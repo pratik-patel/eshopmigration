@@ -79,12 +79,16 @@ docs/context-fabric/
 └── navigation-map.json         # Menu structure
 ```
 
-#### ❌ Missing (Needed by Dashboard):
-- **Nothing major** — ui-behavior.md is comprehensive
-- **Enhancement:** Structured JSON version of ui-behavior.md
-  - **Need:** `ui-behavior.json` with structured screens, controls, actions (easier to parse than markdown)
-  - **When:** Phase 1, Phase 3 (for component visualizations)
-  - **Fix:** Optional — can parse markdown, but JSON would be faster
+#### ✅ Enhancements:
+- **`ui-behavior.json`** — Structured JSON version of ui-behavior.md
+  - **Need:** Structured screens, controls, actions (easier to parse than markdown)
+  - **When:** Phase 0 (for component visualizations)
+  - **✅ DATA SOURCE:** Hook converts ui-behavior.md automatically
+    - Hook: `.claude/hooks/convert-ui-behavior-to-json.sh`
+    - Parser: `.claude/scripts/parse-ui-behavior-to-json.py`
+    - Triggered after agent 102 (ui-inventory-extractor) completes
+    - Generates: `docs/seams/{seam}/ui-behavior.json`
+  - **Fix:** ✅ COMPLETE - Hook implemented
 
 #### 📊 Dashboard Pages Using This Data:
 - 🔍 **Phase 0:** Design system viewer
@@ -1001,6 +1005,12 @@ def parse_tasks_md(tasks_md_path):
 | **implementation-roadmap.json** | ⚠️ **Parse implementation-roadmap.md** | Dashboard parses `docs/implementation-roadmap.md` | After Phase 4 |
 | **coverage-audit.json** | ⚠️ **Derive from manifest.json + seam-proposals.json** | Dashboard calculates per-module coverage | Phase 0 |
 | **architecture-diagram.json** | ⚠️ **Parse CLAUDE.md + architecture-design.md** | Dashboard extracts layers/tech stack | Available always |
+| **ui-behavior.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/convert-ui-behavior-to-json.sh` converts ui-behavior.md | After Phase 0 |
+| **dependency-scan-backend.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-dependency-scan.sh` runs pip-audit | After backend impl |
+| **dependency-scan-frontend.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-dependency-scan.sh` runs npm audit | After frontend impl |
+| **lighthouse-results.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-lighthouse-metrics.sh` runs Lighthouse | After frontend impl |
+| **file-changes-backend.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-file-changes.sh` runs git log | After backend impl |
+| **file-changes-frontend.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-file-changes.sh` runs git log | After frontend impl |
 
 ---
 
