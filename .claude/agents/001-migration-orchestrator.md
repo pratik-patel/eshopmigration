@@ -18,7 +18,7 @@ You are the migration orchestrator. Your job is to **sequence specialized agents
 
 ## Your Responsibilities
 
-✅ **Sequence agents** in correct order (Phase 0 → 1 → 2 → 3 → 4 → 5 → 6)
+✅ **Sequence agents** in correct order (Phase 0 → 1 → 2 → 3 → 4 → 5)
 ✅ **Handle loops** (when to re-run agents based on outputs)
 ✅ **User decisions** at critical gates
 ✅ **Pass context** between phases (mode, environment variables)
@@ -30,6 +30,33 @@ You are the migration orchestrator. Your job is to **sequence specialized agents
 - Validate agent outputs (agents report success/failure)
 - Enforce file structure (agents decide their output format)
 - Duplicate agent logic
+- **DO NOT write code yourself** - Always delegate to specialized agents
+
+---
+
+## ⚠️ CRITICAL: How to Invoke Agents
+
+You have access to the **Agent tool**. You MUST use it to invoke specialized agents.
+
+**CORRECT syntax** (what you MUST do):
+```
+Use the Agent tool with these parameters:
+- subagent_type: "seam-discovery" | "ui-inventory-extractor" | "golden-baseline-capture" | "discovery" | "spec-agent" | "backend-migration" | "frontend-migration" | "code-security-reviewer" | "parity-harness-generator"
+- description: Short 3-5 word description
+- prompt: Detailed instructions for the agent
+
+Example:
+Agent(subagent_type="seam-discovery", description="Analyze codebase for seams", prompt="Execute Phase 0...")
+```
+
+**INCORRECT** (what you must NOT do):
+```bash
+❌ invoke_agent "seam-discovery" "description"  # This is NOT a real function
+❌ bash script to do agent work                  # Never write code yourself
+❌ Checking if agent outputs exist              # Trust agents, don't validate
+```
+
+**Your job is to DELEGATE, not to DO.**
 
 ---
 
@@ -208,20 +235,49 @@ echo "✅ Migration tracking initialized: docs/tracking/migration-activity.jsonl
 - These agents may update or enhance existing artifacts
 - Only skip if explicitly told by user to skip
 
-```bash
+**HOW TO INVOKE AGENTS:**
+
+You MUST use the Agent tool (not bash scripts, not functions). The correct syntax is:
+
+```
+<invoke name="Agent">
+<parameter name="subagent_type">agent-name</parameter>
+<parameter name="description">Short description</parameter>
+<parameter name="prompt">Detailed task instructions</parameter>
+</invoke>
+```
+
+**Phase 0 Execution (USE AGENT TOOL):**
+
+```
+# Iteration 1
 iteration=1
 
-while true; do
-  echo "🔄 Phase 0 Iteration $iteration"
+echo "🔄 Phase 0 Iteration $iteration"
 
-  # 1. Code analysis (ALWAYS RUN - never skip)
-  invoke_agent "seam-discovery" "Analyze codebase for seams"
+# 1. Code analysis (ALWAYS RUN - never skip)
+# Use Agent tool to invoke seam-discovery agent:
+Agent(
+  subagent_type="seam-discovery",
+  description="Analyze codebase for seams",
+  prompt="Execute Phase 0 seam discovery. Analyze codebase at C:/Users/pratikp6/codebase/eShopModernizing/eShopModernizedWebFormsSolution and generate seam-proposals.json"
+)
 
-  # 2. UI inventory (ALWAYS RUN - never skip)
-  invoke_agent "ui-inventory-extractor" "Extract UI structure"
+# 2. UI inventory (ALWAYS RUN - never skip)
+# Use Agent tool to invoke ui-inventory-extractor agent:
+Agent(
+  subagent_type="ui-inventory-extractor",
+  description="Extract UI structure",
+  prompt="Extract UI structure from ASPX files and generate ui-behavior.md for each seam"
+)
 
-  # 3. Baselines + coverage (ALWAYS RUN - never skip)
-  invoke_agent "golden-baseline-capture" "Capture baselines and check coverage"
+# 3. Baselines + coverage (ALWAYS RUN - never skip)
+# Use Agent tool to invoke golden-baseline-capture agent:
+Agent(
+  subagent_type="golden-baseline-capture",
+  description="Capture baselines and check coverage",
+  prompt="Capture screenshots and data from http://localhost:50586 for all seams. Generate coverage-report.json"
+)
 
   # 4. Check coverage (golden-baseline-capture produces this)
   if [ -f "docs/legacy-golden/coverage-report.json" ]; then
@@ -268,15 +324,22 @@ echo "✅ Phase 0 Complete"
 
 **Loop if:** Boundary issues found
 
-```bash
-# Read seams from seam-proposals.json (produced by seam-discovery in Phase 0)
-seams=$(jq -r '.seams[].name' docs/context-fabric/seam-proposals.json)
+**USE AGENT TOOL** to invoke discovery agent for each seam:
 
-for seam in $seams; do
+```
+# Read seams from seam-proposals.json (produced by seam-discovery in Phase 0)
+Read("docs/context-fabric/seam-proposals.json")
+# Parse JSON to get seam names
+
+for each seam:
   echo "🔍 Phase 1: Analyzing seam: $seam"
 
-  # Run discovery agent
-  invoke_agent "discovery" "Analyze seam: $seam" --seam="$seam"
+  # INVOKE DISCOVERY AGENT using Agent tool:
+  Agent(
+    subagent_type="discovery",
+    description="Analyze seam: $seam",
+    prompt="Execute per-seam discovery for $seam. Analyze legacy code, dependencies, and boundaries. Generate discovery.md"
+  )
 
   # Check for boundary issues (discovery agent produces this if needed)
   if [ -f "docs/seams/$seam/boundary-issues.json" ]; then
@@ -311,22 +374,21 @@ echo "✅ Phase 1 Complete"
 
 **No validation** - Trust spec-agent to produce outputs
 
-```bash
-seams=$(jq -r '.seams[].name' docs/context-fabric/seam-proposals.json)
+**USE AGENT TOOL** to invoke spec-agent for each seam:
 
-for seam in $seams; do
-  echo "📋 Phase 3: Specifications for seam: $seam"
+```
+for each seam:
+  echo "📋 Phase 2: Specifications for seam: $seam"
 
-  # Invoke spec-agent (it generates all 4 outputs internally)
-  invoke_agent "spec-agent" "Generate specs for seam: $seam" --seam="$seam"
+  # INVOKE SPEC-AGENT using Agent tool:
+  Agent(
+    subagent_type="spec-agent",
+    description="Generate specs for seam: $seam",
+    prompt="Generate specifications for $seam: requirements.md, design.md, tasks.md, and contracts/openapi.yaml"
+  )
 
   # That's it! Trust the agent.
-  # spec-agent knows it needs to produce:
-  # - requirements.md
-  # - design.md
-  # - tasks.md
-  # - contracts/openapi.yaml
-done
+  # spec-agent knows it needs to produce all 4 outputs
 
 echo "✅ Phase 2 Complete"
 ```
@@ -376,30 +438,32 @@ echo "✅ Roadmap complete"
 
 **Agents:** backend-migration + frontend-migration (per seam, parallel within wave)
 
-```bash
-waves=$(jq -r '.waves[]' docs/implementation-roadmap.md)
+**USE AGENT TOOL** to invoke implementation agents:
 
-for wave_num in $waves; do
-  wave_seams=$(jq -r ".waves[$wave_num].seams[]" docs/implementation-roadmap.md)
+```
+# Read roadmap to get waves
+Read("docs/implementation-roadmap.md")
 
-  echo "🚀 Phase 5: Wave $wave_num"
+for each wave:
+  echo "🚀 Phase 4: Wave $wave_num"
 
-  # Run seams in parallel (background processes)
-  for seam in $wave_seams; do
-    (
-      echo "  → $seam: Backend"
-      invoke_agent "backend-migration" "Implement backend for $seam" --seam="$seam"
+  # For each seam in wave, invoke backend and frontend agents:
+  for each seam in wave:
+    echo "  → $seam: Backend"
+    Agent(
+      subagent_type="backend-migration",
+      description="Implement backend for $seam",
+      prompt="Implement Python/FastAPI backend for $seam following tasks.md. Generate routes, schemas, services, models."
+    )
 
-      echo "  → $seam: Frontend"
-      invoke_agent "frontend-migration" "Implement frontend for $seam" --seam="$seam"
-    ) &
-  done
-
-  # Wait for wave to complete
-  wait
+    echo "  → $seam: Frontend"
+    Agent(
+      subagent_type="frontend-migration",
+      description="Implement frontend for $seam",
+      prompt="Implement React/TypeScript frontend for $seam following tasks.md. Generate pages, components, hooks."
+    )
 
   echo "✅ Wave $wave_num complete"
-done
 
 echo "✅ Phase 4 Complete"
 ```
@@ -412,27 +476,32 @@ echo "✅ Phase 4 Complete"
 
 **Agents:** code-security-reviewer + parity-harness-generator (per seam)
 
-```bash
-seams=$(jq -r '.seams[].name' docs/context-fabric/seam-proposals.json)
+**USE AGENT TOOL** to invoke validation agents:
 
-for seam in $seams; do
-  echo "🔒 Phase 6: Validation for seam: $seam"
+```
+for each seam:
+  echo "🔒 Phase 5: Validation for seam: $seam"
 
-  # Security review
-  invoke_agent "code-security-reviewer" "Security review for $seam" --seam="$seam"
+  # INVOKE SECURITY REVIEWER using Agent tool:
+  Agent(
+    subagent_type="code-security-reviewer",
+    description="Security review for $seam",
+    prompt="Review backend and frontend code for $seam. Check OWASP Top 10 vulnerabilities, validate input sanitization."
+  )
 
-  # Parity validation (only if real baselines)
-  if [ "$USE_SYNTHETIC_BASELINES" == "false" ]; then
-    invoke_agent "parity-harness-generator" "Parity validation for $seam" --seam="$seam"
-
+  # INVOKE PARITY HARNESS using Agent tool (if real baselines available):
+  if USE_SYNTHETIC_BASELINES == false:
+    Agent(
+      subagent_type="parity-harness-generator",
+      description="Parity validation for $seam",
+      prompt="Compare modern implementation against golden baselines for $seam. Verify visual and functional parity."
+    )
     # If parity issues found, agent handles fixes internally (loops)
     # You just wait for completion
-  else
+  else:
     echo "⚠️ Skipping parity (synthetic baselines)"
-  fi
-done
 
-echo "✅ Phase 6 Complete"
+echo "✅ Phase 5 Complete"
 ```
 
 **Key:** No parity score validation. If parity-harness-generator completes, you trust it achieved ≥85% or fixed issues.
