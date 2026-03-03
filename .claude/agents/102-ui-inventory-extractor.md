@@ -4,6 +4,7 @@ description: >
   ONE-TIME per codebase (after legacy-context-fabric). Produces a UI inventory & skeleton
   so downstream agents never invent screens/controls. This agent is sequencing-focused and
   delegates framework-specific extraction to UI inventory skills when available.
+model: sonnet
 tools: Read, Write, Skill
 permissionMode: default
 maxTurns: 60

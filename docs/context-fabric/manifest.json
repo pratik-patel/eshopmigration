@@ -1,0 +1,136 @@
+{
+  "solution": {
+    "name": "eShopModernizedWebForms",
+    "path": "C:\\Users\\pratikp6\\codebase\\eShopModernizing\\eShopModernizedWebFormsSolution\\eShopModernizedWebForms.sln",
+    "projects": [
+      {
+        "name": "eShopModernizedWebForms",
+        "type": "Web Application",
+        "path": "src\\eShopModernizedWebForms\\eShopModernizedWebForms.csproj",
+        "target_framework": ".NET Framework 4.6+"
+      }
+    ]
+  },
+  "modules": [
+    {
+      "name": "Catalog",
+      "type": "Feature Module",
+      "purpose": "CRUD operations for catalog items",
+      "files": [
+        "Catalog/Create.aspx",
+        "Catalog/Create.aspx.cs",
+        "Catalog/Edit.aspx",
+        "Catalog/Edit.aspx.cs",
+        "Catalog/Delete.aspx",
+        "Catalog/Delete.aspx.cs",
+        "Catalog/Details.aspx",
+        "Catalog/Details.aspx.cs",
+        "Catalog/PicUploader.asmx.cs"
+      ]
+    },
+    {
+      "name": "Models",
+      "type": "Data Layer",
+      "purpose": "Entity Framework models and DB context",
+      "files": [
+        "Models/CatalogItem.cs",
+        "Models/CatalogBrand.cs",
+        "Models/CatalogType.cs",
+        "Models/CatalogDBContext.cs",
+        "Models/CatalogItemHiLoGenerator.cs",
+        "Models/Infrastructure/CatalogDBInitializer.cs",
+        "Models/Infrastructure/PreconfiguredData.cs"
+      ]
+    },
+    {
+      "name": "Services",
+      "type": "Business Logic Layer",
+      "purpose": "Service interfaces and implementations",
+      "files": [
+        "Services/ICatalogService.cs",
+        "Services/CatalogService.cs",
+        "Services/CatalogServiceMock.cs",
+        "Services/IImageService.cs",
+        "Services/ImageAzureStorage.cs",
+        "Services/ImageMockStorage.cs"
+      ]
+    },
+    {
+      "name": "App_Start",
+      "type": "Configuration",
+      "purpose": "Application startup configuration",
+      "files": [
+        "App_Start/BundleConfig.cs",
+        "App_Start/CatalogConfiguration.cs",
+        "App_Start/RouteConfig.cs",
+        "App_Start/Startup.Auth.cs",
+        "App_Start/SqlAccessTokenProvider.cs",
+        "App_Start/OptionalKeyVaultConfigurationBuilder.cs",
+        "App_Start/MyTelemetryInitializer.cs"
+      ]
+    },
+    {
+      "name": "Middleware",
+      "type": "Cross-cutting Concerns",
+      "purpose": "Authentication and request processing",
+      "files": [
+        "Middleware/AuthenticationMiddleware.cs"
+      ]
+    },
+    {
+      "name": "Modules",
+      "type": "Dependency Injection",
+      "purpose": "Autofac container configuration",
+      "files": [
+        "Modules/ApplicationModule.cs"
+      ]
+    },
+    {
+      "name": "ViewModel",
+      "type": "Presentation Layer",
+      "purpose": "View models for UI data binding",
+      "files": [
+        "ViewModel/PaginatedItemsViewModel.cs"
+      ]
+    },
+    {
+      "name": "Layout",
+      "type": "UI Infrastructure",
+      "purpose": "Master pages and shared UI components",
+      "files": [
+        "Site.Master",
+        "Site.Master.cs",
+        "Site.Mobile.Master",
+        "Site.Mobile.Master.cs",
+        "ViewSwitcher.ascx",
+        "ViewSwitcher.ascx.cs"
+      ]
+    },
+    {
+      "name": "Entry",
+      "type": "Application Root",
+      "purpose": "Application entry points and global configuration",
+      "files": [
+        "Default.aspx",
+        "Default.aspx.cs",
+        "Global.asax.cs",
+        "Startup.cs"
+      ]
+    }
+  ],
+  "source_file_count": {
+    "cs_files": 38,
+    "aspx_files": 5,
+    "config_files": 11,
+    "total": 54
+  },
+  "key_technologies": [
+    "ASP.NET WebForms",
+    "Entity Framework 6",
+    "Autofac",
+    "OWIN",
+    "OpenID Connect",
+    "Azure SDK",
+    "log4net"
+  ]
+}

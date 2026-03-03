@@ -3,6 +3,7 @@ name: discovery
 description: >
   Per-seam technical analysis. Produces evidence-based boundary analysis, call chains,  dependencies, and readiness assessment for ONE seam.
   Output feeds into requirements-generator.
+model: sonnet
 tools: Read, Glob, Grep, Write, Skill
 permissionMode: default
 maxTurns: 60

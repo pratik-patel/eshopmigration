@@ -3,6 +3,7 @@ name: frontend-migration
 description: >
   Implements frontend for a seam by executing tasks from tasks.md sequentially.
   Reads requirements.md, design.md, tasks.md, ui-behavior.md, and contracts/openapi.yaml to implement the frontend.
+model: sonnet
 tools: Read, Write, Edit, Bash
 permissionMode: acceptEdits
 maxTurns: 60

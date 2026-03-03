@@ -3,6 +3,7 @@ name: migration-orchestrator
 description: >
   Orchestrates full migration by sequencing specialized agents through phases with loops and decision gates.
   Trusts agents to know their outputs and success criteria. Only handles sequencing, loops, and user decisions.
+model: sonnet
 tools: Agent, Read, AskUserQuestion, Bash
 maxTurns: 200
 ---
@@ -201,19 +202,25 @@ echo "✅ Migration tracking initialized: docs/tracking/migration-activity.jsonl
 
 **Loop until:** Coverage complete OR user approves out-of-scope
 
+**CRITICAL: NEVER SKIP PHASE 0**
+- Even if docs/context-fabric/ exists, run all Phase 0 agents
+- Even if seam-proposals.json exists, run all Phase 0 agents
+- These agents may update or enhance existing artifacts
+- Only skip if explicitly told by user to skip
+
 ```bash
 iteration=1
 
 while true; do
   echo "🔄 Phase 0 Iteration $iteration"
 
-  # 1. Code analysis
+  # 1. Code analysis (ALWAYS RUN - never skip)
   invoke_agent "seam-discovery" "Analyze codebase for seams"
 
-  # 2. UI inventory
+  # 2. UI inventory (ALWAYS RUN - never skip)
   invoke_agent "ui-inventory-extractor" "Extract UI structure"
 
-  # 3. Baselines + coverage
+  # 3. Baselines + coverage (ALWAYS RUN - never skip)
   invoke_agent "golden-baseline-capture" "Capture baselines and check coverage"
 
   # 4. Check coverage (golden-baseline-capture produces this)

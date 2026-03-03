@@ -5,6 +5,7 @@ description: >
   discovery report. Use when discovery.md lists External dependencies requiring abstraction.
   Do NOT use for pure business logic — only for platform-specific dependencies.
   Consults target language rules for wrapper patterns and code generation.
+model: sonnet
 tools: Read, Write, Glob, Grep
 permissionMode: acceptEdits
 ---
