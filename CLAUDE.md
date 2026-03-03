@@ -5,6 +5,34 @@ Read it before writing any Python or React code. These rules are non-negotiable.
 
 ---
 
+## 0. Migration Philosophy ⚠️ READ THIS FIRST
+
+### This is a LIKE-TO-LIKE MIGRATION
+
+**The Golden Rule:**
+- IF legacy has it → modern MUST have it (exactly)
+- IF legacy doesn't have it → modern MUST NOT have it
+- IF uncertain → ASK, never assume
+
+**What Changes:**
+- ✅ Technology stack ONLY (ASP.NET→Python, WebForms→React, etc.)
+
+**What Does NOT Change:**
+- ❌ Features, authentication, validation, styling, UI/UX, business logic, assets, behaviors
+
+**Why:**
+- Minimize risk by changing one thing at a time
+- Enable exact parity testing
+- Improve LATER in separate phase
+
+**Exception Process:**
+If you find critical issues (security, data loss):
+1. Document in evidence/issues.md
+2. Do NOT fix in migration
+3. Flag for post-migration phase
+
+---
+
 ## 1. Project Context
 
 Application-specific facts (codebase path, DB paths, plugin types, seam candidates) are discovered autonomously by the `legacy-context-fabric` agent and stored in `docs/context-fabric/project-facts.json`. Do not look for a PROJECT_CONTEXT.md file — it does not exist.

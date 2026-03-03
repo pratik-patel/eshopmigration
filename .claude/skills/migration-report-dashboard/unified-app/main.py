@@ -42,7 +42,7 @@ init_session_state()
 def get_data_loader():
     """Initialize unified data loader with caching"""
     return UnifiedDataLoader(
-        docs_path="../../../docs",
+        docs_path="../../../../docs",
         mock_legacy_path="../mock-data/legacy"
     )
 
