@@ -296,6 +296,7 @@ class CatalogServiceMock:
                 available_stock=100,
                 restock_threshold=10,
                 max_stock_threshold=200,
+                on_reorder=False,
             ),
             CatalogItem(
                 id=2,
@@ -308,6 +309,7 @@ class CatalogServiceMock:
                 available_stock=100,
                 restock_threshold=10,
                 max_stock_threshold=200,
+                on_reorder=False,
             ),
             CatalogItem(
                 id=3,
@@ -320,6 +322,7 @@ class CatalogServiceMock:
                 available_stock=100,
                 restock_threshold=10,
                 max_stock_threshold=200,
+                on_reorder=False,
             ),
         ]
 

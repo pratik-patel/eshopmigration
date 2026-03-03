@@ -17,10 +17,7 @@ export default defineConfig({
         target: 'http://localhost:8000',
         changeOrigin: true,
       },
-      '/pics': {
-        target: 'http://localhost:8000',
-        changeOrigin: true,
-      },
+      // Note: /pics served from frontend/public/pics/ (not proxied)
     },
   },
   test: {

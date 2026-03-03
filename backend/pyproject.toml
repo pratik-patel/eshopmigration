@@ -18,6 +18,8 @@ alembic = "^1.13.1"
 structlog = "^24.1.0"
 httpx = "^0.26.0"
 python-multipart = "^0.0.6"
+aioodbc = "^0.5.0"
+pyodbc = "^5.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.4"

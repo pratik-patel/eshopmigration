@@ -17,10 +17,11 @@ You have been given: a seam name.
 
 You have access to:
 - `docs/seams/{seam}/contracts/openapi.yaml` (API contract — defines data shapes)
-- `docs/seams/{seam}/ui-behavior.md` (PRIMARY UI reference — controls, columns, actions, test scenarios)
+- `docs/seams/{seam}/ui-behavior.md` (PRIMARY UI reference — controls, columns, actions, test scenarios, static assets)
 - `docs/seams/{seam}/discovery.md` (boundary and dependency details)
 - `legacy-golden/{seam}/screenshots/` (visual reference if captured)
 - `docs/context-fabric/visual-controls-catalog.md` (custom control specifications, if present)
+- `docs/context-fabric/static-assets-catalog.json` (static assets inventory for this seam)
 
 ## Step 0: Detect Target Framework
 
@@ -52,9 +53,33 @@ You have access to:
 
 6. **Check visual reference**: `legacy-golden/{seam}/screenshots/` (if available) for layout and styling reference
 
-7. **Create seam module** following the target framework project structure
+7. **Copy static assets** (REQUIRED):
+   a. Read `docs/context-fabric/static-assets-catalog.json` to identify assets for this seam
+   b. Read seam-specific asset list from `docs/seams/{seam}/ui-behavior.md` (Static Assets section)
+   c. Copy required assets from legacy codebase to modern frontend:
+      - **Seam-specific assets** → `frontend/src/assets/{seam}/` (e.g., `frontend/src/assets/catalog/product-placeholder.png`)
+      - **Shared assets** (used by multiple seams) → `frontend/public/shared/` (e.g., `frontend/public/shared/logo.png`)
+      - **Global assets** (app-wide) → `frontend/public/` (e.g., `frontend/public/favicon.ico`)
+   d. For embedded resources (.resx files):
+      - Extract embedded images using appropriate tools or manual extraction
+      - Convert to standard web formats (PNG, SVG, WebP) if necessary
+   e. Optimize assets for web:
+      - Compress images (use tools like `imagemagick`, `sharp`, or online services if size > 500KB)
+      - Convert icons to SVG where possible for better scaling
+      - Ensure proper web formats (PNG for photos with transparency, JPG for photos, SVG for icons/logos)
+   f. Create asset index file: `frontend/src/assets/{seam}/index.ts` with typed exports:
+      ```typescript
+      export const assets = {
+        logo: '/shared/logo.png',
+        productPlaceholder: '/assets/catalog/product-placeholder.png',
+        saveIcon: '/assets/catalog/icons/save.svg',
+      } as const;
+      ```
+   g. Document any missing assets or assets that couldn't be migrated in migration notes
 
-8. **Run quality gates**:
+8. **Create seam module** following the target framework project structure
+
+9. **Run quality gates**:
    - Type checking
    - Linting
    - Unit/component tests
@@ -112,12 +137,16 @@ Generic structure pattern (adapt to framework conventions):
 | Linting | Linter exits 0 | Rules: lint command |
 | Unit/component tests | Test runner exits 0, coverage ≥ threshold | Rules: test command and coverage % |
 | Contract alignment | Every API call matches a path in `docs/seams/{seam}/contracts/openapi.yaml` | Manual review |
+| Asset completeness | All assets from `ui-behavior.md` copied to frontend and properly referenced | Manual review + build check |
 | Visual parity | UI matches legacy screenshots or ui-behavior.md (if available) | Manual review |
 
 ## Output Summary
 
 When complete, report:
 - Files created (with paths relative to frontend root)
+- Assets copied (count, total size, destination paths)
+- Missing or skipped assets (with reasons)
+- Asset optimizations performed (compressions, format conversions)
 - Test results (X/X passed, coverage %)
 - Quality gate results (type check, lint)
 - Any legacy UI behaviors that could NOT be replicated (with reason and mitigation plan)
@@ -132,6 +161,9 @@ When complete, report:
 - **Never write business logic in presentation components** — extract to services/hooks/composables
 - **Never silently swallow errors** — display error states to users
 - **Never use inline styles** — use framework's styling system
+- **Never hardcode asset paths** — import from typed asset index or use path constants
+- **Never reference legacy asset paths** — always use copied assets in frontend directory structure
+- **Never skip asset copying** — if UI references an image, it must be copied and available in the frontend
 
 **Framework-specific constraints:**
 - Type usage patterns (e.g., no `any` in TypeScript)

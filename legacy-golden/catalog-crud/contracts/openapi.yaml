@@ -1,0 +1,652 @@
+openapi: 3.1.0
+
+info:
+  title: Catalog CRUD API
+  version: v1
+  description: |
+    API contract for catalog item Create, Read, Update, Delete operations.
+
+    **Runtime Evidence**: Contract derived from runtime verification of legacy Web Forms application
+    - Real form field IDs captured from http://localhost:50586/Catalog/*
+    - Validation rules extracted from synthetic_validation_errors.json
+    - Dropdown options from synthetic_brands.json and synthetic_types.json
+    - Test data from synthetic_product_1.json and grid-data.json
+
+    **Workflows**:
+    - Create: POST /api/catalog/items
+    - Read: GET /api/catalog/items/{id}
+    - Update: PUT /api/catalog/items/{id}
+    - Delete: DELETE /api/catalog/items/{id}
+    - List Brands: GET /api/catalog/brands
+    - List Types: GET /api/catalog/types
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+
+tags:
+  - name: catalog-items
+    description: Catalog item CRUD operations
+  - name: catalog-metadata
+    description: Brand and type dropdown data
+
+paths:
+  /api/catalog/items:
+    post:
+      summary: Create new catalog item
+      description: |
+        Creates a new catalog item with validation.
+
+        **Legacy Form**: http://localhost:50586/Catalog/Create
+        **Button**: [ Create ]
+        **Field Mapping**:
+        - name → ctl00$MainContent$Name
+        - description → ctl00$MainContent$Description
+        - catalogBrandId → ctl00$MainContent$Brand
+        - catalogTypeId → ctl00$MainContent$Type
+        - price → ctl00$MainContent$Price
+        - availableStock → ctl00$MainContent$Stock
+        - restockThreshold → ctl00$MainContent$Restock
+        - maxStockThreshold → ctl00$MainContent$Maxstock
+      operationId: createCatalogItem
+      tags:
+        - catalog-items
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCatalogItemRequest'
+            examples:
+              valid_hoodie:
+                summary: Valid hoodie creation
+                value:
+                  name: ".NET Bot Black Hoodie"
+                  description: ".NET Bot Black Hoodie, and more"
+                  catalogBrandId: 1
+                  catalogTypeId: 2
+                  price: 19.50
+                  pictureFileName: "1.png"
+                  availableStock: 100
+                  restockThreshold: 0
+                  maxStockThreshold: 0
+              empty_form:
+                summary: Empty form (triggers validation)
+                value:
+                  name: ""
+                  description: ""
+                  catalogBrandId: null
+                  catalogTypeId: null
+                  price: null
+                  availableStock: null
+                  restockThreshold: null
+                  maxStockThreshold: null
+      responses:
+        '201':
+          description: Catalog item created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemResponse'
+              examples:
+                created_hoodie:
+                  summary: Created hoodie
+                  value:
+                    id: 1
+                    name: ".NET Bot Black Hoodie"
+                    description: ".NET Bot Black Hoodie, and more"
+                    price: 19.50
+                    pictureFileName: "1.png"
+                    pictureUri: null
+                    catalogTypeId: 2
+                    catalogBrandId: 1
+                    availableStock: 100
+                    restockThreshold: 0
+                    maxStockThreshold: 0
+                    onReorder: false
+                    catalogType:
+                      id: 2
+                      type: "T-Shirt"
+                    catalogBrand:
+                      id: 1
+                      brand: ".NET"
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+              examples:
+                required_name:
+                  summary: Name field required
+                  value:
+                    code: "VALIDATION_ERROR"
+                    message: "Validation failed"
+                    errors:
+                      - field: "name"
+                        message: "The Name field is required."
+                invalid_price_negative:
+                  summary: Price must be positive
+                  value:
+                    code: "VALIDATION_ERROR"
+                    message: "Validation failed"
+                    errors:
+                      - field: "price"
+                        message: "The Price must be a positive number with maximum two decimals between 0 and 1 million."
+                invalid_price_decimals:
+                  summary: Price too many decimal places
+                  value:
+                    code: "VALIDATION_ERROR"
+                    message: "Validation failed"
+                    errors:
+                      - field: "price"
+                        message: "The Price must be a positive number with maximum two decimals between 0 and 1 million."
+                invalid_stock:
+                  summary: Stock out of range
+                  value:
+                    code: "VALIDATION_ERROR"
+                    message: "Validation failed"
+                    errors:
+                      - field: "availableStock"
+                        message: "The field Stock must be between 0 and 10 million."
+
+  /api/catalog/items/{id}:
+    get:
+      summary: Get catalog item by ID
+      description: |
+        Retrieves a single catalog item with full details including related brand and type.
+
+        **Legacy Page**: http://localhost:50586/Catalog/Details/{id}
+        **Test Product ID**: 1 (.NET Bot Black Hoodie)
+      operationId: getCatalogItem
+      tags:
+        - catalog-items
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Catalog item ID
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+      responses:
+        '200':
+          description: Catalog item found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemResponse'
+              examples:
+                product_1:
+                  summary: Product ID 1 (.NET Bot Black Hoodie)
+                  value:
+                    id: 1
+                    name: ".NET Bot Black Hoodie"
+                    description: ".NET Bot Black Hoodie, and more"
+                    price: 19.50
+                    pictureFileName: "1.png"
+                    pictureUri: null
+                    catalogTypeId: 2
+                    catalogBrandId: 1
+                    availableStock: 100
+                    restockThreshold: 0
+                    maxStockThreshold: 0
+                    onReorder: false
+                    catalogType:
+                      id: 2
+                      type: "T-Shirt"
+                    catalogBrand:
+                      id: 1
+                      brand: ".NET"
+        '404':
+          description: Catalog item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "NOT_FOUND"
+                message: "Catalog item with id '999' not found"
+
+    put:
+      summary: Update existing catalog item
+      description: |
+        Updates an existing catalog item with validation.
+
+        **Legacy Form**: http://localhost:50586/Catalog/Edit/{id}
+        **Button**: [ Save ]
+        **Field Mapping**:
+        - name → ctl00$MainContent$Name
+        - description → ctl00$MainContent$Description
+        - catalogBrandId → ctl00$MainContent$BrandDropDownList
+        - catalogTypeId → ctl00$MainContent$TypeDropDownList
+        - price → ctl00$MainContent$Price
+        - pictureFileName → ctl00$MainContent$PictureFileName
+        - availableStock → ctl00$MainContent$Stock
+        - restockThreshold → ctl00$MainContent$Restock
+        - maxStockThreshold → ctl00$MainContent$Maxstock
+      operationId: updateCatalogItem
+      tags:
+        - catalog-items
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Catalog item ID
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCatalogItemRequest'
+            examples:
+              update_hoodie:
+                summary: Update hoodie details
+                value:
+                  name: ".NET Bot Black Hoodie - Updated"
+                  description: ".NET Bot Black Hoodie, and more - New description"
+                  catalogBrandId: 1
+                  catalogTypeId: 2
+                  price: 24.99
+                  pictureFileName: "1.png"
+                  availableStock: 150
+                  restockThreshold: 10
+                  maxStockThreshold: 200
+      responses:
+        '200':
+          description: Catalog item updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemResponse'
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+        '404':
+          description: Catalog item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete catalog item
+      description: |
+        Deletes a catalog item after confirmation.
+
+        **Legacy Page**: http://localhost:50586/Catalog/Delete/{id}
+        **Button**: [ Delete ]
+        **Confirmation**: Modal with heading "Catalog manager (Web Forms)"
+      operationId: deleteCatalogItem
+      tags:
+        - catalog-items
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: Catalog item ID
+          schema:
+            type: integer
+            minimum: 1
+          example: 1
+      responses:
+        '204':
+          description: Catalog item deleted successfully
+        '404':
+          description: Catalog item not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "NOT_FOUND"
+                message: "Catalog item with id '999' not found"
+
+  /api/catalog/brands:
+    get:
+      summary: List all catalog brands
+      description: |
+        Returns all available brands for dropdown population.
+
+        **Legacy Field**: ctl00$MainContent$Brand (Create), ctl00$MainContent$BrandDropDownList (Edit)
+        **Source**: synthetic_brands.json (5 brands)
+      operationId: listCatalogBrands
+      tags:
+        - catalog-metadata
+      responses:
+        '200':
+          description: List of catalog brands
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatalogBrand'
+              example:
+                - id: 1
+                  brand: ".NET"
+                - id: 2
+                  brand: "Other"
+                - id: 3
+                  brand: "Azure"
+                - id: 4
+                  brand: "Visual Studio"
+                - id: 5
+                  brand: "SQL Server"
+
+  /api/catalog/types:
+    get:
+      summary: List all catalog types
+      description: |
+        Returns all available types for dropdown population.
+
+        **Legacy Field**: ctl00$MainContent$Type (Create), ctl00$MainContent$TypeDropDownList (Edit)
+        **Source**: synthetic_types.json (4 types)
+      operationId: listCatalogTypes
+      tags:
+        - catalog-metadata
+      responses:
+        '200':
+          description: List of catalog types
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatalogType'
+              example:
+                - id: 1
+                  type: "Mug"
+                - id: 2
+                  type: "T-Shirt"
+                - id: 3
+                  type: "Sheet"
+                - id: 4
+                  type: "USB Memory Stick"
+
+components:
+  schemas:
+    CreateCatalogItemRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Product name (required)
+          minLength: 1
+          maxLength: 50
+          example: ".NET Bot Black Hoodie"
+        description:
+          type: string
+          description: Product description
+          maxLength: 255
+          example: ".NET Bot Black Hoodie, and more"
+        catalogBrandId:
+          type: integer
+          description: Brand ID (required, references catalog_brands)
+          minimum: 1
+          example: 1
+        catalogTypeId:
+          type: integer
+          description: Type ID (required, references catalog_types)
+          minimum: 1
+          example: 2
+        price:
+          type: number
+          format: decimal
+          description: Product price (0.00 to 1000000.00, max 2 decimal places)
+          minimum: 0
+          maximum: 1000000
+          multipleOf: 0.01
+          example: 19.50
+        pictureFileName:
+          type: string
+          description: Picture file name (optional, e.g., "1.png")
+          maxLength: 255
+          example: "1.png"
+        availableStock:
+          type: integer
+          description: Available stock quantity (0 to 10000000)
+          minimum: 0
+          maximum: 10000000
+          default: 0
+          example: 100
+        restockThreshold:
+          type: integer
+          description: Restock threshold (0 to 10000000)
+          minimum: 0
+          maximum: 10000000
+          default: 0
+          example: 0
+        maxStockThreshold:
+          type: integer
+          description: Maximum stock threshold (0 to 10000000)
+          minimum: 0
+          maximum: 10000000
+          default: 0
+          example: 0
+
+    UpdateCatalogItemRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: Product name (required)
+          minLength: 1
+          maxLength: 50
+          example: ".NET Bot Black Hoodie"
+        description:
+          type: string
+          description: Product description
+          maxLength: 255
+          example: ".NET Bot Black Hoodie, and more"
+        catalogBrandId:
+          type: integer
+          description: Brand ID (required, references catalog_brands)
+          minimum: 1
+          example: 1
+        catalogTypeId:
+          type: integer
+          description: Type ID (required, references catalog_types)
+          minimum: 1
+          example: 2
+        price:
+          type: number
+          format: decimal
+          description: Product price (0.00 to 1000000.00, max 2 decimal places)
+          minimum: 0
+          maximum: 1000000
+          multipleOf: 0.01
+          example: 19.50
+        pictureFileName:
+          type: string
+          description: Picture file name (optional, e.g., "1.png")
+          maxLength: 255
+          example: "1.png"
+        availableStock:
+          type: integer
+          description: Available stock quantity (0 to 10000000)
+          minimum: 0
+          maximum: 10000000
+          example: 100
+        restockThreshold:
+          type: integer
+          description: Restock threshold (0 to 10000000)
+          minimum: 0
+          maximum: 10000000
+          example: 0
+        maxStockThreshold:
+          type: integer
+          description: Maximum stock threshold (0 to 10000000)
+          minimum: 0
+          maximum: 10000000
+          example: 0
+
+    CatalogItemResponse:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - catalogTypeId
+        - catalogBrandId
+        - availableStock
+      properties:
+        id:
+          type: integer
+          description: Unique catalog item ID
+          example: 1
+        name:
+          type: string
+          description: Product name
+          example: ".NET Bot Black Hoodie"
+        description:
+          type: string
+          description: Product description
+          example: ".NET Bot Black Hoodie, and more"
+        price:
+          type: number
+          format: decimal
+          description: Product price
+          example: 19.50
+        pictureFileName:
+          type: string
+          nullable: true
+          description: Picture file name
+          example: "1.png"
+        pictureUri:
+          type: string
+          nullable: true
+          description: Full picture URI (computed)
+          example: null
+        catalogTypeId:
+          type: integer
+          description: Type ID reference
+          example: 2
+        catalogBrandId:
+          type: integer
+          description: Brand ID reference
+          example: 1
+        availableStock:
+          type: integer
+          description: Available stock quantity
+          example: 100
+        restockThreshold:
+          type: integer
+          description: Restock threshold
+          example: 0
+        maxStockThreshold:
+          type: integer
+          description: Maximum stock threshold
+          example: 0
+        onReorder:
+          type: boolean
+          description: Whether item is on reorder
+          example: false
+        catalogType:
+          $ref: '#/components/schemas/CatalogType'
+          description: Related catalog type (nested)
+        catalogBrand:
+          $ref: '#/components/schemas/CatalogBrand'
+          description: Related catalog brand (nested)
+
+    CatalogBrand:
+      type: object
+      required:
+        - id
+        - brand
+      properties:
+        id:
+          type: integer
+          description: Brand ID
+          example: 1
+        brand:
+          type: string
+          description: Brand name
+          example: ".NET"
+
+    CatalogType:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: integer
+          description: Type ID
+          example: 2
+        type:
+          type: string
+          description: Type name
+          example: "T-Shirt"
+
+    ValidationErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+        - errors
+      properties:
+        code:
+          type: string
+          description: Error code
+          enum:
+            - VALIDATION_ERROR
+          example: "VALIDATION_ERROR"
+        message:
+          type: string
+          description: High-level error message
+          example: "Validation failed"
+        errors:
+          type: array
+          description: List of field-level validation errors
+          items:
+            $ref: '#/components/schemas/FieldError'
+
+    FieldError:
+      type: object
+      required:
+        - field
+        - message
+      properties:
+        field:
+          type: string
+          description: Field name that failed validation
+          example: "name"
+        message:
+          type: string
+          description: Validation error message (matches legacy error text)
+          example: "The Name field is required."
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Error code
+          enum:
+            - NOT_FOUND
+            - INTERNAL_ERROR
+          example: "NOT_FOUND"
+        message:
+          type: string
+          description: Error message
+          example: "Catalog item with id '999' not found"
+        detail:
+          type: object
+          description: Optional error details
+          nullable: true

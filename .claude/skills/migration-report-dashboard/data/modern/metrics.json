@@ -1,0 +1,255 @@
+{
+  "timestamp": "2026-03-02T23:12:10.713108",
+  "app_type": "modern",
+  "quality_level": "good",
+  "frontend": {
+    "lighthouse": {
+      "performance": 76,
+      "accessibility": 80,
+      "best_practices": 78,
+      "seo": 74
+    },
+    "first_contentful_paint_ms": 1411,
+    "largest_contentful_paint_ms": 2941,
+    "time_to_interactive_ms": 3764,
+    "cumulative_layout_shift": 0.118,
+    "bundle_size_kb": 180,
+    "accessibility_issues": [],
+    "feature_parity": 80,
+    "feature_parity_details": [
+      {
+        "screen": "Home",
+        "feature": "Dashboard",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Products",
+        "feature": "Product List",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Products",
+        "feature": "Product Details",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Products",
+        "feature": "Export to Excel",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Orders",
+        "feature": "Order List",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Orders",
+        "feature": "Order Details",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      }
+    ]
+  },
+  "backend": {
+    "total_endpoints": 5,
+    "accessible_endpoints": 5,
+    "api_parity": 0.85,
+    "avg_response_time_ms": 116.67,
+    "median_response_time_ms": 131.26,
+    "p95_response_time_ms": 147.51,
+    "p99_response_time_ms": 147.51,
+    "error_rate": 0.003,
+    "fastest_endpoint": "/api/products/{id}",
+    "slowest_endpoint": "/api/orders",
+    "endpoints": [
+      {
+        "path": "/api/products",
+        "method": "GET",
+        "summary": "List products",
+        "avg_response_time_ms": 100.16,
+        "median_response_time_ms": 80,
+        "min_response_time_ms": 45,
+        "max_response_time_ms": 200,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      },
+      {
+        "path": "/api/products/{id}",
+        "method": "GET",
+        "summary": "Get product",
+        "avg_response_time_ms": 59.28,
+        "median_response_time_ms": 70,
+        "min_response_time_ms": 35,
+        "max_response_time_ms": 180,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      },
+      {
+        "path": "/api/orders",
+        "method": "GET",
+        "summary": "List orders",
+        "avg_response_time_ms": 131.26,
+        "median_response_time_ms": 95,
+        "min_response_time_ms": 50,
+        "max_response_time_ms": 250,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      },
+      {
+        "path": "/api/orders/{id}",
+        "method": "GET",
+        "summary": "Get order",
+        "avg_response_time_ms": 145.15,
+        "median_response_time_ms": 75,
+        "min_response_time_ms": 40,
+        "max_response_time_ms": 190,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      },
+      {
+        "path": "/api/customers",
+        "method": "GET",
+        "summary": "List customers",
+        "avg_response_time_ms": 147.51,
+        "median_response_time_ms": 85,
+        "min_response_time_ms": 48,
+        "max_response_time_ms": 220,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      }
+    ]
+  },
+  "database": {
+    "total_tables": 22,
+    "total_columns": 165,
+    "total_indexes": 45,
+    "total_foreign_keys": 28,
+    "avg_query_time_ms": 100.0,
+    "connection_test": true,
+    "schema_parity": 0.85,
+    "integrity_score": 85,
+    "tables": [
+      {
+        "name": "Products",
+        "columns": 12,
+        "indexes": 3,
+        "foreign_keys": 1,
+        "column_names": [
+          "Id",
+          "Name",
+          "Price",
+          "CategoryId"
+        ]
+      },
+      {
+        "name": "Orders",
+        "columns": 10,
+        "indexes": 4,
+        "foreign_keys": 2,
+        "column_names": [
+          "Id",
+          "CustomerId",
+          "OrderDate",
+          "Total"
+        ]
+      },
+      {
+        "name": "Customers",
+        "columns": 15,
+        "indexes": 2,
+        "foreign_keys": 0,
+        "column_names": [
+          "Id",
+          "Name",
+          "Email",
+          "Phone"
+        ]
+      }
+    ]
+  },
+  "quality": {
+    "sonarqube": {
+      "reliability_rating": "B",
+      "security_rating": "A",
+      "maintainability_rating": "B",
+      "coverage": 69.7,
+      "duplicated_lines_density": 3.8,
+      "bugs": 2,
+      "vulnerabilities": 1,
+      "code_smells": 22,
+      "technical_debt_minutes": 600,
+      "lines_of_code": 15000,
+      "complexity": 425,
+      "cognitive_complexity": 210,
+      "issues_by_severity": {
+        "blocker": 0,
+        "critical": 1,
+        "major": 4,
+        "minor": 7,
+        "info": 10
+      }
+    },
+    "coverage": {
+      "total": 69.7,
+      "line": 72.2,
+      "branch": 66.3,
+      "function": 70.5,
+      "lines_covered": 10837,
+      "lines_total": 15000,
+      "branches_covered": 3315,
+      "branches_total": 5000,
+      "functions_covered": 705,
+      "functions_total": 1000
+    },
+    "security_issues": 1
+  },
+  "nfr": {
+    "response_time_p95_ms": 529.41,
+    "security_posture": 72,
+    "observability_score": 63
+  },
+  "integration": {
+    "integration_parity": 0.85
+  }
+}

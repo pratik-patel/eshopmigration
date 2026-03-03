@@ -39,6 +39,7 @@ Per seam:
 Codebase-wide:
 - `docs/context-fabric/ui-inventory.json` (machine-readable + coverage audit)
 - `docs/context-fabric/visual-controls-catalog.md` (optional)
+- `docs/context-fabric/static-assets-catalog.json` (static assets inventory for migration)
 
 ## Ground rules
 - Do not modify any legacy source files.
@@ -113,7 +114,128 @@ This agent merges primitives across skills if multiple frameworks are present.
 
 ---
 
-# Phase 3 — Map screens to seams
+# Phase 3 — Catalog Static Assets
+
+**Purpose:** Identify and catalog all static assets (images, icons, fonts, videos, documents) used in the UI for migration to the modern frontend.
+
+## 3.1 Asset Discovery Strategy
+
+Search for common asset patterns in the legacy codebase:
+
+**Image file extensions:**
+- `.png`, `.jpg`, `.jpeg`, `.gif`, `.bmp`, `.ico`, `.svg`
+
+**Font file extensions:**
+- `.ttf`, `.otf`, `.woff`, `.woff2`, `.eot`
+
+**Video/media extensions:**
+- `.mp4`, `.avi`, `.wmv`, `.webm`
+
+**Document extensions (if used in UI):**
+- `.pdf`, `.doc`, `.docx`, `.xls`, `.xlsx`
+
+**Common asset directories to scan:**
+- `Images/`, `Resources/`, `Assets/`, `Content/`, `Static/`, `Media/`, `Icons/`
+- Project-embedded resources (`.resx` files in .NET)
+- Resource dictionaries (WPF)
+
+## 3.2 Asset Metadata Collection
+
+For each discovered asset, collect:
+
+```json
+{
+  "path": "relative/path/to/asset.png",
+  "type": "image|icon|font|video|document",
+  "size_bytes": 12345,
+  "format": "png|jpg|svg|ttf|etc",
+  "used_in": ["FormName", "UserControlName"],
+  "usage_context": "button icon|background image|logo|product photo|font|etc",
+  "is_embedded_resource": true|false,
+  "confidence": "high|medium|low"
+}
+```
+
+**Evidence sources for usage detection:**
+- Image property assignments: `pictureBox.Image = ...`, `button.BackgroundImage = ...`
+- Resource file references: `Resources.logo`, `Properties.Resources.icon`
+- XAML bindings: `<Image Source="..."/>`, `<ImageBrush ImageSource="..."/>`
+- Path string literals: `"Images/logo.png"`, `@".\Resources\icon.ico"`
+
+## 3.3 Asset Categorization
+
+Categorize assets by function:
+
+- **Brand assets**: logos, company icons (high priority for migration)
+- **UI chrome**: window icons, button icons, navigation icons
+- **Content images**: product photos, user-uploaded content placeholders
+- **Backgrounds**: form backgrounds, splash screens
+- **Fonts**: custom typefaces (check licensing before migration)
+- **Documents**: help files, manuals, templates
+
+## 3.4 Output: Static Assets Catalog
+
+Write `docs/context-fabric/static-assets-catalog.json`:
+
+```json
+{
+  "discovery_timestamp": "ISO8601",
+  "total_assets": 123,
+  "asset_categories": {
+    "images": 100,
+    "icons": 15,
+    "fonts": 5,
+    "documents": 3
+  },
+  "assets": [
+    {
+      "path": "Resources/logo.png",
+      "type": "image",
+      "size_bytes": 54321,
+      "format": "png",
+      "used_in": ["MainForm", "AboutDialog"],
+      "usage_context": "company logo",
+      "is_embedded_resource": true,
+      "confidence": "high",
+      "migration_priority": "high|medium|low",
+      "notes": "Company branding - must preserve"
+    }
+  ],
+  "embedded_resources": [
+    {
+      "resx_file": "Properties/Resources.resx",
+      "resource_name": "CompanyLogo",
+      "type": "image",
+      "original_path": "Resources/logo.png"
+    }
+  ],
+  "gaps": [
+    "3 image references found in code but source files missing",
+    "Dynamic image loading from database not cataloged (runtime-only)"
+  ]
+}
+```
+
+## 3.5 Per-Seam Asset Assignment
+
+For each asset, attempt to assign to a seam based on:
+- Which screens/controls use it
+- If used across multiple seams → mark as "shared" (copy to `frontend/public/shared/`)
+
+Add to each seam's `ui-behavior.md`:
+
+```markdown
+## Static Assets
+
+| Asset | Type | Path | Usage | Priority |
+|-------|------|------|-------|----------|
+| logo.png | image | Resources/logo.png | Company logo in header | high |
+| save-icon.png | icon | Icons/save.png | Save button icon | medium |
+```
+
+---
+
+# Phase 4 — Map screens to seams
 
 1) Read `seam-proposals.json` and extract:
    - seam name
@@ -125,7 +247,7 @@ This agent merges primitives across skills if multiple frameworks are present.
 
 ---
 
-# Phase 4 — Write per-seam UI inventory markdown
+# Phase 5 — Write per-seam UI inventory markdown
 
 For each seam, write: `docs/seams/{seam}/ui-behavior.md`
 
@@ -173,7 +295,7 @@ List unknowns/dynamic aspects exactly as extracted.
 
 ---
 
-# Phase 5 — Write machine-readable inventory + coverage audit
+# Phase 6 — Write machine-readable inventory + coverage audit
 
 Write `docs/context-fabric/ui-inventory.json` containing:
 - detected frameworks

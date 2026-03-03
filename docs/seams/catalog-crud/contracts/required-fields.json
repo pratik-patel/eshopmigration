@@ -1,0 +1,290 @@
+{
+  "seam_id": "catalog-crud",
+  "source_of_truth": "Real runtime data from browser-agent capture + code inspection",
+  "inputs": [
+    {
+      "name": "name",
+      "source": "both",
+      "evidence": [
+        "ui-behavior.md: Name field (TextBox, required)",
+        "workflow.json:33 (ctl00$MainContent$Name)",
+        "ui-elements.json:884-893 (#MainContent_Name, class=form-control)"
+      ],
+      "confidence": "high",
+      "type": "string",
+      "required": true,
+      "validation": "Min 1 char",
+      "error_message": "The Name field is required."
+    },
+    {
+      "name": "description",
+      "source": "both",
+      "evidence": [
+        "ui-behavior.md: Description field (TextBox, optional)",
+        "workflow.json:41 (ctl00$MainContent$Description)",
+        "ui-elements.json:906-915 (#MainContent_Description)"
+      ],
+      "confidence": "high",
+      "type": "string",
+      "required": false
+    },
+    {
+      "name": "catalog_brand_id",
+      "source": "both",
+      "evidence": [
+        "ui-behavior.md: Brand dropdown (DropDownList, required)",
+        "workflow.json:49-55 (ctl00$MainContent$Brand, type=select-one)",
+        "ui-elements.json:928 (#MainContent_Brand)",
+        "Real dropdown options: Azure, .NET, Visual Studio, SQL Server, Other (IDs 1-5)"
+      ],
+      "confidence": "high",
+      "type": "integer",
+      "required": true,
+      "validation": "Must exist in CatalogBrands table",
+      "default": "1",
+      "options": [
+        {"id": 1, "brand": "Azure"},
+        {"id": 2, "brand": ".NET"},
+        {"id": 3, "brand": "Visual Studio"},
+        {"id": 4, "brand": "SQL Server"},
+        {"id": 5, "brand": "Other"}
+      ]
+    },
+    {
+      "name": "catalog_type_id",
+      "source": "both",
+      "evidence": [
+        "ui-behavior.md: Type dropdown (DropDownList, required)",
+        "workflow.json:57-63 (ctl00$MainContent$Type, type=select-one)",
+        "Real dropdown options: Mug, T-Shirt, Sheet, USB Memory Stick (IDs 1-4)"
+      ],
+      "confidence": "high",
+      "type": "integer",
+      "required": true,
+      "validation": "Must exist in CatalogTypes table",
+      "default": "1",
+      "options": [
+        {"id": 1, "type": "Mug"},
+        {"id": 2, "type": "T-Shirt"},
+        {"id": 3, "type": "Sheet"},
+        {"id": 4, "type": "USB Memory Stick"}
+      ]
+    },
+    {
+      "name": "price",
+      "source": "both",
+      "evidence": [
+        "ui-behavior.md: Price field (TextBox, decimal validation, required)",
+        "workflow.json:65-71 (ctl00$MainContent$Price, default=0.00)",
+        "Real default value: 0.00"
+      ],
+      "confidence": "high",
+      "type": "decimal",
+      "required": true,
+      "default": "0.00",
+      "validation": "0-1000000, max 2 decimals",
+      "error_message": "The Price must be a positive number with maximum two decimals between 0 and 1 million."
+    },
+    {
+      "name": "available_stock",
+      "source": "both",
+      "evidence": [
+        "ui-behavior.md: Stock field (TextBox, integer, default: 0)",
+        "workflow.json:73-79 (ctl00$MainContent$Stock, default=0)",
+        "ui-elements.json:991-1001 (#MainContent_Stock)"
+      ],
+      "confidence": "high",
+      "type": "integer",
+      "required": false,
+      "default": "0",
+      "validation": "0-10000000",
+      "error_message": "The field Stock must be between 0 and 10 million."
+    },
+    {
+      "name": "restock_threshold",
+      "source": "both",
+      "evidence": [
+        "ui-behavior.md: Restock field (TextBox, integer, default: 0)",
+        "workflow.json:81-87 (ctl00$MainContent$Restock, default=0)",
+        "ui-elements.json:1014-1019 (#MainContent_Restock)"
+      ],
+      "confidence": "high",
+      "type": "integer",
+      "required": false,
+      "default": "0",
+      "validation": "0-10000000",
+      "error_message": "The field Restock must be between 0 and 10 million."
+    },
+    {
+      "name": "max_stock_threshold",
+      "source": "both",
+      "evidence": [
+        "ui-behavior.md: Max stock field (TextBox, integer, default: 0)",
+        "workflow.json:89-95 (ctl00$MainContent$Maxstock, default=0)"
+      ],
+      "confidence": "high",
+      "type": "integer",
+      "required": false,
+      "default": "0",
+      "validation": "0-10000000",
+      "error_message": "The field Max stock must be between 0 and 10 million."
+    },
+    {
+      "name": "picture_file_name",
+      "source": "data_path",
+      "evidence": [
+        "ui-behavior.md: Picture filename field (Edit page only, readonly)",
+        "workflow.json:151-157 (ctl00$MainContent$PictureFileName, Edit form)",
+        "Real value example: 1.png"
+      ],
+      "confidence": "high",
+      "type": "string",
+      "required": false,
+      "default": "dummy.png",
+      "notes": "Not editable on Create form (informational message only). Readonly on Edit form."
+    }
+  ],
+  "outputs": [
+    {
+      "name": "id",
+      "source": "data_path",
+      "evidence": [
+        "CatalogService.cs: HiLo ID generation",
+        "Edit URL pattern: /Catalog/Edit/{id}",
+        "Real example: Product 1 (.NET Bot Black Hoodie)"
+      ],
+      "confidence": "high",
+      "type": "integer",
+      "displayed_on": ["edit", "details", "delete"]
+    },
+    {
+      "name": "name",
+      "source": "both",
+      "evidence": [
+        "Details page displays name",
+        "Edit form pre-fills name",
+        "Real value: .NET Bot Black Hoodie"
+      ],
+      "confidence": "high",
+      "type": "string",
+      "displayed_on": ["edit", "details", "delete"]
+    },
+    {
+      "name": "description",
+      "source": "both",
+      "evidence": [
+        "Details page displays description",
+        "Edit form pre-fills description"
+      ],
+      "confidence": "high",
+      "type": "string",
+      "displayed_on": ["edit", "details", "delete"]
+    },
+    {
+      "name": "catalog_brand_name",
+      "source": "both",
+      "evidence": [
+        "Details page displays brand name (not ID)",
+        "Real value: .NET"
+      ],
+      "confidence": "high",
+      "type": "string",
+      "displayed_on": ["details", "delete"],
+      "notes": "Dropdown shows brand name on Edit, label shows brand name on Details/Delete"
+    },
+    {
+      "name": "catalog_type_name",
+      "source": "both",
+      "evidence": [
+        "Details page displays type name (not ID)",
+        "Real value: T-Shirt"
+      ],
+      "confidence": "high",
+      "type": "string",
+      "displayed_on": ["details", "delete"],
+      "notes": "Dropdown shows type name on Edit, label shows type name on Details/Delete"
+    },
+    {
+      "name": "price",
+      "source": "both",
+      "evidence": [
+        "Details page displays price",
+        "Edit form pre-fills price",
+        "Real value: 19.5"
+      ],
+      "confidence": "high",
+      "type": "decimal",
+      "displayed_on": ["edit", "details", "delete"]
+    },
+    {
+      "name": "picture_file_name",
+      "source": "both",
+      "evidence": [
+        "Edit page displays readonly picture filename",
+        "Details/Delete pages show picture filename",
+        "Real value: 1.png"
+      ],
+      "confidence": "high",
+      "type": "string",
+      "displayed_on": ["edit", "details", "delete"]
+    },
+    {
+      "name": "picture_url",
+      "source": "ui",
+      "evidence": [
+        "Edit/Details/Delete pages display product image",
+        "Image URL pattern: /Pics/{picture_file_name}",
+        "Real example: /Pics/1.png"
+      ],
+      "confidence": "high",
+      "type": "string",
+      "displayed_on": ["edit", "details", "delete"],
+      "notes": "Computed from picture_file_name"
+    },
+    {
+      "name": "available_stock",
+      "source": "both",
+      "evidence": [
+        "Details page displays stock",
+        "Edit form pre-fills stock",
+        "Real value: 100"
+      ],
+      "confidence": "high",
+      "type": "integer",
+      "displayed_on": ["edit", "details", "delete"]
+    },
+    {
+      "name": "restock_threshold",
+      "source": "both",
+      "evidence": [
+        "Details page displays restock",
+        "Edit form pre-fills restock",
+        "Real value: 0"
+      ],
+      "confidence": "high",
+      "type": "integer",
+      "displayed_on": ["edit", "details", "delete"]
+    },
+    {
+      "name": "max_stock_threshold",
+      "source": "both",
+      "evidence": [
+        "Details page displays max stock",
+        "Edit form pre-fills max stock",
+        "Real value: 0"
+      ],
+      "confidence": "high",
+      "type": "integer",
+      "displayed_on": ["edit", "details", "delete"]
+    }
+  ],
+  "filters_sorts_paging": [],
+  "runtime_verification": {
+    "verified_by": "browser-agent",
+    "capture_date": "2026-03-02",
+    "total_ui_elements": 111,
+    "form_fields_confirmed": 8,
+    "dropdown_options_confirmed": 2,
+    "test_data_available": 10
+  }
+}

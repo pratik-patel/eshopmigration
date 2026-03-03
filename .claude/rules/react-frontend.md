@@ -55,14 +55,162 @@ frontend/
 │   ├── types/                    # Generated + hand-written types
 │   │   └── api.d.ts              # Generated from OpenAPI spec
 │   │
+│   ├── assets/                   # Static assets (imported in code)
+│   │   ├── catalog/              # Seam-specific assets
+│   │   │   ├── index.ts          # Typed exports
+│   │   │   └── *.png|svg|jpg
+│   │   └── orders/
+│   │       └── ...
+│   │
 │   └── lib/
 │       ├── utils.ts
 │       └── ws.ts                 # WebSocket client wrapper
+│
+├── public/                       # Static assets (served directly)
+│   ├── favicon.ico
+│   └── shared/                   # Shared assets
+│       └── *.png|svg|jpg
 │
 ├── tests/{unit,e2e}/
 ├── vite.config.ts
 ├── tailwind.config.ts
 └── tsconfig.json
+```
+
+## Static Asset Management
+
+### Directory Structure
+
+```
+frontend/
+├── public/                      # Static assets served directly
+│   ├── favicon.ico
+│   ├── logo.png                 # App-wide logo
+│   └── shared/                  # Shared across multiple seams
+│       ├── company-logo.png
+│       └── icons/
+│           └── common-icon.svg
+│
+└── src/
+    └── assets/                  # Assets imported in code
+        ├── catalog/             # Seam-specific assets
+        │   ├── index.ts         # Typed exports
+        │   ├── product-placeholder.png
+        │   └── icons/
+        │       └── save.svg
+        └── orders/              # Another seam
+            ├── index.ts
+            └── ...
+```
+
+### Asset Import Pattern
+
+**Always use typed imports** — never hardcode paths in components.
+
+```typescript
+// src/assets/catalog/index.ts
+export const catalogAssets = {
+  productPlaceholder: new URL('./product-placeholder.png', import.meta.url).href,
+  saveIcon: new URL('./icons/save.svg', import.meta.url).href,
+  // Shared assets (in public/)
+  companyLogo: '/shared/company-logo.png',
+} as const;
+
+export type CatalogAsset = keyof typeof catalogAssets;
+```
+
+```typescript
+// In component: src/components/catalog/ProductCard.tsx
+import { catalogAssets } from '@/assets/catalog';
+
+export function ProductCard({ product }: ProductCardProps) {
+  return (
+    <div className="card">
+      <img
+        src={product.imageUrl || catalogAssets.productPlaceholder}
+        alt={product.name}
+        className="w-full h-48 object-cover"
+      />
+      <button className="btn">
+        <img src={catalogAssets.saveIcon} alt="" className="w-4 h-4" />
+        Save
+      </button>
+    </div>
+  );
+}
+```
+
+### Asset Optimization Rules
+
+**Before copying assets:**
+- Compress images > 500KB (use `sharp`, `imagemin`, or online tools)
+- Convert icons to SVG where possible (better scaling, smaller size)
+- Use WebP format for photos where browser support allows (with fallback)
+- Remove unused assets (verify usage in `ui-behavior.md`)
+
+**Image format guidelines:**
+- **Icons/logos with simple shapes** → SVG (infinitely scalable, small size)
+- **Photos with transparency** → PNG (or WebP with PNG fallback)
+- **Photos without transparency** → JPG or WebP (smaller than PNG)
+- **Favicons** → ICO (multi-size) or PNG (single size)
+
+### Vite Asset Handling
+
+Vite automatically processes assets:
+
+```typescript
+// Imported assets get content hash in filename
+import logo from './logo.png'; // → /assets/logo-a3b2c1d4.png
+
+// Public folder assets keep original path
+<img src="/shared/logo.png" /> // → /shared/logo.png (no hash)
+```
+
+**Rules:**
+- Use `public/` for assets that need stable URLs (SEO images, favicons, robots.txt)
+- Use `src/assets/` for component-specific assets (gets optimized and hashed)
+- Never put large files (> 1MB) in `src/assets/` — use `public/` or CDN
+
+### Forbidden Asset Patterns
+
+- ❌ No hardcoded paths in components: `<img src="/assets/catalog/product.png" />`
+- ❌ No direct references to legacy paths: `<img src="C:\Legacy\Images\product.png" />`
+- ❌ No inline data URIs for large images (> 10KB)
+- ❌ No unoptimized assets (compress images before copying)
+- ❌ No assets without alt text (accessibility requirement)
+
+### Asset Loading States
+
+Always handle loading states for images:
+
+```typescript
+import { useState } from 'react';
+
+export function ProductImage({ src, alt }: { src: string; alt: string }) {
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  return (
+    <div className="relative">
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-200 animate-pulse" />
+      )}
+      <img
+        src={src}
+        alt={alt}
+        onLoad={() => setIsLoading(false)}
+        onError={() => {
+          setIsLoading(false);
+          setHasError(true);
+        }}
+        className={`transition-opacity ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+      />
+      {hasError && (
+        <div className="text-red-500">Failed to load image</div>
+      )}
+    </div>
+  );
+}
 ```
 
 ## TypeScript Rules
@@ -167,6 +315,9 @@ Route paths must match the seam name in `seams/`.
 - ❌ No `any` types
 - ❌ No direct `window.location` manipulation — use React Router's `useNavigate`
 - ❌ No business logic in components — extract to hooks or services
+- ❌ No hardcoded asset paths — always import from typed asset index
+- ❌ No unoptimized or uncompressed assets — compress before copying
+- ❌ No images without alt text — accessibility requirement
 
 ## Naming Conventions
 

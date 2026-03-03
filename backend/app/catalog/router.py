@@ -19,7 +19,7 @@ from app.core.schemas import (
 )
 from app.core.models import CatalogItem
 from app.core.exceptions import NotFoundException
-from app.dependencies import get_catalog_service
+from app.dependencies import get_catalog_service_with_session
 from app.config import get_settings
 
 logger = structlog.get_logger()
@@ -45,7 +45,7 @@ async def get_catalog_items(
     page_index: Annotated[
         int, Query(ge=0, description="Page index (zero-based)")
     ] = 0,
-    catalog_service: ICatalogService = Depends(get_catalog_service),
+    catalog_service: ICatalogService = Depends(get_catalog_service_with_session),
 ):
     """
     Get paginated catalog items.
@@ -78,7 +78,7 @@ async def get_catalog_items(
 )
 async def get_catalog_item(
     item_id: int,
-    catalog_service: ICatalogService = Depends(get_catalog_service),
+    catalog_service: ICatalogService = Depends(get_catalog_service_with_session),
 ):
     """
     Get catalog item by ID.
@@ -113,7 +113,7 @@ async def get_catalog_item(
 )
 async def create_catalog_item(
     item_data: CatalogItemCreateDto,
-    catalog_service: ICatalogService = Depends(get_catalog_service),
+    catalog_service: ICatalogService = Depends(get_catalog_service_with_session),
 ):
     """
     Create new catalog item.
@@ -156,7 +156,7 @@ async def create_catalog_item(
 async def update_catalog_item(
     item_id: int,
     item_data: CatalogItemUpdateDto,
-    catalog_service: ICatalogService = Depends(get_catalog_service),
+    catalog_service: ICatalogService = Depends(get_catalog_service_with_session),
 ):
     """
     Update existing catalog item.
@@ -208,7 +208,7 @@ async def update_catalog_item(
 )
 async def delete_catalog_item(
     item_id: int,
-    catalog_service: ICatalogService = Depends(get_catalog_service),
+    catalog_service: ICatalogService = Depends(get_catalog_service_with_session),
 ):
     """
     Delete catalog item.
@@ -246,7 +246,7 @@ async def delete_catalog_item(
     description="Get list of all catalog brands for dropdown",
 )
 async def get_catalog_brands(
-    catalog_service: ICatalogService = Depends(get_catalog_service),
+    catalog_service: ICatalogService = Depends(get_catalog_service_with_session),
 ):
     """
     Get all catalog brands.
@@ -270,7 +270,7 @@ async def get_catalog_brands(
     description="Get list of all catalog types for dropdown",
 )
 async def get_catalog_types(
-    catalog_service: ICatalogService = Depends(get_catalog_service),
+    catalog_service: ICatalogService = Depends(get_catalog_service_with_session),
 ):
     """
     Get all catalog types.

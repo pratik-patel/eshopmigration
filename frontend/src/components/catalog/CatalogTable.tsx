@@ -7,6 +7,7 @@
 import { Link } from 'react-router-dom'
 import type { CatalogItem } from '@/api/catalog'
 import { formatPrice } from '@/lib/utils'
+import { getProductImageUrl } from '@/assets/catalog-list'
 
 interface CatalogTableProps {
   items: CatalogItem[]
@@ -45,9 +46,10 @@ export function CatalogTable({ items }: CatalogTableProps) {
               {/* Image */}
               <td className="p-2">
                 <img
-                  src={`/pics/${item.picture_file_name}`}
+                  src={getProductImageUrl(item.picture_file_name)}
                   alt={item.name}
                   className="esh-thumbnail"
+                  loading="lazy"
                 />
               </td>
 

@@ -66,6 +66,7 @@ class CatalogItemCreateDto(BaseModel):
     - BR-002: AvailableStock validation
     - BR-003: RestockThreshold validation
     - BR-004: MaxStockThreshold validation
+    - BR-005: Name required
     """
 
     name: str = Field(..., min_length=1, description="Product name (required)")
@@ -73,9 +74,8 @@ class CatalogItemCreateDto(BaseModel):
     price: Decimal = Field(
         ...,
         ge=0,
-        le=Decimal("9999999999999999.99"),
-        decimal_places=2,
-        description="Price (0-9999999999999999.99, max 2 decimals)",
+        le=Decimal("1000000"),
+        description="Price (0-1000000, max 2 decimals)",
     )
     catalog_type_id: int = Field(..., description="Catalog type ID (required)")
     catalog_brand_id: int = Field(..., description="Catalog brand ID (required)")
@@ -102,12 +102,52 @@ class CatalogItemCreateDto(BaseModel):
         description="Picture filename (defaults to 'dummy.png')",
     )
 
+    @field_validator("name")
+    @classmethod
+    def validate_name_required(cls, v: str) -> str:
+        """Validate name is not empty (BR-005)."""
+        if not v or not v.strip():
+            raise ValueError("The Name field is required.")
+        return v
+
     @field_validator("price")
     @classmethod
-    def validate_price_decimals(cls, v: Decimal) -> Decimal:
-        """Validate price has maximum 2 decimal places (BR-001)."""
+    def validate_price_range(cls, v: Decimal) -> Decimal:
+        """Validate price range and decimals (BR-001)."""
+        # Check decimal places
         if v.as_tuple().exponent < -2:
-            raise ValueError("Price must have maximum 2 decimal places")
+            raise ValueError(
+                "The Price must be a positive number with maximum two decimals between 0 and 1 million."
+            )
+        # Check range
+        if v < 0 or v > 1_000_000:
+            raise ValueError(
+                "The Price must be a positive number with maximum two decimals between 0 and 1 million."
+            )
+        return v
+
+    @field_validator("available_stock")
+    @classmethod
+    def validate_available_stock_range(cls, v: int) -> int:
+        """Validate available stock range (BR-002)."""
+        if v < 0 or v > 10_000_000:
+            raise ValueError("The field Stock must be between 0 and 10 million.")
+        return v
+
+    @field_validator("restock_threshold")
+    @classmethod
+    def validate_restock_threshold_range(cls, v: int) -> int:
+        """Validate restock threshold range (BR-003)."""
+        if v < 0 or v > 10_000_000:
+            raise ValueError("The field Restock must be between 0 and 10 million.")
+        return v
+
+    @field_validator("max_stock_threshold")
+    @classmethod
+    def validate_max_stock_threshold_range(cls, v: int) -> int:
+        """Validate max stock threshold range (BR-004)."""
+        if v < 0 or v > 10_000_000:
+            raise ValueError("The field Max stock must be between 0 and 10 million.")
         return v
 
 

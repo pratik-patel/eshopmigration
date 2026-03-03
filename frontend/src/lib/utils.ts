@@ -9,13 +9,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Format price as currency (USD).
+ * Format price as number (without $ sign).
+ * The $ sign is added via CSS (.esh-price:before) for legacy parity.
  */
 export function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  }).format(price)
+  return price.toFixed(2)
 }
 
 /**

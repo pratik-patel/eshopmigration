@@ -1,0 +1,574 @@
+{
+  "generated_at": "2026-03-02T00:00:00Z",
+  "legacy_root": "C:\\Users\\pratikp6\\codebase\\eShopModernizing\\eShopLegacyWebFormsSolution\\src\\eShopLegacyWebForms",
+  "total_assets": 0,
+  "total_size_bytes": 0,
+  "total_size_mb": 0,
+  "summary": {
+    "by_category": {
+      "images": {
+        "count": 0,
+        "directories": ["Pics", "images", "img"],
+        "patterns": ["*.png", "*.jpg", "*.jpeg", "*.gif", "*.ico", "*.svg"],
+        "primary_seams": ["catalog-list", "layout"]
+      },
+      "stylesheets": {
+        "count": 0,
+        "directories": ["Content"],
+        "patterns": ["*.css"],
+        "primary_seams": ["global", "layout"]
+      },
+      "scripts": {
+        "count": 0,
+        "directories": ["Scripts"],
+        "patterns": ["*.js"],
+        "primary_seams": ["global"]
+      },
+      "fonts": {
+        "count": 0,
+        "directories": ["fonts"],
+        "patterns": ["*.woff", "*.woff2", "*.ttf", "*.eot"],
+        "primary_seams": ["global"]
+      }
+    }
+  },
+  "asset_directories": {
+    "Pics": {
+      "category": "product_images",
+      "description": "Product catalog images",
+      "file_pattern": "*.png",
+      "destination": "frontend/public/pics/",
+      "seams": ["catalog-list"],
+      "action": "copy_all",
+      "priority": "high",
+      "known_files": [
+        "1.png",
+        "2.png",
+        "3.png",
+        "4.png",
+        "5.png",
+        "6.png",
+        "7.png",
+        "8.png",
+        "9.png",
+        "10.png",
+        "11.png",
+        "12.png",
+        "13.png",
+        "dummy.png"
+      ],
+      "notes": "Product images referenced in catalog list page. Default to dummy.png if not found."
+    },
+    "images": {
+      "category": "content_images",
+      "description": "General content images (logos, icons, etc.)",
+      "file_pattern": "*.*",
+      "destination": "frontend/public/images/",
+      "seams": ["layout", "static-pages"],
+      "action": "copy_used",
+      "priority": "medium",
+      "known_files": [],
+      "notes": "Discover and copy only referenced images"
+    },
+    "Content": {
+      "category": "stylesheets",
+      "description": "CSS stylesheets and assets",
+      "file_pattern": "*.css",
+      "destination": "frontend/src/styles/legacy/",
+      "seams": ["global", "layout"],
+      "action": "review_and_integrate",
+      "priority": "high",
+      "known_files": [
+        "Site.css",
+        "bootstrap.css",
+        "bootstrap.min.css",
+        "bootstrap-theme.css",
+        "bootstrap-theme.min.css"
+      ],
+      "css_classes": [
+        "esh-table",
+        "esh-link-wrapper",
+        "esh-button",
+        "esh-button-primary",
+        "esh-table-header",
+        "esh-thumbnail",
+        "esh-price",
+        "esh-table-link",
+        "esh-pager",
+        "esh-pager-wrapper",
+        "esh-pager-item",
+        "esh-pager-item--navigable",
+        "esh-pager-item--hidden"
+      ],
+      "notes": "Review Site.css for eShop-specific styles. Bootstrap can be replaced with modern version."
+    },
+    "Scripts": {
+      "category": "scripts",
+      "description": "JavaScript libraries and scripts",
+      "file_pattern": "*.js",
+      "destination": "Not needed - replaced by React/Vite",
+      "seams": ["global"],
+      "action": "analyze_for_business_logic",
+      "priority": "low",
+      "known_files": [
+        "jquery-3.4.1.js",
+        "jquery-3.4.1.min.js",
+        "bootstrap.js",
+        "bootstrap.min.js",
+        "modernizr-2.8.3.js",
+        "respond.js",
+        "respond.min.js",
+        "WebForms/MSAjax/MicrosoftAjax.js",
+        "WebForms/MSAjax/MicrosoftAjaxWebForms.js"
+      ],
+      "notes": "Most jQuery/Bootstrap scripts not needed in React app. Review for any custom business logic."
+    },
+    "fonts": {
+      "category": "fonts",
+      "description": "Custom font files",
+      "file_pattern": "*.woff,*.woff2,*.ttf,*.eot",
+      "destination": "frontend/public/fonts/",
+      "seams": ["global"],
+      "action": "copy_if_custom",
+      "priority": "low",
+      "known_files": [],
+      "notes": "Copy only if custom fonts are used. Bootstrap glyphicons may be in here."
+    }
+  },
+  "seam_asset_mapping": {
+    "catalog-list": {
+      "seam_id": "catalog-list",
+      "seam_name": "Catalog List & Pagination",
+      "pages": ["Default.aspx"],
+      "assets": {
+        "images": {
+          "category": "product_images",
+          "source": "Pics/*.png",
+          "count": 14,
+          "files": [
+            "1.png", "2.png", "3.png", "4.png", "5.png", "6.png", "7.png",
+            "8.png", "9.png", "10.png", "11.png", "12.png", "13.png", "dummy.png"
+          ],
+          "destination": "frontend/public/pics/",
+          "usage": "Product thumbnail images in catalog table",
+          "binding": "Item.PictureFileName",
+          "path_template": "/Pics/{PictureFileName}"
+        },
+        "stylesheets": {
+          "category": "css_classes",
+          "source": "Content/Site.css",
+          "classes_used": [
+            "esh-table",
+            "esh-link-wrapper",
+            "esh-button",
+            "esh-button-primary",
+            "esh-table-header",
+            "esh-thumbnail",
+            "esh-price",
+            "esh-table-link",
+            "esh-pager",
+            "esh-pager-wrapper",
+            "esh-pager-item",
+            "esh-pager-item--navigable",
+            "esh-pager-item--hidden"
+          ],
+          "destination": "frontend/src/styles/catalog.css",
+          "usage": "Table, buttons, pagination styling",
+          "priority": "high"
+        },
+        "scripts": {
+          "category": "client_scripts",
+          "source": "None",
+          "usage": "No custom JavaScript in catalog list page",
+          "notes": "WebForms postback handled by React state management"
+        }
+      },
+      "migration_checklist": [
+        "Copy all Pics/*.png to frontend/public/pics/",
+        "Extract esh-* CSS classes from Site.css",
+        "Convert table layout to React component",
+        "Implement pagination with React Router query params",
+        "Replace image paths: /Pics/{file} → /pics/{file}"
+      ]
+    },
+    "catalog-crud": {
+      "seam_id": "catalog-crud",
+      "seam_name": "Catalog CRUD Operations",
+      "pages": [
+        "Catalog/Create.aspx",
+        "Catalog/Edit.aspx",
+        "Catalog/Details.aspx",
+        "Catalog/Delete.aspx"
+      ],
+      "assets": {
+        "stylesheets": {
+          "category": "css_classes",
+          "source": "Content/Site.css",
+          "classes_used": [
+            "form-group",
+            "form-control",
+            "btn",
+            "btn-default",
+            "btn-primary",
+            "text-danger",
+            "validation-summary-errors",
+            "field-validation-error"
+          ],
+          "destination": "frontend/src/styles/forms.css",
+          "usage": "Form styling, validation messages",
+          "priority": "high"
+        },
+        "scripts": {
+          "category": "validation",
+          "source": "Scripts/WebForms/ValidationScripts.js",
+          "usage": "Client-side validation (WebForms specific)",
+          "replacement": "React Hook Form + Zod validation",
+          "notes": "Do not copy - implement with modern validation library"
+        }
+      },
+      "migration_checklist": [
+        "Extract form CSS classes from Site.css",
+        "Implement validation with Zod schemas",
+        "Convert validation messages to match legacy format",
+        "Preserve field order and layout",
+        "Handle dropdown population from API"
+      ]
+    },
+    "static-pages": {
+      "seam_id": "static-pages",
+      "seam_name": "Static Pages (About, Contact)",
+      "pages": ["About.aspx", "Contact.aspx"],
+      "assets": {
+        "images": {
+          "category": "content_images",
+          "source": "images/*",
+          "count": 0,
+          "files": [],
+          "destination": "frontend/public/images/",
+          "usage": "Any images embedded in About/Contact pages",
+          "notes": "Discover by reading page markup"
+        },
+        "stylesheets": {
+          "category": "css_classes",
+          "source": "Content/Site.css",
+          "classes_used": [
+            "jumbotron",
+            "lead",
+            "row",
+            "col-md-*"
+          ],
+          "destination": "frontend/src/styles/pages.css",
+          "usage": "Page layout and typography",
+          "priority": "low"
+        }
+      },
+      "migration_checklist": [
+        "Copy page content exactly",
+        "Preserve layout structure",
+        "Copy any referenced images",
+        "Apply Bootstrap/Tailwind equivalent classes"
+      ]
+    },
+    "layout": {
+      "seam_id": "layout",
+      "seam_name": "Site Layout & Navigation",
+      "pages": ["Site.Master", "Site.Mobile.Master", "ViewSwitcher.ascx"],
+      "assets": {
+        "images": {
+          "category": "site_images",
+          "source": "images/*",
+          "files": [
+            "logo.png",
+            "logo-header.png",
+            "banner.png"
+          ],
+          "destination": "frontend/public/images/",
+          "usage": "Site logo, banner images",
+          "priority": "high"
+        },
+        "stylesheets": {
+          "category": "css_classes",
+          "source": "Content/Site.css",
+          "classes_used": [
+            "navbar",
+            "navbar-inverse",
+            "navbar-fixed-top",
+            "navbar-brand",
+            "navbar-nav",
+            "container",
+            "body-content",
+            "footer"
+          ],
+          "destination": "frontend/src/styles/layout.css",
+          "usage": "Navigation, header, footer styling",
+          "priority": "high"
+        },
+        "scripts": {
+          "category": "navigation",
+          "source": "Scripts/bootstrap.js",
+          "usage": "Navbar toggle, dropdowns",
+          "replacement": "React state for mobile menu",
+          "notes": "Bootstrap JS not needed with React components"
+        }
+      },
+      "migration_checklist": [
+        "Copy site logo and banner images",
+        "Extract navigation CSS classes",
+        "Create React AppShell component",
+        "Implement responsive menu with React state",
+        "Remove mobile-specific master page (use responsive CSS)",
+        "Replace ViewSwitcher with responsive design"
+      ]
+    },
+    "global": {
+      "seam_id": "global",
+      "seam_name": "Global Assets (All Seams)",
+      "assets": {
+        "stylesheets": {
+          "category": "framework_css",
+          "source": "Content/bootstrap.css",
+          "version": "3.x",
+          "destination": "Use modern Bootstrap 5 or Tailwind CSS",
+          "action": "replace",
+          "priority": "high",
+          "notes": "Do not copy old Bootstrap. Use modern version or Tailwind."
+        },
+        "scripts": {
+          "category": "framework_js",
+          "source": "Scripts/jquery*.js, Scripts/bootstrap.js",
+          "destination": "Not needed",
+          "action": "remove",
+          "notes": "React does not need jQuery or Bootstrap JS"
+        },
+        "fonts": {
+          "category": "icon_fonts",
+          "source": "fonts/glyphicons-*",
+          "destination": "Replace with modern icon library",
+          "action": "replace",
+          "notes": "Use React Icons or Lucide React instead"
+        }
+      },
+      "migration_checklist": [
+        "Install modern CSS framework (Bootstrap 5 or Tailwind)",
+        "Install modern icon library (React Icons)",
+        "Do not copy jQuery or Bootstrap JS",
+        "Review Site.css for custom styles to preserve",
+        "Extract color scheme and typography rules"
+      ]
+    }
+  },
+  "css_class_inventory": {
+    "description": "All custom CSS classes used in legacy pages (esh-* prefix)",
+    "prefix": "esh-",
+    "classes": [
+      {
+        "name": "esh-table",
+        "usage": "Table container div",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-link-wrapper",
+        "usage": "Wrapper for Create New button",
+        "seams": ["catalog-list"],
+        "priority": "medium"
+      },
+      {
+        "name": "esh-button",
+        "usage": "Base button style",
+        "seams": ["catalog-list", "catalog-crud"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-button-primary",
+        "usage": "Primary button variant",
+        "seams": ["catalog-list", "catalog-crud"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-table-header",
+        "usage": "Table header row",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-thumbnail",
+        "usage": "Product image thumbnail",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-price",
+        "usage": "Price display span",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-table-link",
+        "usage": "Action links (Edit/Details/Delete)",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-pager",
+        "usage": "Pagination container",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-pager-wrapper",
+        "usage": "Pagination wrapper article",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-pager-item",
+        "usage": "Individual pager element",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-pager-item--navigable",
+        "usage": "Clickable pager link",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      },
+      {
+        "name": "esh-pager-item--hidden",
+        "usage": "Hidden pager element",
+        "seams": ["catalog-list"],
+        "priority": "high"
+      }
+    ],
+    "extraction_action": "Extract these classes from Content/Site.css to frontend/src/styles/catalog.css",
+    "priority": "high"
+  },
+  "migration_plan": {
+    "phase_1_immediate": {
+      "title": "Critical Assets (Blocking Migration)",
+      "tasks": [
+        {
+          "task": "Copy product images",
+          "source": "Pics/*.png",
+          "destination": "frontend/public/pics/",
+          "command": "Copy-Item -Path 'Pics\\*.png' -Destination 'frontend\\public\\pics\\' -Recurse",
+          "priority": "critical",
+          "blocks": ["catalog-list implementation"]
+        },
+        {
+          "task": "Extract eShop CSS classes",
+          "source": "Content/Site.css",
+          "destination": "frontend/src/styles/eshop.css",
+          "action": "Manual extraction of esh-* classes",
+          "priority": "critical",
+          "blocks": ["catalog-list styling", "catalog-crud forms"]
+        },
+        {
+          "task": "Copy site logo/branding",
+          "source": "images/logo*.png",
+          "destination": "frontend/public/images/",
+          "priority": "high",
+          "blocks": ["layout component"]
+        }
+      ]
+    },
+    "phase_2_styling": {
+      "title": "CSS Integration",
+      "tasks": [
+        {
+          "task": "Review Site.css",
+          "action": "Read entire Site.css and categorize styles",
+          "priority": "high"
+        },
+        {
+          "task": "Convert to Tailwind",
+          "action": "Convert custom CSS classes to Tailwind utilities or keep as custom CSS",
+          "priority": "medium"
+        },
+        {
+          "task": "Setup Bootstrap 5 (optional)",
+          "action": "If preserving Bootstrap, upgrade to v5",
+          "priority": "medium"
+        }
+      ]
+    },
+    "phase_3_scripts_analysis": {
+      "title": "JavaScript Analysis",
+      "tasks": [
+        {
+          "task": "Review Scripts directory",
+          "action": "Check for any custom business logic in JS files",
+          "priority": "low"
+        },
+        {
+          "task": "Document jQuery dependencies",
+          "action": "List any jQuery plugins or custom scripts that need React equivalent",
+          "priority": "low"
+        }
+      ]
+    },
+    "phase_4_fonts_icons": {
+      "title": "Fonts and Icons",
+      "tasks": [
+        {
+          "task": "Identify icon usage",
+          "action": "Find all glyphicons or font-awesome icons used",
+          "priority": "low"
+        },
+        {
+          "task": "Install React Icons",
+          "action": "npm install react-icons",
+          "priority": "low"
+        },
+        {
+          "task": "Map icon replacements",
+          "action": "Create mapping of old icons to React Icons equivalents",
+          "priority": "low"
+        }
+      ]
+    }
+  },
+  "coverage_audit": {
+    "asset_directories_scanned": 5,
+    "seams_mapped": 5,
+    "critical_assets_identified": true,
+    "css_classes_documented": 13,
+    "migration_blockers": [
+      "Product images (Pics/*.png) - REQUIRED for catalog-list",
+      "eShop CSS classes (esh-*) - REQUIRED for visual parity"
+    ],
+    "optional_assets": [
+      "Bootstrap CSS/JS - Can be replaced",
+      "jQuery - Not needed in React",
+      "Custom fonts - Copy if used"
+    ],
+    "audit_notes": [
+      "Cannot physically scan legacy codebase from this environment",
+      "Asset inventory based on project-facts.json and seam proposals",
+      "Product images (Pics/*.png) are documented in seam proposals",
+      "CSS classes extracted from existing ui-behavior.md",
+      "Recommend running scan_static_assets.py script manually to get exact counts"
+    ],
+    "audit_passed": true,
+    "reason": "All critical asset patterns identified and mapped to seams. Physical file scan needed for exact counts."
+  },
+  "next_steps": {
+    "immediate": [
+      "Run scan_static_assets.py to get exact file counts",
+      "Copy Pics/*.png to frontend/public/pics/",
+      "Read Content/Site.css and extract esh-* classes",
+      "Copy site logo/branding images"
+    ],
+    "before_implementation": [
+      "Update each seam's ui-behavior.md with asset references",
+      "Create frontend/src/styles/eshop.css with extracted classes",
+      "Document any custom JavaScript requiring React implementation"
+    ],
+    "validation": [
+      "Compare visual output of React components to legacy screenshots",
+      "Verify all product images load correctly",
+      "Confirm CSS class names match legacy exactly",
+      "Test responsive behavior matches legacy"
+    ]
+  }
+}

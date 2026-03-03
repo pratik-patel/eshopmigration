@@ -1,0 +1,268 @@
+{
+  "timestamp": "2026-03-02T23:12:10.711112",
+  "app_type": "legacy",
+  "quality_level": "fair",
+  "frontend": {
+    "lighthouse": {
+      "performance": 62,
+      "accessibility": 66,
+      "best_practices": 64,
+      "seo": 61
+    },
+    "first_contentful_paint_ms": 1714,
+    "largest_contentful_paint_ms": 3571,
+    "time_to_interactive_ms": 4571,
+    "cumulative_layout_shift": 0.143,
+    "bundle_size_kb": 250,
+    "accessibility_issues": [
+      {
+        "audit": "color-contrast",
+        "title": "Background and foreground colors do not have sufficient contrast",
+        "description": "3 elements found",
+        "severity": "serious"
+      },
+      {
+        "audit": "image-alt",
+        "title": "Image elements do not have alt attributes",
+        "description": "2 elements found",
+        "severity": "critical"
+      }
+    ],
+    "feature_parity": 66,
+    "feature_parity_details": [
+      {
+        "screen": "Home",
+        "feature": "Dashboard",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Products",
+        "feature": "Product List",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Products",
+        "feature": "Product Details",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Products",
+        "feature": "Export to Excel",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Orders",
+        "feature": "Order List",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      },
+      {
+        "screen": "Orders",
+        "feature": "Order Details",
+        "legacy_present": true,
+        "modern_present": true,
+        "notes": ""
+      }
+    ]
+  },
+  "backend": {
+    "total_endpoints": 5,
+    "accessible_endpoints": 5,
+    "api_parity": 0.7,
+    "avg_response_time_ms": 149.44,
+    "median_response_time_ms": 140.28,
+    "p95_response_time_ms": 200.21,
+    "p99_response_time_ms": 200.21,
+    "error_rate": 0.006,
+    "fastest_endpoint": "/api/products/{id}",
+    "slowest_endpoint": "/api/orders",
+    "endpoints": [
+      {
+        "path": "/api/products",
+        "method": "GET",
+        "summary": "List products",
+        "avg_response_time_ms": 121.95,
+        "median_response_time_ms": 80,
+        "min_response_time_ms": 45,
+        "max_response_time_ms": 200,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      },
+      {
+        "path": "/api/products/{id}",
+        "method": "GET",
+        "summary": "Get product",
+        "avg_response_time_ms": 147.99,
+        "median_response_time_ms": 70,
+        "min_response_time_ms": 35,
+        "max_response_time_ms": 180,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      },
+      {
+        "path": "/api/orders",
+        "method": "GET",
+        "summary": "List orders",
+        "avg_response_time_ms": 200.21,
+        "median_response_time_ms": 95,
+        "min_response_time_ms": 50,
+        "max_response_time_ms": 250,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      },
+      {
+        "path": "/api/orders/{id}",
+        "method": "GET",
+        "summary": "Get order",
+        "avg_response_time_ms": 136.78,
+        "median_response_time_ms": 75,
+        "min_response_time_ms": 40,
+        "max_response_time_ms": 190,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      },
+      {
+        "path": "/api/customers",
+        "method": "GET",
+        "summary": "List customers",
+        "avg_response_time_ms": 140.28,
+        "median_response_time_ms": 85,
+        "min_response_time_ms": 48,
+        "max_response_time_ms": 220,
+        "success_rate": 1.0,
+        "status_codes": [
+          200,
+          200,
+          200
+        ],
+        "errors": [],
+        "accessible": true
+      }
+    ]
+  },
+  "database": {
+    "total_tables": 25,
+    "total_columns": 180,
+    "total_indexes": 45,
+    "total_foreign_keys": 28,
+    "avg_query_time_ms": 121.43,
+    "connection_test": true,
+    "schema_parity": 0.7,
+    "integrity_score": 70,
+    "tables": [
+      {
+        "name": "Products",
+        "columns": 12,
+        "indexes": 3,
+        "foreign_keys": 1,
+        "column_names": [
+          "Id",
+          "Name",
+          "Price",
+          "CategoryId"
+        ]
+      },
+      {
+        "name": "Orders",
+        "columns": 10,
+        "indexes": 4,
+        "foreign_keys": 2,
+        "column_names": [
+          "Id",
+          "CustomerId",
+          "OrderDate",
+          "Total"
+        ]
+      },
+      {
+        "name": "Customers",
+        "columns": 15,
+        "indexes": 2,
+        "foreign_keys": 0,
+        "column_names": [
+          "Id",
+          "Name",
+          "Email",
+          "Phone"
+        ]
+      }
+    ]
+  },
+  "quality": {
+    "sonarqube": {
+      "reliability_rating": "C",
+      "security_rating": "B",
+      "maintainability_rating": "B",
+      "coverage": 57.4,
+      "duplicated_lines_density": 4.6,
+      "bugs": 5,
+      "vulnerabilities": 2,
+      "code_smells": 45,
+      "technical_debt_minutes": 1200,
+      "lines_of_code": 15000,
+      "complexity": 850,
+      "cognitive_complexity": 420,
+      "issues_by_severity": {
+        "blocker": 0,
+        "critical": 2,
+        "major": 8,
+        "minor": 15,
+        "info": 20
+      }
+    },
+    "coverage": {
+      "total": 57.4,
+      "line": 59.5,
+      "branch": 54.6,
+      "function": 58.1,
+      "lines_covered": 8925,
+      "lines_total": 15000,
+      "branches_covered": 2730,
+      "branches_total": 5000,
+      "functions_covered": 581,
+      "functions_total": 1000
+    },
+    "security_issues": 2
+  },
+  "nfr": {
+    "response_time_p95_ms": 642.86,
+    "security_posture": 59,
+    "observability_score": 52
+  },
+  "integration": {
+    "integration_parity": 0.7
+  }
+}

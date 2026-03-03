@@ -305,6 +305,65 @@ Properties used:
 - CatalogBrand (navigation property) → Brand (string)
 - CatalogType (navigation property) → Type (string)
 
+## Static Assets
+
+### Product Images
+**Source**: `Pics/*.png`
+**Destination**: `frontend/public/pics/`
+**Count**: 14 files
+**Files**:
+- `1.png` through `13.png` - Product images
+- `dummy.png` - Default/fallback image
+
+**Usage**:
+- Referenced in catalog table: `<img src="/Pics/{PictureFileName}" />`
+- CSS class: `esh-thumbnail`
+- Binding: `Item.PictureFileName`
+- Path template in React: `/pics/{pictureFileName}` (lowercase directory)
+
+**Migration Action**: **CRITICAL - REQUIRED**
+```bash
+# Copy all product images
+Copy-Item -Path "Pics\*.png" -Destination "frontend\public\pics\" -Recurse
+```
+
+### CSS Stylesheets
+**Source**: `Content/Site.css`
+**Destination**: `frontend/src/styles/catalog.css`
+
+**Custom Classes Used** (esh-* prefix):
+- `esh-table` - Table container div
+- `esh-link-wrapper` - Button wrapper
+- `esh-button` - Base button style
+- `esh-button-primary` - Primary button variant
+- `esh-table-header` - Table header row
+- `esh-thumbnail` - Product image sizing
+- `esh-price` - Price formatting
+- `esh-table-link` - Action links
+- `esh-pager` - Pagination container
+- `esh-pager-wrapper` - Pagination wrapper
+- `esh-pager-item` - Pager element
+- `esh-pager-item--navigable` - Clickable pager
+- `esh-pager-item--hidden` - Hidden pager state
+
+**Migration Action**: **CRITICAL - REQUIRED**
+1. Read `Content/Site.css`
+2. Extract all `.esh-*` class definitions
+3. Create `frontend/src/styles/eshop.css` with extracted styles
+4. Import in React components: `import '@/styles/eshop.css'`
+
+**Priority**: HIGH - Required for visual parity
+
+### Framework CSS
+**Source**: `Content/bootstrap.css`
+**Action**: REPLACE with modern Bootstrap 5 or Tailwind CSS
+**Do Not Copy**: Old Bootstrap 3.x CSS
+
+### JavaScript Libraries
+**Source**: `Scripts/jquery*.js`, `Scripts/bootstrap.js`
+**Action**: DO NOT COPY - Not needed in React
+**Notes**: All jQuery/Bootstrap JS functionality replaced by React state management
+
 ## Migration Notes for React
 
 ### Component Hierarchy
@@ -367,6 +426,18 @@ useCatalogItems(pageIndex: number, pageSize: number) {
 - Calculate total pages: `Math.ceil(totalItems / pageSize)`
 - Display text: ``Showing ${pageSize} of ${totalItems} products - Page ${pageIndex + 1} - ${totalPages}``
 
+## Asset Migration Checklist
+
+- [ ] Copy `Pics/*.png` to `frontend/public/pics/` (14 files)
+- [ ] Extract `.esh-*` CSS classes from `Content/Site.css`
+- [ ] Create `frontend/src/styles/eshop.css` with extracted styles
+- [ ] Verify image paths: `/Pics/{file}` → `/pics/{file}` (lowercase)
+- [ ] Test dummy.png fallback for missing images
+- [ ] Verify CSS class names match legacy exactly
+- [ ] Test responsive behavior of table and pagination
+- [ ] Validate thumbnail sizing with `.esh-thumbnail` class
+- [ ] Compare visual output to legacy screenshot
+
 ## Test Scenarios (UI Behavior)
 
 1. **Load default page (page 1)**
@@ -408,3 +479,9 @@ useCatalogItems(pageIndex: number, pageSize: number) {
    - Verify table layout identical
    - Verify button styles match
    - Verify pagination styling matches
+
+8. **Asset loading**
+   - Verify all product images load without 404 errors
+   - Verify CSS classes applied correctly
+   - Verify no broken image links
+   - Check browser console for missing asset errors

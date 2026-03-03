@@ -1,0 +1,150 @@
+{
+  "seam_id": "catalog-crud",
+  "read_targets": [
+    {
+      "table": "CatalogItems",
+      "access_pattern": "SELECT by ID",
+      "evidence": [
+        "CatalogService.cs:39 (FindCatalogItem)",
+        "Edit.aspx.cs:18 (Page_Load)",
+        "Details.aspx.cs:16 (Page_Load)",
+        "Delete.aspx.cs:16 (Page_Load)"
+      ],
+      "operations": ["FindCatalogItem"],
+      "sql": "SELECT * FROM CatalogItems WHERE Id = @id",
+      "confidence": "high",
+      "runtime_verified": true,
+      "runtime_example": {
+        "product_id": 1,
+        "name": ".NET Bot Black Hoodie",
+        "price": 19.5,
+        "stock": 100
+      }
+    },
+    {
+      "table": "CatalogBrands",
+      "access_pattern": "SELECT all",
+      "evidence": [
+        "CatalogService.cs:47 (GetCatalogBrands)",
+        "Create.aspx.cs:20 (GetBrands)",
+        "Edit.aspx.cs:25 (GetBrands)"
+      ],
+      "operations": ["GetCatalogBrands", "ToList"],
+      "sql": "SELECT * FROM CatalogBrands",
+      "confidence": "high",
+      "runtime_verified": true,
+      "runtime_options": [
+        {"id": 1, "brand": "Azure"},
+        {"id": 2, "brand": ".NET"},
+        {"id": 3, "brand": "Visual Studio"},
+        {"id": 4, "brand": "SQL Server"},
+        {"id": 5, "brand": "Other"}
+      ]
+    },
+    {
+      "table": "CatalogTypes",
+      "access_pattern": "SELECT all",
+      "evidence": [
+        "CatalogService.cs:42 (GetCatalogTypes)",
+        "Create.aspx.cs:25 (GetTypes)",
+        "Edit.aspx.cs:30 (GetTypes)"
+      ],
+      "operations": ["GetCatalogTypes", "ToList"],
+      "sql": "SELECT * FROM CatalogTypes",
+      "confidence": "high",
+      "runtime_verified": true,
+      "runtime_options": [
+        {"id": 1, "type": "Mug"},
+        {"id": 2, "type": "T-Shirt"},
+        {"id": 3, "type": "Sheet"},
+        {"id": 4, "type": "USB Memory Stick"}
+      ]
+    }
+  ],
+  "write_targets": [
+    {
+      "table": "CatalogItems",
+      "operation": "INSERT",
+      "evidence": [
+        "CatalogService.cs:52-56 (CreateCatalogItem)",
+        "Create.aspx.cs:30-50 (Create_Click)"
+      ],
+      "side_effect": "New row added to CatalogItems",
+      "sql": "INSERT INTO CatalogItems (Id, Name, Description, Price, PictureFileName, PictureUri, CatalogTypeId, CatalogBrandId, AvailableStock, RestockThreshold, MaxStockThreshold, OnReorder) VALUES (...)",
+      "transaction_scope": "Implicit EF6 transaction (SaveChanges())",
+      "confidence": "high",
+      "triggers": ["Create_Click button"],
+      "notes": "HiLo ID generation via CatalogItemHiLoGenerator"
+    },
+    {
+      "table": "CatalogItems",
+      "operation": "UPDATE",
+      "evidence": [
+        "CatalogService.cs:59-62 (UpdateCatalogItem)",
+        "Edit.aspx.cs:47-68 (Save_Click)"
+      ],
+      "side_effect": "Existing row modified in CatalogItems",
+      "sql": "UPDATE CatalogItems SET Name = @name, Description = @description, Price = @price, CatalogTypeId = @typeId, CatalogBrandId = @brandId, AvailableStock = @stock, RestockThreshold = @restock, MaxStockThreshold = @maxStock, PictureFileName = @pictureFileName WHERE Id = @id",
+      "transaction_scope": "Implicit EF6 transaction (SaveChanges())",
+      "confidence": "high",
+      "triggers": ["Save_Click button (Edit)"],
+      "runtime_verified": true,
+      "runtime_example": {
+        "product_id": 1,
+        "before": {"name": ".NET Bot Black Hoodie", "price": 19.5},
+        "after": {"name": "Modified Name", "price": 25.0}
+      }
+    },
+    {
+      "table": "CatalogItems",
+      "operation": "DELETE",
+      "evidence": [
+        "CatalogService.cs:65-68 (RemoveCatalogItem)",
+        "Delete.aspx.cs:26-30 (Delete_Click)"
+      ],
+      "side_effect": "Row removed from CatalogItems",
+      "sql": "DELETE FROM CatalogItems WHERE Id = @id",
+      "transaction_scope": "Implicit EF6 transaction (SaveChanges())",
+      "confidence": "high",
+      "triggers": ["Delete_Click button"]
+    }
+  ],
+  "unknown_targets": [],
+  "shared_write_conflicts": [
+    {
+      "table": "CatalogItems",
+      "conflict_type": "Concurrent writes to same row",
+      "scenarios": [
+        "User A edits product 1 while User B deletes product 1",
+        "User A edits product 1 while User B also edits product 1 (last-write-wins)"
+      ],
+      "severity": "low",
+      "mitigation": "EF6 handles concurrency at database level. No optimistic concurrency checks in legacy code. Last-write-wins behavior is acceptable for catalog management.",
+      "cross_seam": false,
+      "notes": "Only catalog-crud seam writes to CatalogItems. catalog-list seam reads only."
+    }
+  ],
+  "runtime_verification": {
+    "verified_by": "browser-agent",
+    "capture_date": "2026-03-02",
+    "real_data_captured": 10,
+    "sample_products": [
+      {
+        "id": 1,
+        "name": ".NET Bot Black Hoodie",
+        "brand": ".NET",
+        "type": "T-Shirt",
+        "price": 19.5,
+        "stock": 100
+      },
+      {
+        "id": 2,
+        "name": ".NET Black & White Mug",
+        "brand": ".NET",
+        "type": "Mug",
+        "price": 8.5,
+        "stock": 100
+      }
+    ]
+  }
+}
