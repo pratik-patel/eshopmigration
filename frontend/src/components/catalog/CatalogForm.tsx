@@ -58,6 +58,7 @@ interface CatalogFormProps {
   productImage?: string | null
   onSubmit: (data: CatalogFormData) => void
   isSubmitting: boolean
+  serverErrors?: Record<string, string> | null
 }
 
 export function CatalogForm({
@@ -66,6 +67,7 @@ export function CatalogForm({
   productImage,
   onSubmit,
   isSubmitting,
+  serverErrors,
 }: CatalogFormProps) {
   // Fetch brands and types for dropdowns
   const { data: brands } = useCatalogBrands()
@@ -133,9 +135,9 @@ export function CatalogForm({
                   type="text"
                   className="form-control"
                 />
-                {errors.name && (
+                {(errors.name || serverErrors?.name) && (
                   <span className="field-validation-valid text-danger">
-                    {errors.name.message}
+                    {errors.name?.message || serverErrors?.name}
                   </span>
                 )}
               </div>
@@ -172,9 +174,9 @@ export function CatalogForm({
                     </option>
                   ))}
                 </select>
-                {errors.catalog_brand_id && (
+                {(errors.catalog_brand_id || serverErrors?.catalog_brand_id) && (
                   <span className="field-validation-valid text-danger">
-                    {errors.catalog_brand_id.message}
+                    {errors.catalog_brand_id?.message || serverErrors?.catalog_brand_id}
                   </span>
                 )}
               </div>
@@ -197,9 +199,9 @@ export function CatalogForm({
                     </option>
                   ))}
                 </select>
-                {errors.catalog_type_id && (
+                {(errors.catalog_type_id || serverErrors?.catalog_type_id) && (
                   <span className="field-validation-valid text-danger">
-                    {errors.catalog_type_id.message}
+                    {errors.catalog_type_id?.message || serverErrors?.catalog_type_id}
                   </span>
                 )}
               </div>
@@ -217,9 +219,9 @@ export function CatalogForm({
                   step="0.01"
                   className="form-control"
                 />
-                {errors.price && (
+                {(errors.price || serverErrors?.price) && (
                   <span className="field-validation-valid text-danger">
-                    {errors.price.message}
+                    {errors.price?.message || serverErrors?.price}
                   </span>
                 )}
               </div>
@@ -256,9 +258,9 @@ export function CatalogForm({
                   type="number"
                   className="form-control"
                 />
-                {errors.available_stock && (
+                {(errors.available_stock || serverErrors?.available_stock) && (
                   <span className="field-validation-valid text-danger">
-                    {errors.available_stock.message}
+                    {errors.available_stock?.message || serverErrors?.available_stock}
                   </span>
                 )}
               </div>
@@ -275,9 +277,9 @@ export function CatalogForm({
                   type="number"
                   className="form-control"
                 />
-                {errors.restock_threshold && (
+                {(errors.restock_threshold || serverErrors?.restock_threshold) && (
                   <span className="field-validation-valid text-danger">
-                    {errors.restock_threshold.message}
+                    {errors.restock_threshold?.message || serverErrors?.restock_threshold}
                   </span>
                 )}
               </div>
@@ -294,9 +296,9 @@ export function CatalogForm({
                   type="number"
                   className="form-control"
                 />
-                {errors.max_stock_threshold && (
+                {(errors.max_stock_threshold || serverErrors?.max_stock_threshold) && (
                   <span className="field-validation-valid text-danger">
-                    {errors.max_stock_threshold.message}
+                    {errors.max_stock_threshold?.message || serverErrors?.max_stock_threshold}
                   </span>
                 )}
               </div>

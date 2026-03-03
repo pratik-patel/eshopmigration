@@ -67,6 +67,10 @@ export function useCreateCatalogItem() {
       // Navigate back to catalog list
       navigate('/')
     },
+    onError: (error) => {
+      // Error handled in component layer
+      console.error('Failed to create catalog item:', error)
+    },
   })
 }
 
@@ -88,6 +92,10 @@ export function useUpdateCatalogItem(id: number) {
 
       // Navigate back to catalog list
       navigate('/')
+    },
+    onError: (error) => {
+      // Error handled in component layer
+      console.error('Failed to update catalog item:', error)
     },
   })
 }

@@ -26,6 +26,10 @@ export function Pagination({
   const hasNext = pageIndex < totalPages - 1
   const currentPage = pageIndex + 1 // Display as 1-based
 
+  // Calculate the range of items being shown
+  const startItem = pageIndex * pageSize + 1
+  const endItem = Math.min((pageIndex + 1) * pageSize, totalItems)
+
   return (
     <div className="esh-pager">
       <div className="container">
@@ -43,9 +47,9 @@ export function Pagination({
               Previous
             </button>
 
-            {/* Page info */}
+            {/* Page info - matches legacy format: "Showing X to Y of Z products - Page N - M" */}
             <span className="esh-pager-item">
-              Showing {pageSize} of {totalItems} products - Page {currentPage} - {totalPages}
+              Showing {startItem} to {endItem} of {totalItems} products - Page {currentPage} - {totalPages}
             </span>
 
             {/* Next button */}

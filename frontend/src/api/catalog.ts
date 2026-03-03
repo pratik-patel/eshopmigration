@@ -27,7 +27,7 @@ export interface CatalogItem {
   id: number
   name: string
   description: string | null
-  price: number
+  price: string // API returns Decimal as string (Pydantic serialization)
   picture_file_name: string
   picture_uri: string | null
   catalog_type_id: number

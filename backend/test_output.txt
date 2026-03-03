@@ -1,0 +1,1125 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.2, pytest-7.4.4, pluggy-1.6.0
+rootdir: C:\Users\pratikp6\codebase\eshopmigration\backend
+configfile: pyproject.toml
+plugins: anyio-4.12.1, asyncio-0.23.8, cov-4.1.0
+asyncio: mode=Mode.AUTO
+collected 1 item
+
+tests\parity\test_catalog_list_api_parity.py F                           [100%]
+
+================================== FAILURES ===================================
+_____________ TestCatalogListAPIParity.test_first_page_row_count ______________
+
+self = <test_catalog_list_api_parity.TestCatalogListAPIParity object at 0x000001D2C94FE330>
+async_client = <httpx.AsyncClient object at 0x000001D2C96A8AA0>
+golden_baseline = {'headers': ['', 'Name', 'Description', 'Brand', 'Type', 'Price', ...], 'rows': [['', '.NET Bot Black Hoodie', '.NET B...'', '.NET Blue Hoodie', '.NET Blue Hoodie', '.NET', 'T-Shirt', '12', ...], ...], 'tableIndex': 0, 'totalRows': 10, ...}
+
+    @pytest.mark.asyncio
+    async def test_first_page_row_count(self, async_client: AsyncClient, golden_baseline):
+        """
+        Test that first page returns correct number of rows.
+    
+        Golden baseline shows 10 products on first page.
+        """
+>       response = await async_client.get("/api/catalog/items?page_size=10&page_index=0")
+
+tests\parity\test_catalog_list_api_parity.py:84: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <httpx.AsyncClient object at 0x000001D2C96A8AA0>
+url = '/api/catalog/items?page_size=10&page_index=0'
+
+    async def get(
+        self,
+        url: URLTypes,
+        *,
+        params: typing.Optional[QueryParamTypes] = None,
+        headers: typing.Optional[HeaderTypes] = None,
+        cookies: typing.Optional[CookieTypes] = None,
+        auth: typing.Union[AuthTypes, UseClientDefault, None] = USE_CLIENT_DEFAULT,
+        follow_redirects: typing.Union[bool, UseClientDefault] = USE_CLIENT_DEFAULT,
+        timeout: typing.Union[TimeoutTypes, UseClientDefault] = USE_CLIENT_DEFAULT,
+        extensions: typing.Optional[RequestExtensions] = None,
+    ) -> Response:
+        """
+        Send a `GET` request.
+    
+        **Parameters**: See `httpx.request`.
+        """
+>       return await self.request(
+            "GET",
+            url,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            auth=auth,
+            follow_redirects=follow_redirects,
+            timeout=timeout,
+            extensions=extensions,
+        )
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\httpx\_client.py:1786: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <httpx.AsyncClient object at 0x000001D2C96A8AA0>, method = 'GET'
+url = '/api/catalog/items?page_size=10&page_index=0'
+
+    async def request(
+        self,
+        method: str,
+        url: URLTypes,
+        *,
+        content: typing.Optional[RequestContent] = None,
+        data: typing.Optional[RequestData] = None,
+        files: typing.Optional[RequestFiles] = None,
+        json: typing.Optional[typing.Any] = None,
+        params: typing.Optional[QueryParamTypes] = None,
+        headers: typing.Optional[HeaderTypes] = None,
+        cookies: typing.Optional[CookieTypes] = None,
+        auth: typing.Union[AuthTypes, UseClientDefault, None] = USE_CLIENT_DEFAULT,
+        follow_redirects: typing.Union[bool, UseClientDefault] = USE_CLIENT_DEFAULT,
+        timeout: typing.Union[TimeoutTypes, UseClientDefault] = USE_CLIENT_DEFAULT,
+        extensions: typing.Optional[RequestExtensions] = None,
+    ) -> Response:
+        """
+        Build and send a request.
+    
+        Equivalent to:
+    
+        ```python
+        request = client.build_request(...)
+        response = await client.send(request, ...)
+        ```
+    
+        See `AsyncClient.build_request()`, `AsyncClient.send()`
+        and [Merging of configuration][0] for how the various parameters
+        are merged with client-level configuration.
+    
+        [0]: /advanced/#merging-of-configuration
+        """
+        request = self.build_request(
+            method=method,
+            url=url,
+            content=content,
+            data=data,
+            files=files,
+            json=json,
+            params=params,
+            headers=headers,
+            cookies=cookies,
+            timeout=timeout,
+            extensions=extensions,
+        )
+>       return await self.send(request, auth=auth, follow_redirects=follow_redirects)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\httpx\_client.py:1559: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <httpx.AsyncClient object at 0x000001D2C96A8AA0>
+request = <Request('GET', 'http://test/api/catalog/items?page_size=10&page_index=0')>
+
+    async def send(
+        self,
+        request: Request,
+        *,
+        stream: bool = False,
+        auth: typing.Union[AuthTypes, UseClientDefault, None] = USE_CLIENT_DEFAULT,
+        follow_redirects: typing.Union[bool, UseClientDefault] = USE_CLIENT_DEFAULT,
+    ) -> Response:
+        """
+        Send a request.
+    
+        The request is sent as-is, unmodified.
+    
+        Typically you'll want to build one with `AsyncClient.build_request()`
+        so that any client-level configuration is merged into the request,
+        but passing an explicit `httpx.Request()` is supported as well.
+    
+        See also: [Request instances][0]
+    
+        [0]: /advanced/#request-instances
+        """
+        if self._state == ClientState.CLOSED:
+            raise RuntimeError("Cannot send a request, as the client has been closed.")
+    
+        self._state = ClientState.OPENED
+        follow_redirects = (
+            self.follow_redirects
+            if isinstance(follow_redirects, UseClientDefault)
+            else follow_redirects
+        )
+    
+        auth = self._build_request_auth(request, auth)
+    
+>       response = await self._send_handling_auth(
+            request,
+            auth=auth,
+            follow_redirects=follow_redirects,
+            history=[],
+        )
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\httpx\_client.py:1646: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <httpx.AsyncClient object at 0x000001D2C96A8AA0>
+request = <Request('GET', 'http://test/api/catalog/items?page_size=10&page_index=0')>
+auth = <httpx.Auth object at 0x000001D2C979AFF0>, follow_redirects = False
+history = []
+
+    async def _send_handling_auth(
+        self,
+        request: Request,
+        auth: Auth,
+        follow_redirects: bool,
+        history: typing.List[Response],
+    ) -> Response:
+        auth_flow = auth.async_auth_flow(request)
+        try:
+            request = await auth_flow.__anext__()
+    
+            while True:
+>               response = await self._send_handling_redirects(
+                    request,
+                    follow_redirects=follow_redirects,
+                    history=history,
+                )
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\httpx\_client.py:1674: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <httpx.AsyncClient object at 0x000001D2C96A8AA0>
+request = <Request('GET', 'http://test/api/catalog/items?page_size=10&page_index=0')>
+follow_redirects = False, history = []
+
+    async def _send_handling_redirects(
+        self,
+        request: Request,
+        follow_redirects: bool,
+        history: typing.List[Response],
+    ) -> Response:
+        while True:
+            if len(history) > self.max_redirects:
+                raise TooManyRedirects(
+                    "Exceeded maximum allowed redirects.", request=request
+                )
+    
+            for hook in self._event_hooks["request"]:
+                await hook(request)
+    
+>           response = await self._send_single_request(request)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\httpx\_client.py:1711: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <httpx.AsyncClient object at 0x000001D2C96A8AA0>
+request = <Request('GET', 'http://test/api/catalog/items?page_size=10&page_index=0')>
+
+    async def _send_single_request(self, request: Request) -> Response:
+        """
+        Sends a single request, without handling any redirections.
+        """
+        transport = self._transport_for_url(request.url)
+        timer = Timer()
+        await timer.async_start()
+    
+        if not isinstance(request.stream, AsyncByteStream):
+            raise RuntimeError(
+                "Attempted to send an sync request with an AsyncClient instance."
+            )
+    
+        with request_context(request=request):
+>           response = await transport.handle_async_request(request)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\httpx\_client.py:1748: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <httpx.ASGITransport object at 0x000001D2C9799D00>
+request = <Request('GET', 'http://test/api/catalog/items?page_size=10&page_index=0')>
+
+    async def handle_async_request(
+        self,
+        request: Request,
+    ) -> Response:
+        assert isinstance(request.stream, AsyncByteStream)
+    
+        # ASGI scope.
+        scope = {
+            "type": "http",
+            "asgi": {"version": "3.0"},
+            "http_version": "1.1",
+            "method": request.method,
+            "headers": [(k.lower(), v) for (k, v) in request.headers.raw],
+            "scheme": request.url.scheme,
+            "path": request.url.path,
+            "raw_path": request.url.raw_path.split(b"?")[0],
+            "query_string": request.url.query,
+            "server": (request.url.host, request.url.port),
+            "client": self.client,
+            "root_path": self.root_path,
+        }
+    
+        # Request.
+        request_body_chunks = request.stream.__aiter__()
+        request_complete = False
+    
+        # Response.
+        status_code = None
+        response_headers = None
+        body_parts = []
+        response_started = False
+        response_complete = create_event()
+    
+        # ASGI callables.
+    
+        async def receive() -> typing.Dict[str, typing.Any]:
+            nonlocal request_complete
+    
+            if request_complete:
+                await response_complete.wait()
+                return {"type": "http.disconnect"}
+    
+            try:
+                body = await request_body_chunks.__anext__()
+            except StopAsyncIteration:
+                request_complete = True
+                return {"type": "http.request", "body": b"", "more_body": False}
+            return {"type": "http.request", "body": body, "more_body": True}
+    
+        async def send(message: typing.Dict[str, typing.Any]) -> None:
+            nonlocal status_code, response_headers, response_started
+    
+            if message["type"] == "http.response.start":
+                assert not response_started
+    
+                status_code = message["status"]
+                response_headers = message.get("headers", [])
+                response_started = True
+    
+            elif message["type"] == "http.response.body":
+                assert not response_complete.is_set()
+                body = message.get("body", b"")
+                more_body = message.get("more_body", False)
+    
+                if body and request.method != "HEAD":
+                    body_parts.append(body)
+    
+                if not more_body:
+                    response_complete.set()
+    
+        try:
+>           await self.app(scope, receive, send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\httpx\_transports\asgi.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <fastapi.applications.FastAPI object at 0x000001D2C967E060>
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function ASGITransport.handle_async_request.<locals>.send at 0x000001D2C97AB920>
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if self.root_path:
+            scope["root_path"] = self.root_path
+>       await super().__call__(scope, receive, send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\applications.py:1054: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <fastapi.applications.FastAPI object at 0x000001D2C967E060>
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function ASGITransport.handle_async_request.<locals>.send at 0x000001D2C97AB920>
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        scope["app"] = self
+        if self.middleware_stack is None:
+            self.middleware_stack = self.build_middleware_stack()
+>       await self.middleware_stack(scope, receive, send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\applications.py:123: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <starlette.middleware.errors.ServerErrorMiddleware object at 0x000001D2C97D4350>
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function ASGITransport.handle_async_request.<locals>.send at 0x000001D2C97AB920>
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+    
+        response_started = False
+    
+        async def _send(message: Message) -> None:
+            nonlocal response_started, send
+    
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+    
+        try:
+            await self.app(scope, receive, _send)
+        except Exception as exc:
+            request = Request(scope)
+            if self.debug:
+                # In debug mode, return traceback responses.
+                response = self.debug_response(request, exc)
+            elif self.handler is None:
+                # Use our default 500 error handler.
+                response = self.error_response(request, exc)
+            else:
+                # Use an installed 500 error handler.
+                if is_async_callable(self.handler):
+                    response = await self.handler(request, exc)
+                else:
+                    response = await run_in_threadpool(self.handler, request, exc)
+    
+            if not response_started:
+                await response(scope, receive, send)
+    
+            # We always continue to raise the exception.
+            # This allows servers to log the error, or allows test clients
+            # to optionally raise the error within the test case.
+>           raise exc
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\middleware\errors.py:186: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <starlette.middleware.errors.ServerErrorMiddleware object at 0x000001D2C97D4350>
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function ASGITransport.handle_async_request.<locals>.send at 0x000001D2C97AB920>
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+    
+        response_started = False
+    
+        async def _send(message: Message) -> None:
+            nonlocal response_started, send
+    
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+    
+        try:
+>           await self.app(scope, receive, _send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\middleware\errors.py:164: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <starlette.middleware.cors.CORSMiddleware object at 0x000001D2C97D42F0>
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function ServerErrorMiddleware.__call__.<locals>._send at 0x000001D2C97ABBA0>
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":  # pragma: no cover
+            await self.app(scope, receive, send)
+            return
+    
+        method = scope["method"]
+        headers = Headers(scope=scope)
+        origin = headers.get("origin")
+    
+        if origin is None:
+>           await self.app(scope, receive, send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\middleware\cors.py:83: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <starlette.middleware.exceptions.ExceptionMiddleware object at 0x000001D2C97D42C0>
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function ServerErrorMiddleware.__call__.<locals>._send at 0x000001D2C97ABBA0>
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] not in ("http", "websocket"):
+            await self.app(scope, receive, send)
+            return
+    
+        scope["starlette.exception_handlers"] = (
+            self._exception_handlers,
+            self._status_handlers,
+        )
+    
+        conn: typing.Union[Request, WebSocket]
+        if scope["type"] == "http":
+            conn = Request(scope, receive, send)
+        else:
+            conn = WebSocket(scope, receive, send)
+    
+>       await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\middleware\exceptions.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function ServerErrorMiddleware.__call__.<locals>._send at 0x000001D2C97ABBA0>
+
+    async def wrapped_app(scope: Scope, receive: Receive, send: Send) -> None:
+        response_started = False
+    
+        async def sender(message: Message) -> None:
+            nonlocal response_started
+    
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+    
+        try:
+            await app(scope, receive, sender)
+        except Exception as exc:
+            handler = None
+    
+            if isinstance(exc, HTTPException):
+                handler = status_handlers.get(exc.status_code)
+    
+            if handler is None:
+                handler = _lookup_exception_handler(exception_handlers, exc)
+    
+            if handler is None:
+>               raise exc
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\_exception_handler.py:64: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function ServerErrorMiddleware.__call__.<locals>._send at 0x000001D2C97ABBA0>
+
+    async def wrapped_app(scope: Scope, receive: Receive, send: Send) -> None:
+        response_started = False
+    
+        async def sender(message: Message) -> None:
+            nonlocal response_started
+    
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+    
+        try:
+>           await app(scope, receive, sender)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\_exception_handler.py:53: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <fastapi.routing.APIRouter object at 0x000001D2C967E300>
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001D2C97BE700>
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        """
+        The main entry point to the Router class.
+        """
+>       await self.middleware_stack(scope, receive, send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\routing.py:758: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <fastapi.routing.APIRouter object at 0x000001D2C967E300>
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001D2C97BE700>
+
+    async def app(self, scope: Scope, receive: Receive, send: Send) -> None:
+        assert scope["type"] in ("http", "websocket", "lifespan")
+    
+        if "router" not in scope:
+            scope["router"] = self
+    
+        if scope["type"] == "lifespan":
+            await self.lifespan(scope, receive, send)
+            return
+    
+        partial = None
+    
+        for route in self.routes:
+            # Determine if any route matches the incoming scope,
+            # and hand over to the matching route if found.
+            match, child_scope = route.matches(scope)
+            if match == Match.FULL:
+                scope.update(child_scope)
+>               await route.handle(scope, receive, send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\routing.py:778: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = APIRoute(path='/api/catalog/items', name='get_catalog_items', methods=['GET'])
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001D2C97BE700>
+
+    async def handle(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if self.methods and scope["method"] not in self.methods:
+            headers = {"Allow": ", ".join(self.methods)}
+            if "app" in scope:
+                raise HTTPException(status_code=405, headers=headers)
+            else:
+                response = PlainTextResponse(
+                    "Method Not Allowed", status_code=405, headers=headers
+                )
+            await response(scope, receive, send)
+        else:
+>           await self.app(scope, receive, send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\routing.py:299: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001D2C97BE700>
+
+    async def app(scope: Scope, receive: Receive, send: Send) -> None:
+        request = Request(scope, receive, send)
+    
+        async def app(scope: Scope, receive: Receive, send: Send) -> None:
+            if is_async_callable(func):
+                response = await func(request)
+            else:
+                response = await run_in_threadpool(func, request)
+            await response(scope, receive, send)
+    
+>       await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\routing.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001D2C97BE700>
+
+    async def wrapped_app(scope: Scope, receive: Receive, send: Send) -> None:
+        response_started = False
+    
+        async def sender(message: Message) -> None:
+            nonlocal response_started
+    
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+    
+        try:
+            await app(scope, receive, sender)
+        except Exception as exc:
+            handler = None
+    
+            if isinstance(exc, HTTPException):
+                handler = status_handlers.get(exc.status_code)
+    
+            if handler is None:
+                handler = _lookup_exception_handler(exception_handlers, exc)
+    
+            if handler is None:
+>               raise exc
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\_exception_handler.py:64: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001D2C97BE700>
+
+    async def wrapped_app(scope: Scope, receive: Receive, send: Send) -> None:
+        response_started = False
+    
+        async def sender(message: Message) -> None:
+            nonlocal response_started
+    
+            if message["type"] == "http.response.start":
+                response_started = True
+            await send(message)
+    
+        try:
+>           await app(scope, receive, sender)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\_exception_handler.py:53: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+scope = {'app': <fastapi.applications.FastAPI object at 0x000001D2C967E060>, 'asgi': {'version': '3.0'}, 'client': ('127.0.0.1', 123), 'endpoint': <function get_catalog_items at 0x000001D2C964DF80>, ...}
+receive = <function ASGITransport.handle_async_request.<locals>.receive at 0x000001D2C97AB9C0>
+send = <function wrap_app_handling_exceptions.<locals>.wrapped_app.<locals>.sender at 0x000001D2C97BD8A0>
+
+    async def app(scope: Scope, receive: Receive, send: Send) -> None:
+        if is_async_callable(func):
+>           response = await func(request)
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\starlette\routing.py:74: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+request = <starlette.requests.Request object at 0x000001D2C97D4620>
+
+    async def app(request: Request) -> Response:
+        exception_to_reraise: Optional[Exception] = None
+        response: Union[Response, None] = None
+        async with AsyncExitStack() as async_exit_stack:
+            # TODO: remove this scope later, after a few releases
+            # This scope fastapi_astack is no longer used by FastAPI, kept for
+            # compatibility, just in case
+            request.scope["fastapi_astack"] = async_exit_stack
+            try:
+                body: Any = None
+                if body_field:
+                    if is_body_form:
+                        body = await request.form()
+                        async_exit_stack.push_async_callback(body.close)
+                    else:
+                        body_bytes = await request.body()
+                        if body_bytes:
+                            json_body: Any = Undefined
+                            content_type_value = request.headers.get("content-type")
+                            if not content_type_value:
+                                json_body = await request.json()
+                            else:
+                                message = email.message.Message()
+                                message["content-type"] = content_type_value
+                                if message.get_content_maintype() == "application":
+                                    subtype = message.get_content_subtype()
+                                    if subtype == "json" or subtype.endswith("+json"):
+                                        json_body = await request.json()
+                            if json_body != Undefined:
+                                body = json_body
+                            else:
+                                body = body_bytes
+            except json.JSONDecodeError as e:
+                validation_error = RequestValidationError(
+                    [
+                        {
+                            "type": "json_invalid",
+                            "loc": ("body", e.pos),
+                            "msg": "JSON decode error",
+                            "input": {},
+                            "ctx": {"error": e.msg},
+                        }
+                    ],
+                    body=e.doc,
+                )
+                exception_to_reraise = validation_error
+                raise validation_error from e
+            except HTTPException as e:
+                exception_to_reraise = e
+                raise
+            except Exception as e:
+                http_error = HTTPException(
+                    status_code=400, detail="There was an error parsing the body"
+                )
+                exception_to_reraise = http_error
+                raise http_error from e
+            try:
+                solved_result = await solve_dependencies(
+                    request=request,
+                    dependant=dependant,
+                    body=body,
+                    dependency_overrides_provider=dependency_overrides_provider,
+                    async_exit_stack=async_exit_stack,
+                )
+                values, errors, background_tasks, sub_response, _ = solved_result
+            except Exception as e:
+                exception_to_reraise = e
+>               raise e
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\routing.py:285: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+request = <starlette.requests.Request object at 0x000001D2C97D4620>
+
+    async def app(request: Request) -> Response:
+        exception_to_reraise: Optional[Exception] = None
+        response: Union[Response, None] = None
+        async with AsyncExitStack() as async_exit_stack:
+            # TODO: remove this scope later, after a few releases
+            # This scope fastapi_astack is no longer used by FastAPI, kept for
+            # compatibility, just in case
+            request.scope["fastapi_astack"] = async_exit_stack
+            try:
+                body: Any = None
+                if body_field:
+                    if is_body_form:
+                        body = await request.form()
+                        async_exit_stack.push_async_callback(body.close)
+                    else:
+                        body_bytes = await request.body()
+                        if body_bytes:
+                            json_body: Any = Undefined
+                            content_type_value = request.headers.get("content-type")
+                            if not content_type_value:
+                                json_body = await request.json()
+                            else:
+                                message = email.message.Message()
+                                message["content-type"] = content_type_value
+                                if message.get_content_maintype() == "application":
+                                    subtype = message.get_content_subtype()
+                                    if subtype == "json" or subtype.endswith("+json"):
+                                        json_body = await request.json()
+                            if json_body != Undefined:
+                                body = json_body
+                            else:
+                                body = body_bytes
+            except json.JSONDecodeError as e:
+                validation_error = RequestValidationError(
+                    [
+                        {
+                            "type": "json_invalid",
+                            "loc": ("body", e.pos),
+                            "msg": "JSON decode error",
+                            "input": {},
+                            "ctx": {"error": e.msg},
+                        }
+                    ],
+                    body=e.doc,
+                )
+                exception_to_reraise = validation_error
+                raise validation_error from e
+            except HTTPException as e:
+                exception_to_reraise = e
+                raise
+            except Exception as e:
+                http_error = HTTPException(
+                    status_code=400, detail="There was an error parsing the body"
+                )
+                exception_to_reraise = http_error
+                raise http_error from e
+            try:
+>               solved_result = await solve_dependencies(
+                    request=request,
+                    dependant=dependant,
+                    body=body,
+                    dependency_overrides_provider=dependency_overrides_provider,
+                    async_exit_stack=async_exit_stack,
+                )
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\routing.py:275: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    async def solve_dependencies(
+        *,
+        request: Union[Request, WebSocket],
+        dependant: Dependant,
+        body: Optional[Union[Dict[str, Any], FormData]] = None,
+        background_tasks: Optional[StarletteBackgroundTasks] = None,
+        response: Optional[Response] = None,
+        dependency_overrides_provider: Optional[Any] = None,
+        dependency_cache: Optional[Dict[Tuple[Callable[..., Any], Tuple[str]], Any]] = None,
+        async_exit_stack: AsyncExitStack,
+    ) -> Tuple[
+        Dict[str, Any],
+        List[Any],
+        Optional[StarletteBackgroundTasks],
+        Response,
+        Dict[Tuple[Callable[..., Any], Tuple[str]], Any],
+    ]:
+        values: Dict[str, Any] = {}
+        errors: List[Any] = []
+        if response is None:
+            response = Response()
+            del response.headers["content-length"]
+            response.status_code = None  # type: ignore
+        dependency_cache = dependency_cache or {}
+        sub_dependant: Dependant
+        for sub_dependant in dependant.dependencies:
+            sub_dependant.call = cast(Callable[..., Any], sub_dependant.call)
+            sub_dependant.cache_key = cast(
+                Tuple[Callable[..., Any], Tuple[str]], sub_dependant.cache_key
+            )
+            call = sub_dependant.call
+            use_sub_dependant = sub_dependant
+            if (
+                dependency_overrides_provider
+                and dependency_overrides_provider.dependency_overrides
+            ):
+                original_call = sub_dependant.call
+                call = getattr(
+                    dependency_overrides_provider, "dependency_overrides", {}
+                ).get(original_call, original_call)
+                use_path: str = sub_dependant.path  # type: ignore
+>               use_sub_dependant = get_dependant(
+                    path=use_path,
+                    call=call,
+                    name=sub_dependant.name,
+                    security_scopes=sub_dependant.security_scopes,
+                )
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\dependencies\utils.py:563: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def get_dependant(
+        *,
+        path: str,
+        call: Callable[..., Any],
+        name: Optional[str] = None,
+        security_scopes: Optional[List[str]] = None,
+        use_cache: bool = True,
+    ) -> Dependant:
+        path_param_names = get_path_param_names(path)
+        endpoint_signature = get_typed_signature(call)
+        signature_params = endpoint_signature.parameters
+        dependant = Dependant(
+            call=call,
+            name=name,
+            path=path,
+            security_scopes=security_scopes,
+            use_cache=use_cache,
+        )
+        for param_name, param in signature_params.items():
+            is_path_param = param_name in path_param_names
+>           type_annotation, depends, param_field = analyze_param(
+                param_name=param_name,
+                annotation=param.annotation,
+                value=param.default,
+                is_path_param=is_path_param,
+            )
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\dependencies\utils.py:261: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def analyze_param(
+        *,
+        param_name: str,
+        annotation: Any,
+        value: Any,
+        is_path_param: bool,
+    ) -> Tuple[Any, Optional[params.Depends], Optional[ModelField]]:
+        field_info = None
+        depends = None
+        type_annotation: Any = Any
+        use_annotation: Any = Any
+        if annotation is not inspect.Signature.empty:
+            use_annotation = annotation
+            type_annotation = annotation
+        if get_origin(use_annotation) is Annotated:
+            annotated_args = get_args(annotation)
+            type_annotation = annotated_args[0]
+            fastapi_annotations = [
+                arg
+                for arg in annotated_args[1:]
+                if isinstance(arg, (FieldInfo, params.Depends))
+            ]
+            fastapi_specific_annotations = [
+                arg
+                for arg in fastapi_annotations
+                if isinstance(arg, (params.Param, params.Body, params.Depends))
+            ]
+            if fastapi_specific_annotations:
+                fastapi_annotation: Union[
+                    FieldInfo, params.Depends, None
+                ] = fastapi_specific_annotations[-1]
+            else:
+                fastapi_annotation = None
+            if isinstance(fastapi_annotation, FieldInfo):
+                # Copy `field_info` because we mutate `field_info.default` below.
+                field_info = copy_field_info(
+                    field_info=fastapi_annotation, annotation=use_annotation
+                )
+                assert field_info.default is Undefined or field_info.default is Required, (
+                    f"`{field_info.__class__.__name__}` default value cannot be set in"
+                    f" `Annotated` for {param_name!r}. Set the default value with `=` instead."
+                )
+                if value is not inspect.Signature.empty:
+                    assert not is_path_param, "Path parameters cannot have default values"
+                    field_info.default = value
+                else:
+                    field_info.default = Required
+            elif isinstance(fastapi_annotation, params.Depends):
+                depends = fastapi_annotation
+    
+        if isinstance(value, params.Depends):
+            assert depends is None, (
+                "Cannot specify `Depends` in `Annotated` and default value"
+                f" together for {param_name!r}"
+            )
+            assert field_info is None, (
+                "Cannot specify a FastAPI annotation in `Annotated` and `Depends` as a"
+                f" default value together for {param_name!r}"
+            )
+            depends = value
+        elif isinstance(value, FieldInfo):
+            assert field_info is None, (
+                "Cannot specify FastAPI annotations in `Annotated` and default value"
+                f" together for {param_name!r}"
+            )
+            field_info = value
+            if PYDANTIC_V2:
+                field_info.annotation = type_annotation
+    
+        if depends is not None and depends.dependency is None:
+            depends.dependency = type_annotation
+    
+        if lenient_issubclass(
+            type_annotation,
+            (
+                Request,
+                WebSocket,
+                HTTPConnection,
+                Response,
+                StarletteBackgroundTasks,
+                SecurityScopes,
+            ),
+        ):
+            assert depends is None, f"Cannot specify `Depends` for type {type_annotation!r}"
+            assert (
+                field_info is None
+            ), f"Cannot specify FastAPI annotation for type {type_annotation!r}"
+        elif field_info is None and depends is None:
+            default_value = value if value is not inspect.Signature.empty else Required
+            if is_path_param:
+                # We might check here that `default_value is Required`, but the fact is that the same
+                # parameter might sometimes be a path parameter and sometimes not. See
+                # `tests/test_infer_param_optionality.py` for an example.
+                field_info = params.Path(annotation=use_annotation)
+            elif is_uploadfile_or_nonable_uploadfile_annotation(
+                type_annotation
+            ) or is_uploadfile_sequence_annotation(type_annotation):
+                field_info = params.File(annotation=use_annotation, default=default_value)
+            elif not field_annotation_is_scalar(annotation=type_annotation):
+                field_info = params.Body(annotation=use_annotation, default=default_value)
+            else:
+                field_info = params.Query(annotation=use_annotation, default=default_value)
+    
+        field = None
+        if field_info is not None:
+            if is_path_param:
+                assert isinstance(field_info, params.Path), (
+                    f"Cannot use `{field_info.__class__.__name__}` for path param"
+                    f" {param_name!r}"
+                )
+            elif (
+                isinstance(field_info, params.Param)
+                and getattr(field_info, "in_", None) is None
+            ):
+                field_info.in_ = params.ParamTypes.query
+            use_annotation_from_field_info = get_annotation_from_field_info(
+                use_annotation,
+                field_info,
+                param_name,
+            )
+            if not field_info.alias and getattr(field_info, "convert_underscores", None):
+                alias = param_name.replace("_", "-")
+            else:
+                alias = field_info.alias or param_name
+            field_info.alias = alias
+>           field = create_response_field(
+                name=param_name,
+                type_=use_annotation_from_field_info,
+                default=field_info.default,
+                alias=alias,
+                required=field_info.default in (Required, Undefined),
+                field_info=field_info,
+            )
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\dependencies\utils.py:442: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'session', type_ = <class 'sqlalchemy.ext.asyncio.session.AsyncSession'>
+class_validators = {}
+default = <sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000001D2C96AA3F0>
+required = False, model_config = <class 'fastapi._compat.BaseConfig'>
+field_info = Query(<sqlalchemy.ext.asyncio.session.AsyncSession object at 0x000001D2C96AA3F0>)
+alias = 'session', mode = 'validation'
+
+    def create_response_field(
+        name: str,
+        type_: Type[Any],
+        class_validators: Optional[Dict[str, Validator]] = None,
+        default: Optional[Any] = Undefined,
+        required: Union[bool, UndefinedType] = Undefined,
+        model_config: Type[BaseConfig] = BaseConfig,
+        field_info: Optional[FieldInfo] = None,
+        alias: Optional[str] = None,
+        mode: Literal["validation", "serialization"] = "validation",
+    ) -> ModelField:
+        """
+        Create a new response field. Raises if type_ is invalid.
+        """
+        class_validators = class_validators or {}
+        if PYDANTIC_V2:
+            field_info = field_info or FieldInfo(
+                annotation=type_, default=default, alias=alias
+            )
+        else:
+            field_info = field_info or FieldInfo()
+        kwargs = {"name": name, "field_info": field_info}
+        if PYDANTIC_V2:
+            kwargs.update({"mode": mode})
+        else:
+            kwargs.update(
+                {
+                    "type_": type_,
+                    "class_validators": class_validators,
+                    "default": default,
+                    "required": required,
+                    "model_config": model_config,
+                    "alias": alias,
+                }
+            )
+        try:
+            return ModelField(**kwargs)  # type: ignore[arg-type]
+        except (RuntimeError, PydanticSchemaGenerationError):
+>           raise fastapi.exceptions.FastAPIError(
+                "Invalid args for response field! Hint: "
+                f"check that {type_} is a valid Pydantic field type. "
+                "If you are using a return type annotation that is not a valid Pydantic "
+                "field (e.g. Union[Response, dict, None]) you can disable generating the "
+                "response model from the type annotation with the path operation decorator "
+                "parameter response_model=None. Read more: "
+                "https://fastapi.tiangolo.com/tutorial/response-model/"
+            ) from None
+E           fastapi.exceptions.FastAPIError: Invalid args for response field! Hint: check that <class 'sqlalchemy.ext.asyncio.session.AsyncSession'> is a valid Pydantic field type. If you are using a return type annotation that is not a valid Pydantic field (e.g. Union[Response, dict, None]) you can disable generating the response model from the type annotation with the path operation decorator parameter response_model=None. Read more: https://fastapi.tiangolo.com/tutorial/response-model/
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\utils.py:101: FastAPIError
+---------------------------- Captured stdout setup ----------------------------
+[2m2026-03-03T04:56:02.081381Z[0m [[32m[1minfo     [0m] [1mdatabase.seed.start           [0m
+[2m2026-03-03T04:56:02.095097Z[0m [[32m[1minfo     [0m] [1mdatabase.seed.brands          [0m [36mcount[0m=[35m5[0m
+[2m2026-03-03T04:56:02.097099Z[0m [[32m[1minfo     [0m] [1mdatabase.seed.types           [0m [36mcount[0m=[35m4[0m
+[2m2026-03-03T04:56:02.101097Z[0m [[32m[1minfo     [0m] [1mdatabase.seed.items           [0m [36mcount[0m=[35m10[0m
+[2m2026-03-03T04:56:02.101097Z[0m [[32m[1minfo     [0m] [1mdatabase.seed.complete        [0m [36mbrands[0m=[35m5[0m [36mitems[0m=[35m10[0m [36mtypes[0m=[35m4[0m
+============================== warnings summary ===============================
+app\main.py:60
+  C:\Users\pratikp6\codebase\eshopmigration\backend\app\main.py:60: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("startup")
+
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\applications.py:4495
+..\..\..\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\applications.py:4495
+  C:\Users\pratikp6\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\fastapi\applications.py:4495: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    return self.router.on_event(event_type)
+
+app\main.py:85
+  C:\Users\pratikp6\codebase\eshopmigration\backend\app\main.py:85: DeprecationWarning: 
+          on_event is deprecated, use lifespan event handlers instead.
+  
+          Read more about it in the
+          [FastAPI docs for Lifespan Events](https://fastapi.tiangolo.com/advanced/events/).
+          
+    @app.on_event("shutdown")
+
+tests/parity/test_catalog_list_api_parity.py::TestCatalogListAPIParity::test_first_page_row_count
+  C:\Users\pratikp6\AppData\Local\pypoetry\Cache\virtualenvs\eshop-backend-ZL83aCq--py3.12\Lib\site-packages\pytest_asyncio\plugin.py:761: DeprecationWarning: The event_loop fixture provided by pytest-asyncio has been redefined in
+  C:\Users\pratikp6\codebase\eshopmigration\backend\tests\conftest.py:20
+  Replacing the event_loop fixture with a custom implementation is deprecated
+  and will lead to errors in the future.
+  If you want to request an asyncio event loop with a scope other than function
+  scope, use the "scope" argument to the asyncio mark when marking the tests.
+  If you want to return different types of event loops, use the event_loop_policy
+  fixture.
+  
+    warnings.warn(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/parity/test_catalog_list_api_parity.py::TestCatalogListAPIParity::test_first_page_row_count
+======================== 1 failed, 5 warnings in 0.53s ========================

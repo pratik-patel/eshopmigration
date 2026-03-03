@@ -164,12 +164,12 @@ class CatalogService:
 
     async def get_catalog_brands(self) -> list[CatalogBrand]:
         """
-        Get all catalog brands ordered by brand name.
+        Get all catalog brands ordered by ID (matching legacy behavior).
 
         Returns:
-            List of all catalog brands
+            List of all catalog brands ordered by ID
         """
-        stmt = select(CatalogBrand).order_by(CatalogBrand.brand)
+        stmt = select(CatalogBrand).order_by(CatalogBrand.id)
         result = await self.session.execute(stmt)
         brands = list(result.scalars().all())
 
@@ -179,12 +179,12 @@ class CatalogService:
 
     async def get_catalog_types(self) -> list[CatalogType]:
         """
-        Get all catalog types ordered by type name.
+        Get all catalog types ordered by ID (matching legacy behavior).
 
         Returns:
-            List of all catalog types
+            List of all catalog types ordered by ID
         """
-        stmt = select(CatalogType).order_by(CatalogType.type)
+        stmt = select(CatalogType).order_by(CatalogType.id)
         result = await self.session.execute(stmt)
         types = list(result.scalars().all())
 
@@ -271,10 +271,12 @@ class CatalogServiceMock:
         """Initialize mock service with sample data."""
         self.logger = logger.bind(service="CatalogServiceMock", mock=True)
 
-        # Initialize mock data
+        # Initialize mock data (matching seed data)
         self._brands = [
             CatalogBrand(id=1, brand="Azure"),
             CatalogBrand(id=2, brand=".NET"),
+            CatalogBrand(id=3, brand="Visual Studio"),
+            CatalogBrand(id=4, brand="SQL Server"),
             CatalogBrand(id=5, brand="Other"),
         ]
 
@@ -282,6 +284,7 @@ class CatalogServiceMock:
             CatalogType(id=1, type="Mug"),
             CatalogType(id=2, type="T-Shirt"),
             CatalogType(id=3, type="Sheet"),
+            CatalogType(id=4, type="USB Memory Stick"),
         ]
 
         self._items = [

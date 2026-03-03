@@ -2,7 +2,7 @@
  * TanStack Query hook for catalog items.
  */
 
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { getCatalogItems, type PaginatedCatalogItemsResponse } from '@/api/catalog'
 
 /**
@@ -17,6 +17,6 @@ export function useCatalogItems(pageSize: number = 10, pageIndex: number = 0) {
     queryKey: ['catalog-items', pageSize, pageIndex],
     queryFn: () => getCatalogItems(pageSize, pageIndex),
     staleTime: 1000 * 60, // 1 minute
-    keepPreviousData: true, // Keep previous page data while loading next page
+    placeholderData: keepPreviousData, // Keep previous page data while loading next page (TanStack Query v5)
   })
 }

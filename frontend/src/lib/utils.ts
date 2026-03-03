@@ -11,9 +11,12 @@ export function cn(...inputs: ClassValue[]) {
 /**
  * Format price as number (without $ sign).
  * The $ sign is added via CSS (.esh-price:before) for legacy parity.
+ *
+ * @param price - Price as number or string (API returns Decimal as string)
  */
-export function formatPrice(price: number): string {
-  return price.toFixed(2)
+export function formatPrice(price: number | string): string {
+  const numPrice = typeof price === 'string' ? parseFloat(price) : price
+  return numPrice.toFixed(2)
 }
 
 /**

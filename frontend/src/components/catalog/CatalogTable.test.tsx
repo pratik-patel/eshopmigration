@@ -109,9 +109,14 @@ describe('CatalogTable', () => {
   it('renders price with currency formatting', () => {
     renderWithRouter(<CatalogTable items={mockItems} />)
 
-    // Prices should be formatted as currency
-    expect(screen.getByText('$19.50')).toBeInTheDocument()
-    expect(screen.getByText('$8.50')).toBeInTheDocument()
+    // Prices should be formatted with 2 decimal places
+    // Note: $ symbol is added via CSS (.esh-price:before), not in DOM text
+    expect(screen.getByText('19.50')).toBeInTheDocument()
+    expect(screen.getByText('8.50')).toBeInTheDocument()
+
+    // Verify esh-price class is applied (CSS adds $ symbol)
+    const priceElements = document.querySelectorAll('.esh-price')
+    expect(priceElements.length).toBeGreaterThanOrEqual(2)
   })
 
   it('renders stock values', () => {

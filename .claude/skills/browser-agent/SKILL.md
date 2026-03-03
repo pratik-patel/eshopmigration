@@ -1,16 +1,22 @@
 ---
 name: browser-agent
-description: Automated browser agent using Playwright to discover UI workflows, capture screenshots, and verify parity between legacy and modern applications.
+description: Automated browser agent using Playwright for pixel-level visual comparison, structural element verification, CSS class matching, and workflow parity testing between legacy and modern applications.
 disable-model-invocation: false
 context: fork
 agent: general-purpose
 ---
 
-# Browser Agent — UI Discovery & Parity Verification
+# Browser Agent — UI Discovery & Pixel-Level Parity Verification
 
 Automated browser testing agent for:
 1. **Discovery mode**: Capture legacy UI workflows and screenshots for golden baseline
-2. **Verification mode**: Compare legacy vs modern UI for feature parity
+2. **Verification mode**: Pixel-level comparison of legacy vs modern UI including:
+   - Screenshot pixel diffing with highlighted changes
+   - Structural element verification (headers, footers, nav, forms)
+   - CSS class matching
+   - Interactive element count comparison
+   - Data grid content validation
+   - Workflow execution parity
 
 **Arguments:** `[discovery|verify] <app-url> [--seam <seam-name>]`
 
@@ -104,58 +110,100 @@ fi
 ## Mode 2: Verification (Parity Testing)
 
 **Purpose**: Compare legacy vs modern UI to verify:
-- Feature completeness
-- Visual consistency
-- Data accuracy
-- Workflow equivalence
+- **Pixel-level visual consistency** (layout, colors, spacing)
+- **Structural element parity** (headers, footers, nav, forms)
+- **CSS class matching** (styling fidelity)
+- **Interactive element completeness** (buttons, links, inputs)
+- **Data accuracy** (grid contents, API responses)
+- **Workflow equivalence** (same steps, same outcome)
 
 **Usage**: `/browser-agent verify http://localhost:8080 --legacy http://old-app:8080 --modern http://localhost:5173`
 
 **Output**:
-- `tests/parity/screenshots/` — Side-by-side comparisons
-- `tests/parity/diff-report.html` — Visual diff report
-- `tests/parity/feature-matrix.md` — Feature parity matrix
-- `tests/parity/issues.json` — Detected discrepancies
+- `legacy-golden/parity-results/{seam}/VERIFICATION_SUMMARY.md` — Executive summary with parity score
+- `legacy-golden/parity-results/{seam}/screenshots/` — Side-by-side comparisons with pixel diffs
+- `legacy-golden/parity-results/{seam}/feature-matrix.md` — Element-by-element comparison
+- `legacy-golden/parity-results/{seam}/issues.json` — Structured discrepancy data
 
 ### Verification Algorithm
 
-1. **Baseline Comparison**
-   - Load corresponding screens in both apps
-   - Capture screenshots at same viewport size
-   - Compare:
-     - Visual layout (pixel diff with tolerance)
-     - Text content (semantic comparison)
-     - Interactive elements (presence/absence)
-     - Data grid contents (row/column comparison)
+1. **Pixel-Level Screenshot Comparison**
+   - Capture full-page screenshots at same viewport (1920x1080)
+   - Generate pixel diff using image comparison library (Pillow/pixelmatch)
+   - Calculate difference percentage
+   - Highlight changed regions in red overlay
+   - Save three images: `legacy.png`, `modern.png`, `diff.png`
+   - **Tolerance:** 5% pixel diff acceptable (for anti-aliasing, minor rendering differences)
+   - **Threshold:** >30% diff = major layout issue
 
-2. **Workflow Parity**
-   - Execute same user journey in both apps
-   - Compare:
-     - Navigation paths
-     - Number of steps required
-     - Final state/outcome
-     - Error messages
+2. **Structural Element Verification**
+   - Verify presence of key structural elements:
+     - **Header/Banner:** `.header`, `header`, `[role="banner"]`, `.navbar`
+     - **Navigation:** `nav`, `.nav`, `.menu`, `[role="navigation"]`
+     - **Main Content:** `main`, `[role="main"]`, `.content`, `.container`
+     - **Footer:** `footer`, `[role="contentinfo"]`, `.footer`
+     - **Forms:** `form`, all `input`/`select`/`textarea` elements
+     - **Tables/Grids:** `table`, `.grid`, `[role="grid"]`, `.datagrid`
+   - For each element type, report:
+     - **Found in both:** ✅ PASS
+     - **Found in legacy only:** ❌ FAIL - Missing in modern
+     - **Found in modern only:** ⚠️  WARN - Extra element added
 
-3. **Functional Element Parity**
-   - For each UI element in legacy:
-     - Check if equivalent exists in modern app
-     - Verify behavior (click, hover, input)
-     - Compare enabled/disabled states
-     - Check validation messages
+3. **CSS Class Matching**
+   - Extract all CSS classes from legacy elements
+   - Check if modern elements have equivalent classes
+   - Special handling for legacy class patterns:
+     - `.esh-*` classes (eShop legacy CSS)
+     - `.btn`, `.button` classes
+     - `.table`, `.grid` classes
+     - `.form-control`, `.input` classes
+   - Report class coverage percentage
 
-4. **Data Parity**
-   - For grids/tables:
+4. **Interactive Element Count**
+   - Count all interactive elements:
+     - Buttons: `button`, `input[type="submit"]`, `.btn`, `[role="button"]`
+     - Links: `a[href]`
+     - Inputs: `input`, `textarea`, `select`
+   - Compare counts (exact match not required, but within 20%)
+   - Flag major discrepancies (>50% difference)
+
+5. **Data Grid Comparison**
+   - For each table/grid:
+     - Extract column headers
+     - Extract first 10 rows of data
      - Compare row counts
-     - Compare column structure
-     - Sample data values for accuracy
-     - Check sorting/filtering behavior
+     - Compare cell values (text content)
+     - **Tolerance:** Formatting differences OK (e.g., "19.50" vs "$19.50")
+     - **Threshold:** >10% data difference = FAIL
 
-5. **Scoring**
-   - Generate parity score (0-100%):
-     - Feature completeness: 40%
-     - Visual consistency: 20%
-     - Data accuracy: 30%
-     - Workflow equivalence: 10%
+6. **Workflow Parity**
+   - Execute same user journey in both apps:
+     - Click "Create New" button
+     - Fill form fields with test data
+     - Submit form
+     - Verify success/error state
+   - Compare outcomes:
+     - Same success message
+     - Same error messages
+     - Same navigation destination
+
+7. **Scoring Formula**
+   ```
+   parity_score = (
+     feature_completeness * 0.40 +
+     visual_consistency * 0.20 +
+     data_accuracy * 0.30 +
+     workflow_equivalence * 0.10
+   ) * 100
+
+   where:
+     feature_completeness = elements_present / elements_expected
+     visual_consistency = 1 - (pixel_diff_percent / 100)
+     data_accuracy = matching_data_rows / total_data_rows
+     workflow_equivalence = successful_workflows / total_workflows
+   ```
+
+   **Target:** 85%+ overall score
 
 ---
 

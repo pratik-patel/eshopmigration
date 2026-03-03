@@ -202,7 +202,7 @@ describe('CatalogListPage', () => {
     })
 
     expect(screen.getByText('Next')).toBeInTheDocument()
-    expect(screen.getByText(/Showing 10 of 25 products - Page 1 - 3/)).toBeInTheDocument()
+    expect(screen.getByText(/Showing 1 to 10 of 25 products - Page 1 - 3/)).toBeInTheDocument()
   })
 
   it('renders empty state when no items', async () => {

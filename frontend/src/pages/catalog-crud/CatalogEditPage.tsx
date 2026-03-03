@@ -8,6 +8,7 @@
 import { useParams, Navigate } from 'react-router-dom'
 import { CatalogForm, type CatalogFormData } from '@/components/catalog/CatalogForm'
 import { useCatalogItem, useUpdateCatalogItem } from '@/hooks/useCatalogCRUD'
+import { ApiError } from '@/api/client'
 
 export function CatalogEditPage() {
   const { id } = useParams<{ id: string }>()
@@ -52,6 +53,13 @@ export function CatalogEditPage() {
     updateMutation.mutate(data)
   }
 
+  // Extract server validation errors from 400 response
+  const serverErrors = updateMutation.error instanceof ApiError &&
+    updateMutation.error.status === 400 &&
+    (updateMutation.error.details as { detail?: Record<string, string> })?.detail
+      ? (updateMutation.error.details as { detail: Record<string, string> }).detail
+      : null
+
   return (
     <div>
       <CatalogForm
@@ -60,6 +68,7 @@ export function CatalogEditPage() {
         productImage={productImage}
         onSubmit={handleSubmit}
         isSubmitting={updateMutation.isPending}
+        serverErrors={serverErrors}
       />
     </div>
   )

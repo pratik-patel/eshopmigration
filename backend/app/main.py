@@ -2,13 +2,16 @@
 FastAPI application entry point for eShop Catalog API.
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.responses import JSONResponse
 import structlog
+import traceback
 
 from app.config import get_settings
 from app.core.logging import configure_logging
+from app.core.exceptions import NotFoundException
 
 # Import routers
 from app.catalog.router import router as catalog_router
@@ -25,6 +28,36 @@ app = FastAPI(
     docs_url="/api/docs",
     redoc_url="/api/redoc",
 )
+
+
+# Exception handlers
+@app.exception_handler(NotFoundException)
+async def not_found_exception_handler(request: Request, exc: NotFoundException):
+    """Handle NotFoundException."""
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"detail": str(exc.detail)},
+    )
+
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Handle all unhandled exceptions."""
+    logger.error(
+        "api.unhandled_exception",
+        path=request.url.path,
+        method=request.method,
+        error=str(exc),
+        traceback=traceback.format_exc(),
+    )
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "detail": "Internal server error",
+            "error": str(exc),
+            "type": type(exc).__name__,
+        },
+    )
 
 # Get settings
 settings = get_settings()

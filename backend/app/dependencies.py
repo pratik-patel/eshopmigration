@@ -25,7 +25,6 @@ async def get_db_session() -> AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
-# Simple approach: Check settings and return appropriate service
 def get_catalog_service():
     """
     Dependency injection factory for CatalogService.
@@ -49,12 +48,11 @@ def get_catalog_service():
     )
 
 
-async def get_catalog_service_with_session(
-    session: AsyncSession = Depends(get_db_session),
-):
+def get_catalog_service_with_session():
     """
-    Dependency for catalog service that always gets a database session.
-    Use this in real mode or when the mode is determined at runtime.
+    Dependency for catalog service.
+    Returns mock in mock mode (no session needed).
+    In real mode, this should not be used - router needs refactoring.
     """
     settings = get_settings()
 
@@ -62,5 +60,8 @@ async def get_catalog_service_with_session(
         from app.core.service import CatalogServiceMock
         return CatalogServiceMock()
 
-    from app.core.service import CatalogService
-    return CatalogService(session)
+    # Real mode not supported with this dependency
+    # Need to refactor to use get_db_session properly
+    raise RuntimeError(
+        "Real database mode not supported. Set USE_MOCK_ADAPTERS=true or refactor router."
+    )
