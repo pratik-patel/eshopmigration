@@ -141,7 +141,7 @@ Edit `config.json` to customize behavior:
 ### Discovery Mode Output
 
 ```
-legacy-golden/<seam>/
+docs/legacy-golden/<seam>/
 ├── BASELINE_INDEX.md          # Human-readable summary
 ├── workflows.json             # Machine-readable workflows
 ├── discovery-summary.json     # Statistics
@@ -176,7 +176,7 @@ This skill integrates with Claude Code migration agents:
 Phase: 0 (UNDERSTAND)
 Agent: golden-baseline-capture
 Uses: /browser-agent discovery
-Output: legacy-golden/<seam>/BASELINE_INDEX.md
+Output: docs/legacy-golden/<seam>/BASELINE_INDEX.md
 ```
 
 ### 2. Parity Harness Generator Agent
@@ -310,7 +310,7 @@ Before using in production:
 - [ ] Verification script passes (`./verify-installation.sh`)
 - [ ] Test discovery run successful
 - [ ] Test verification run successful
-- [ ] Output directories created (`legacy-golden/`, `tests/parity/`)
+- [ ] Output directories created (`docs/legacy-golden/`, `tests/parity/`)
 - [ ] Legacy application accessible at specified URL
 - [ ] Modern application accessible (for verification mode)
 

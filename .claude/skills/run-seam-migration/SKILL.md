@@ -47,8 +47,15 @@ test -f "docs/context-fabric/seam-proposals.json"   || echo "❌ BLOCKED: Run le
 ui_behavior_count=$(find seams -name "ui-behavior.md" 2>/dev/null | wc -l)
 test $ui_behavior_count -ge 5 && echo "✅ UI behavior: $ui_behavior_count seams documented" || echo "⚠️  UI behavior: Only $ui_behavior_count seams (run ui-behavior-extractor)"
 
-# 3. Check golden baselines (CRITICAL FOR VALIDATION)
-if [ -d "legacy-golden" ] && [ -f "legacy-golden/BASELINE_INDEX.md" ]; then
+# 3. Check architecture design (REQUIRED after first seam requirements)
+# NOTE: Architecture runs AFTER first seam requirements (to be informed by actual needs)
+if [ ! -f "docs/architecture-design.md" ]; then
+    echo "⚠️  Architecture design not yet complete"
+    echo "   This is normal - architecture will be designed after first seam requirements"
+fi
+
+# 4. Check golden baselines (CRITICAL FOR VALIDATION)
+if [ -d "legacy-golden" ] && [ -f "docs/legacy-golden/BASELINE_INDEX.md" ]; then
     echo "✅ Golden baselines: captured"
 else
     echo "❌ WARNING: No golden baselines found"
@@ -91,21 +98,91 @@ Stop and report if any required prerequisite is missing. Do not attempt to work 
 
 ---
 
-## Phase 1 — Discovery
+## Phase 1 — Discovery (Technical Analysis)
 
 **Agent:** discovery
-**Input:** seam name, legacy codebase path from `docs/context-fabric/project-facts.json`, docs/context-fabric/ (if available)
-**Output:** `docs/seams/$ARGUMENTS/discovery.md`
+**Input:** seam name, `docs/seams/$ARGUMENTS/spec.md`, `docs/seams/$ARGUMENTS/ui-behavior.md`, legacy source files
+**Output:**
+- `docs/seams/$ARGUMENTS/discovery.md` (technical analysis)
+- `docs/seams/$ARGUMENTS/readiness.json` (GO/NO-GO)
+- `docs/seams/$ARGUMENTS/evidence-map.json` (call chains, flows)
+- `docs/seams/$ARGUMENTS/contracts/required-fields.json` (UI fields)
+- `docs/seams/$ARGUMENTS/data/targets.json` (read/write targets)
 
 **Gate — do not proceed until:**
 - [ ] All dependencies classified (In-Seam / Cross-Seam / External)
 - [ ] No unresolved UNKNOWN dependencies
 - [ ] At least 3 test scenarios documented
 - [ ] Cross-seam dependencies have a resolution note
+- [ ] Readiness status is GO (confidence: high/medium)
 
 ---
 
-## Phase 2 — Contract
+## Phase 2 — Requirements (Functional Specifications)
+
+**Agent:** requirements-generator
+**Input:**
+- **REQUIRED**: `docs/seams/$ARGUMENTS/discovery.md` (technical analysis)
+- **REQUIRED**: `docs/seams/$ARGUMENTS/ui-behavior.md` (UI structure)
+- Optional: `docs/context-fabric/business-rules.json`
+
+**Output:**
+- `docs/seams/$ARGUMENTS/requirements.md` (EARS-formatted functional requirements)
+
+**Process**:
+1. Read discovery.md (extract business rules, workflows, validation rules)
+2. Transform technical findings → EARS requirements
+3. Generate acceptance criteria (happy path, validation, error handling)
+4. Add Requirement 0 (if first seam): Project Scaffolding
+5. Add Requirement 0.5 (if UI seam): UI Layout & Navigation
+6. **Human review gate**: User MUST approve requirements
+
+**Gate — do not proceed until:**
+- [ ] Requirements generated with EARS patterns
+- [ ] All business rules from discovery.md captured
+- [ ] Scenario coverage complete (happy path, validation, business rules, error handling)
+- [ ] **User has explicitly approved requirements** (typed "approved")
+
+---
+
+## Phase 3 — Architecture Design (CRITICAL - First Seam Only)
+
+**Condition**: Only run if `docs/architecture-design.md` does NOT exist (first seam only)
+
+**Agent:** architecture-design
+**Input:**
+- **REQUIRED**: `docs/seams/$ARGUMENTS/requirements.md` (concrete functional needs)
+- **REQUIRED**: `docs/seams/$ARGUMENTS/discovery.md` (technical complexity, dependencies)
+- `docs/context-fabric/project-facts.json` (legacy tech stack)
+
+**Output:**
+- `docs/architecture-design.md` (comprehensive 15-section design document)
+
+**Process**:
+1. Read requirements.md → understand ACTUAL functional needs
+2. Read discovery.md → understand technical complexity
+3. Ask user for tech preferences (Python/Java? React/Vue? PostgreSQL/MongoDB?)
+4. Generate 15-section design document:
+   - Executive Summary, Architecture Overview, Component Architecture
+   - Data Architecture, Integration Architecture, Security Architecture
+   - Infrastructure & Deployment, Observability, DR, Cost, Risks, Decisions
+5. **Human review gate**: User MUST approve architecture
+
+**Gate — do not proceed until:**
+- [ ] Requirements inform architecture (not assumptions)
+- [ ] User has chosen tech stack (Python/FastAPI + React, etc.)
+- [ ] 15-section design document complete
+- [ ] **User has explicitly approved architecture** (typed "approved")
+
+**Why architecture runs here**:
+- ✅ Informed by REAL requirements (not guesses)
+- ✅ Based on concrete complexity (from discovery)
+- ✅ User sees what's needed BEFORE choosing tech stack
+- ✅ Architecture locked in for remaining seams
+
+---
+
+## Phase 4 — Contract
 
 **Agent:** contract-generator
 **Input:** `docs/seams/$ARGUMENTS/spec.md`, `docs/seams/$ARGUMENTS/discovery.md`
@@ -139,52 +216,88 @@ Stop and report if any required prerequisite is missing. Do not attempt to work 
 
 ---
 
-## Phase 2.75 — Data Strategy
-
-**Agent:** data-strategy
-**Input:** `docs/seams/$ARGUMENTS/discovery.md`
-**Output:** `docs/seams/$ARGUMENTS/data-strategy.md`, SQLAlchemy model signatures
-
-**Gate:**
-- [ ] Strategy chosen (Read-Only / Direct Write / New Tables)
-- [ ] If New Tables: user approval documented
-- [ ] SQLAlchemy model signatures match existing DB schema
-
----
-
 ## Phase 3 — Backend + Frontend (run in parallel)
 
-### 3a Backend
+### 3a Backend Implementation
 **Agent:** backend-migration
-**Input:** `docs/seams/$ARGUMENTS/contracts/openapi.yaml`, `docs/seams/$ARGUMENTS/discovery.md`, `docs/seams/$ARGUMENTS/data-strategy.md`
+**Input:** `docs/seams/$ARGUMENTS/contracts/openapi.yaml`, `docs/seams/$ARGUMENTS/discovery.md`, `docs/seams/$ARGUMENTS/requirements.md`
 **Output:** `backend/app/$ARGUMENTS/`
 
-**Gate:**
+**Note**: Backend agent will determine data strategy in Step 1 (read-only vs direct write vs new tables)
+
+**Gate 3a.1 — Quality Gates (enforced by backend-migration agent internally)**:
 ```bash
 cd backend
-pytest tests/unit/test_$ARGUMENTS_* -v --cov=app/$ARGUMENTS --cov-report=term-missing
-mypy app/$ARGUMENTS/
-ruff check app/$ARGUMENTS/
+# Build verification
+pytest --collect-only app/$ARGUMENTS/ tests/unit/test_$ARGUMENTS_*
+# Tests + Coverage
+pytest tests/unit/test_$ARGUMENTS_* -v --cov=app/$ARGUMENTS --cov-report=term-missing --cov-fail-under=80
+# Static Analysis
+ruff check app/$ARGUMENTS/ --select=ALL
+mypy app/$ARGUMENTS/ --strict --ignore-missing-imports
 ```
 - [ ] pytest exits 0, coverage ≥ 80%
 - [ ] mypy exits 0
 - [ ] ruff exits 0
 
-### 3b Frontend
+**Gate 3a.2 — Code & Security Review (MANDATORY)**:
+**Agent:** code-security-reviewer
+**Input:**
+- Changed files: all files in `backend/app/$ARGUMENTS/`
+- `docs/seams/$ARGUMENTS/requirements.md` (spec alignment)
+- `docs/seams/$ARGUMENTS/discovery.md` (legacy business rules)
+- `docs/architecture-design.md` (design patterns + security architecture)
+
+**Action:**
+1. Invoke Agent tool with `subagent_type="code-security-reviewer"`
+2. Wait for verdict: APPROVED | RECOMMENDATION | BLOCKER
+3. **If BLOCKER**: HALT pipeline, report to user, DO NOT PROCEED
+4. **If RECOMMENDATION**: Log recommendations in `docs/seams/$ARGUMENTS/review-notes.md`, proceed
+5. **If APPROVED**: Proceed to Phase 3b
+
+**DO NOT PROCEED to Phase 3b until code-security-reviewer returns APPROVED or RECOMMENDATION.**
+
+---
+
+### 3b Frontend Implementation
 **Agent:** frontend-migration
 **Input:** `docs/seams/$ARGUMENTS/contracts/openapi.yaml`, `docs/seams/$ARGUMENTS/ui-behavior.md` (primary UI reference), `docs/seams/$ARGUMENTS/discovery.md`, `docs/context-fabric/visual-controls-catalog.md`
 **Output:** `frontend/src/pages/$ARGUMENTS/`, `frontend/src/components/$ARGUMENTS/`
 
-**Gate:**
+**Gate 3b.1 — Quality Gates (enforced by frontend-migration agent internally)**:
 ```bash
 cd frontend
-npm run type-check
+# Build verification
+npx tsc --noEmit --project tsconfig.json
+npm run build
+# Tests + Coverage
+npm run test -- --coverage --coverageThreshold='{"global":{"statements":80,"branches":80,"functions":80,"lines":80}}' --run
+# Static Analysis
 npm run lint
-npm test -- $ARGUMENTS
+npm run format:check
 ```
-- [ ] type-check exits 0
-- [ ] lint exits 0
-- [ ] tests exit 0, coverage ≥ 70%
+- [ ] TypeScript compilation exits 0
+- [ ] Build exits 0
+- [ ] Tests exit 0, coverage ≥ 80% (all metrics)
+- [ ] Lint exits 0
+- [ ] Format check exits 0
+
+**Gate 3b.2 — Code & Security Review (MANDATORY)**:
+**Agent:** code-security-reviewer
+**Input:**
+- Changed files: all files in `frontend/src/pages/$ARGUMENTS/`, `frontend/src/components/$ARGUMENTS/`, `frontend/src/api/$ARGUMENTS.ts`, `frontend/src/hooks/use$ARGUMENTS*.ts`
+- `docs/seams/$ARGUMENTS/requirements.md` (spec alignment)
+- `docs/seams/$ARGUMENTS/ui-behavior.md` (UI structure)
+- `docs/architecture-design.md` (design patterns + security architecture)
+
+**Action:**
+1. Invoke Agent tool with `subagent_type="code-security-reviewer"`
+2. Wait for verdict: APPROVED | RECOMMENDATION | BLOCKER
+3. **If BLOCKER**: HALT pipeline, report to user, DO NOT PROCEED
+4. **If RECOMMENDATION**: Log recommendations, proceed to Phase 4
+5. **If APPROVED**: Proceed to Phase 4
+
+**DO NOT PROCEED to Phase 4 until code-security-reviewer returns APPROVED or RECOMMENDATION.**
 
 ---
 
@@ -203,12 +316,138 @@ pytest tests/integration/test_$ARGUMENTS_* -v
 
 ---
 
+## Phase 4.5 — Full-Stack Smoke Test (CRITICAL)
+
+**Purpose**: Verify backend and frontend work **together** end-to-end. Integration tests only test backend; this tests the full stack.
+
+### Step 1: Start Services
+
+```bash
+# Start backend
+cd backend && docker-compose up -d backend
+sleep 3
+
+# Start frontend dev server
+cd frontend && npm run dev &
+sleep 5
+```
+
+### Step 2: Health Checks
+
+```bash
+# Backend health check
+curl -f http://localhost:8000/api/health || {
+  echo "❌ Backend not responding"
+  exit 1
+}
+
+# Frontend health check
+curl -f http://localhost:5173/ || {
+  echo "❌ Frontend not responding"
+  exit 1
+}
+
+echo "✅ Services are running"
+```
+
+### Step 3: Contract Validation (Automated)
+
+```bash
+# Validate backend routes match contract
+python .claude/scripts/validate_contract_backend.py \
+  backend/app/$ARGUMENTS \
+  docs/seams/$ARGUMENTS/contracts/openapi.yaml || {
+    echo "❌ Backend contract validation failed"
+    exit 1
+  }
+
+# Validate frontend API calls match contract
+python .claude/scripts/validate_contract_frontend.py \
+  frontend/src \
+  docs/seams/$ARGUMENTS/contracts/openapi.yaml || {
+    echo "❌ Frontend contract validation failed"
+    exit 1
+  }
+
+echo "✅ Contract validation passed"
+```
+
+### Step 4: E2E Smoke Test (Playwright)
+
+```bash
+# Run Playwright smoke test
+cd frontend && npx playwright test tests/e2e/smoke/$ARGUMENTS.spec.ts --headed || {
+  echo "❌ E2E smoke test failed"
+  exit 1
+}
+
+echo "✅ E2E smoke test passed"
+```
+
+### Step 5: Visual Parity Check (If Screenshots Exist)
+
+```bash
+# Check if baseline screenshots exist
+if [ -d "docs/legacy-golden/$ARGUMENTS/screenshots" ]; then
+  echo "📸 Running visual parity check..."
+
+  # Take screenshot of current implementation
+  cd frontend && npx playwright screenshot \
+    http://localhost:5173/$ARGUMENTS \
+    --viewport-size 1920,1080 \
+    --output ../current-screenshot.png
+
+  # Compare with baseline
+  python .claude/scripts/compare_screenshots.py \
+    docs/legacy-golden/$ARGUMENTS/screenshots/main.png \
+    current-screenshot.png \
+    --threshold 85 \
+    --output diff.png || {
+      echo "⚠️  Visual parity below 85%"
+      echo "   Review diff.png for visual comparison"
+      echo "   Continue? (y/n)"
+      read -r response
+      if [ "$response" != "y" ]; then
+        exit 1
+      fi
+    }
+
+  echo "✅ Visual parity check passed"
+else
+  echo "⚠️  No baseline screenshots - skipping visual parity check"
+fi
+```
+
+### Step 6: Cleanup
+
+```bash
+# Stop services
+cd backend && docker-compose down
+kill %1  # Stop frontend dev server
+```
+
+**Gate:**
+- [ ] Backend responds to health check
+- [ ] Frontend loads without console errors
+- [ ] Backend routes match contract (automated validation)
+- [ ] Frontend API calls match contract (automated validation)
+- [ ] E2E smoke test passes (can navigate, view data, submit forms)
+- [ ] Visual similarity ≥ 85% (if screenshots available)
+
+**Why this matters**:
+- Catches FE/BE contract mismatches **before** code review
+- Verifies full stack works together (not just in isolation)
+- Validates visual appearance matches legacy
+- Much cheaper to fix now than after all code is merged
+
+---
+
 ## Phase 5 — Parity Tests (conditional)
 
-**Condition:** Run only if `legacy-golden/$ARGUMENTS/BASELINE_INDEX.md` exists.
+**Condition:** Run only if `docs/legacy-golden/$ARGUMENTS/BASELINE_INDEX.md` exists.
 
 **Agent:** parity-harness-generator
-**Input:** `legacy-golden/$ARGUMENTS/`, `docs/seams/$ARGUMENTS/contracts/openapi.yaml`
+**Input:** `docs/legacy-golden/$ARGUMENTS/`, `docs/seams/$ARGUMENTS/contracts/openapi.yaml`
 **Output:** `backend/tests/parity/`, `frontend/tests/e2e/parity/`
 
 Then run:

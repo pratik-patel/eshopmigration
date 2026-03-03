@@ -1,0 +1,65 @@
+{
+  "hooks": {
+    "post-write": {
+      "description": "Run code review and security analysis after writing code",
+      "command": "bash .claude/scripts/post-code-hook.sh \"{{file_path}}\"",
+      "background": false
+    },
+    "post-edit": {
+      "description": "Run code review and security analysis after editing code",
+      "command": "bash .claude/scripts/post-code-hook.sh \"{{file_path}}\"",
+      "background": false
+    },
+    "post-implementation": {
+      "description": "Run comprehensive quality checks after seam implementation",
+      "command": "bash .claude/scripts/post-implementation-hook.sh \"{{seam_name}}\"",
+      "background": false
+    }
+  },
+  "quality_gates": {
+    "code_coverage": {
+      "backend_minimum": 80,
+      "frontend_minimum": 75,
+      "critical_paths": 95
+    },
+    "security": {
+      "severity_threshold": "high",
+      "block_on_critical": true,
+      "auto_fix_enabled": true
+    },
+    "code_quality": {
+      "max_complexity": 10,
+      "max_function_lines": 50,
+      "max_file_lines": 500
+    }
+  },
+  "tools": {
+    "backend": {
+      "linter": "ruff",
+      "formatter": "black",
+      "type_checker": "mypy",
+      "security_scanner": "bandit",
+      "dependency_checker": "safety",
+      "coverage_tool": "pytest-cov"
+    },
+    "frontend": {
+      "linter": "eslint",
+      "formatter": "prettier",
+      "type_checker": "tsc",
+      "security_scanner": "npm audit",
+      "dependency_checker": "npm audit",
+      "coverage_tool": "vitest"
+    }
+  },
+  "auto_fix": {
+    "enabled": true,
+    "max_iterations": 3,
+    "fix_priorities": [
+      "critical_security",
+      "high_security",
+      "type_errors",
+      "linting_errors",
+      "formatting"
+    ]
+  }
+}

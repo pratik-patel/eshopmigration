@@ -56,10 +56,10 @@ fi
 **Usage**: `/browser-agent discovery http://localhost:8080`
 
 **Output**:
-- `legacy-golden/<seam>/screenshots/*.png` — UI state captures
-- `legacy-golden/<seam>/workflows.json` — Discovered user journeys
-- `legacy-golden/<seam>/ui-elements.json` — Interactive element inventory
-- `legacy-golden/<seam>/BASELINE_INDEX.md` — Summary index
+- `docs/legacy-golden/<seam>/screenshots/*.png` — UI state captures
+- `docs/legacy-golden/<seam>/workflows.json` — Discovered user journeys
+- `docs/legacy-golden/<seam>/ui-elements.json` — Interactive element inventory
+- `docs/legacy-golden/<seam>/BASELINE_INDEX.md` — Summary index
 
 ### Discovery Algorithm
 
@@ -120,10 +120,10 @@ fi
 **Usage**: `/browser-agent verify http://localhost:8080 --legacy http://old-app:8080 --modern http://localhost:5173`
 
 **Output**:
-- `legacy-golden/parity-results/{seam}/VERIFICATION_SUMMARY.md` — Executive summary with parity score
-- `legacy-golden/parity-results/{seam}/screenshots/` — Side-by-side comparisons with pixel diffs
-- `legacy-golden/parity-results/{seam}/feature-matrix.md` — Element-by-element comparison
-- `legacy-golden/parity-results/{seam}/issues.json` — Structured discrepancy data
+- `docs/legacy-golden/parity-results/{seam}/VERIFICATION_SUMMARY.md` — Executive summary with parity score
+- `docs/legacy-golden/parity-results/{seam}/screenshots/` — Side-by-side comparisons with pixel diffs
+- `docs/legacy-golden/parity-results/{seam}/feature-matrix.md` — Element-by-element comparison
+- `docs/legacy-golden/parity-results/{seam}/issues.json` — Structured discrepancy data
 
 ### Verification Algorithm
 
@@ -497,7 +497,7 @@ if (isReact) {
 
 1. **Initialize**
    ```bash
-   OUTPUT_DIR="./legacy-golden/<seam>" \
+   OUTPUT_DIR="./docs/legacy-golden/<seam>" \
    APP_URL="http://localhost:8080" \
    npx playwright test .claude/skills/browser-agent/scripts/discover.spec.ts
    ```
@@ -509,7 +509,7 @@ if (isReact) {
 
 3. **Output Structure**
    ```
-   legacy-golden/<seam>/
+   docs/legacy-golden/<seam>/
    ├── BASELINE_INDEX.md         # Human-readable summary
    ├── workflows.json            # Discovered journeys
    ├── ui-elements.json          # Element inventory
@@ -561,7 +561,7 @@ workflow:
   2. Agent invokes: /browser-agent discovery http://legacy-app:8080
   3. Agent reviews workflows.json
   4. Agent generates BASELINE_INDEX.md
-  5. Agent commits to legacy-golden/
+  5. Agent commits to docs/legacy-golden/
 ```
 
 ### 2. Parity Harness Generator Agent
@@ -571,7 +571,7 @@ dependencies:
   - browser-agent skill (verify mode)
   - golden baselines (from step 1)
 workflow:
-  1. Agent reads legacy-golden/<seam>/workflows.json
+  1. Agent reads docs/legacy-golden/<seam>/workflows.json
   2. Agent invokes: /browser-agent verify --seam <seam>
   3. Agent analyzes diff-report.html
   4. Agent generates parity test suite
@@ -701,7 +701,7 @@ try {
 
 ## Next Steps After Running Browser Agent
 
-1. **Review Output**: Check `legacy-golden/<seam>/BASELINE_INDEX.md`
+1. **Review Output**: Check `docs/legacy-golden/<seam>/BASELINE_INDEX.md`
 2. **Validate Workflows**: Ensure all critical workflows were discovered
 3. **Supplement**: Add manual screenshots for screens the agent couldn't reach
 4. **Document Blockers**: Note any screens requiring authentication or special setup

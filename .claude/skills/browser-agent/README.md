@@ -31,21 +31,21 @@ Explore a legacy application and capture UI workflows:
 
 # Direct command
 APP_URL="http://localhost:8080" \
-OUTPUT_DIR="./legacy-golden/my-seam" \
+OUTPUT_DIR="./docs/legacy-golden/my-seam" \
 MAX_DEPTH=3 \
 npm run discover
 
 # Generate baseline index
-npm run report:baseline ./legacy-golden/my-seam
+npm run report:baseline ./docs/legacy-golden/my-seam
 ```
 
 **Output:**
-- `legacy-golden/my-seam/BASELINE_INDEX.md` — Human-readable summary
-- `legacy-golden/my-seam/workflows.json` — Workflow definitions
-- `legacy-golden/my-seam/discovery-summary.json` — Statistics
-- `legacy-golden/my-seam/screenshots/` — UI captures
-- `legacy-golden/my-seam/elements_*.json` — Element inventories
-- `legacy-golden/my-seam/grid-data_*.json` — Extracted data
+- `docs/legacy-golden/my-seam/BASELINE_INDEX.md` — Human-readable summary
+- `docs/legacy-golden/my-seam/workflows.json` — Workflow definitions
+- `docs/legacy-golden/my-seam/discovery-summary.json` — Statistics
+- `docs/legacy-golden/my-seam/screenshots/` — UI captures
+- `docs/legacy-golden/my-seam/elements_*.json` — Element inventories
+- `docs/legacy-golden/my-seam/grid-data_*.json` — Extracted data
 
 ### Verification Mode
 
@@ -58,7 +58,7 @@ Compare legacy vs modern application:
 # Direct command
 LEGACY_URL="http://localhost:8080" \
 MODERN_URL="http://localhost:5173" \
-BASELINE_DIR="./legacy-golden/channels" \
+BASELINE_DIR="./docs/legacy-golden/channels" \
 OUTPUT_DIR="./tests/parity/channels" \
 npm run verify
 
@@ -110,7 +110,7 @@ workflow:
   1. Agent invokes: /browser-agent discovery http://legacy-app:8080
   2. Reviews workflows.json
   3. Generates BASELINE_INDEX.md
-  4. Commits to legacy-golden/
+  4. Commits to docs/legacy-golden/
 ```
 
 ### 2. Parity Harness Generator Agent
@@ -119,7 +119,7 @@ The `parity-harness-generator` agent uses this skill to verify parity:
 
 ```yaml
 workflow:
-  1. Reads legacy-golden/<seam>/workflows.json
+  1. Reads docs/legacy-golden/<seam>/workflows.json
   2. Invokes: /browser-agent verify --seam <seam>
   3. Analyzes diff-report.html
   4. Generates test suite
@@ -145,7 +145,7 @@ workflow:
 /browser-agent discovery http://localhost:8080/channels --seam channels
 ```
 
-Result: `legacy-golden/channels/BASELINE_INDEX.md` with 15 workflows captured
+Result: `docs/legacy-golden/channels/BASELINE_INDEX.md` with 15 workflows captured
 
 ### Example 2: Verify Archiver Parity
 

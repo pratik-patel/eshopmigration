@@ -34,13 +34,13 @@ cd .claude/skills/browser-agent
 
 ```bash
 # Open the baseline index
-code legacy-golden/channels/BASELINE_INDEX.md
+code docs/legacy-golden/channels/BASELINE_INDEX.md
 
 # View screenshots
-ls -la legacy-golden/channels/screenshots/
+ls -la docs/legacy-golden/channels/screenshots/
 
 # Check workflows
-cat legacy-golden/channels/workflows.json | jq '.[] | {name, steps: .steps | length}'
+cat docs/legacy-golden/channels/workflows.json | jq '.[] | {name, steps: .steps | length}'
 ```
 
 ### Step 4: Supplement with Manual Captures
@@ -49,17 +49,17 @@ If some screens require authentication or special setup:
 
 ```bash
 # Add manual screenshots to:
-# legacy-golden/channels/screenshots/manual_*.png
+# docs/legacy-golden/channels/screenshots/manual_*.png
 
 # Document in BASELINE_INDEX.md:
-echo "## Manual Captures" >> legacy-golden/channels/BASELINE_INDEX.md
-echo "- Login screen: manual_login.png" >> legacy-golden/channels/BASELINE_INDEX.md
+echo "## Manual Captures" >> docs/legacy-golden/channels/BASELINE_INDEX.md
+echo "- Login screen: manual_login.png" >> docs/legacy-golden/channels/BASELINE_INDEX.md
 ```
 
 ### Step 5: Commit Baseline
 
 ```bash
-git add legacy-golden/channels/
+git add docs/legacy-golden/channels/
 git commit -m "Add golden baseline for channels seam
 
 - Discovered 12 workflows
@@ -71,7 +71,7 @@ Co-Authored-By: Claude Opus 4.6 <noreply@anthropic.com>"
 
 **Expected Output:**
 ```
-legacy-golden/channels/
+docs/legacy-golden/channels/
 ├── BASELINE_INDEX.md          # ✅ 12 workflows documented
 ├── workflows.json             # ✅ Machine-readable definitions
 ├── discovery-summary.json     # ✅ Statistics
@@ -193,11 +193,11 @@ agent.invoke_skill("browser-agent", {
     "mode": "discovery",
     "url": legacy_app_url,
     "seam": current_seam,
-    "output": f"legacy-golden/{current_seam}"
+    "output": f"docs/legacy-golden/{current_seam}"
 })
 
 # Agent then reviews output
-workflows = agent.read_json(f"legacy-golden/{current_seam}/workflows.json")
+workflows = agent.read_json(f"docs/legacy-golden/{current_seam}/workflows.json")
 
 if len(workflows) < 3:
     agent.warn("Only {len(workflows)} workflows found. Manual supplement needed.")
@@ -210,12 +210,12 @@ agent.generate_baseline_index(current_seam)
 
 ```bash
 # Agent validates completeness
-test -f legacy-golden/channels/BASELINE_INDEX.md || echo "❌ Missing index"
-test -f legacy-golden/channels/workflows.json || echo "❌ Missing workflows"
-test -d legacy-golden/channels/screenshots || echo "❌ Missing screenshots"
+test -f docs/legacy-golden/channels/BASELINE_INDEX.md || echo "❌ Missing index"
+test -f docs/legacy-golden/channels/workflows.json || echo "❌ Missing workflows"
+test -d docs/legacy-golden/channels/screenshots || echo "❌ Missing screenshots"
 
 # Count screenshots
-screenshot_count=$(ls legacy-golden/channels/screenshots/*.png | wc -l)
+screenshot_count=$(ls docs/legacy-golden/channels/screenshots/*.png | wc -l)
 echo "📸 Captured $screenshot_count screenshots"
 
 # Expect at least 10 for a typical seam
@@ -351,7 +351,7 @@ cd .claude/skills/browser-agent
 ```typescript
 test('discover all grids', async ({ page }) => {
   const baseUrl = process.env.APP_URL || 'http://localhost:8080';
-  const outputDir = process.env.OUTPUT_DIR || './legacy-golden/grids';
+  const outputDir = process.env.OUTPUT_DIR || './docs/legacy-golden/grids';
 
   await page.goto(baseUrl);
 
@@ -501,8 +501,8 @@ done
 echo ""
 echo "📊 Summary:"
 for seam in "${SEAMS[@]}"; do
-    if [ -f "legacy-golden/$seam/BASELINE_INDEX.md" ]; then
-        workflow_count=$(grep -c "^### " "legacy-golden/$seam/BASELINE_INDEX.md" || echo 0)
+    if [ -f "docs/legacy-golden/$seam/BASELINE_INDEX.md" ]; then
+        workflow_count=$(grep -c "^### " "docs/legacy-golden/$seam/BASELINE_INDEX.md" || echo 0)
         echo "  $seam: $workflow_count workflows"
     else
         echo "  $seam: ❌ Not captured"
