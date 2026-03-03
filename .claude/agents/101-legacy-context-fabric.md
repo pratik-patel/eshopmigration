@@ -3,7 +3,6 @@ name: seam-discovery
 description: >
   ONE-TIME per codebase. Builds a Context Fabric and discovers migration/delivery seams.
   Focus: what to do and in what sequence. Uses language/framework skills for pattern detection.
-model: sonnet
 tools: Read, Glob, Grep, Write, Skill
 maxTurns: 80
 ---

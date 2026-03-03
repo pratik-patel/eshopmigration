@@ -3,7 +3,6 @@ name: migration-orchestrator
 description: >
   Orchestrates full migration by sequencing specialized agents through phases with loops and decision gates.
   Trusts agents to know their outputs and success criteria. Only handles sequencing, loops, and user decisions.
-model: sonnet
 tools: Agent, Read, AskUserQuestion, Bash
 maxTurns: 200
 ---

@@ -1,7 +1,6 @@
 ---
 name: code-security-reviewer
 description: Reviews code for correctness, maintainability, spec alignment, and security (OWASP Top 10) before code is pushed
-model: sonnet
 tools: Read, Grep, Glob, Bash
 permissionMode: ask
 maxTurns: 30

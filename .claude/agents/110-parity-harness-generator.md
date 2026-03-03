@@ -7,7 +7,6 @@ description: >
   Use after backend and frontend are implemented for a seam AND golden baselines exist.
   Requires docs/legacy-golden/{seam}/BASELINE_INDEX.md.
   Do NOT run if golden baselines have not been captured.
-model: sonnet
 tools: Read, Write, Edit, Bash, Skill, Agent
 ---
 

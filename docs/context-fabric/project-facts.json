@@ -1,0 +1,210 @@
+{
+  "discovery_date": "2026-03-03T00:00:00Z",
+  "codebase_roots": [
+    {
+      "path": "C:/Users/pratikp6/codebase/eShopModernizing/eShopModernizedWebFormsSolution",
+      "type": "primary",
+      "solution_file": "eShopModernizedWebForms.sln",
+      "framework": "ASP.NET WebForms",
+      "target_framework": ".NET Framework 4.7.2"
+    }
+  ],
+  "project_summary": {
+    "name": "eShopModernizedWebForms",
+    "application_type": "E-commerce Catalog Management",
+    "primary_language": "C#",
+    "framework": "ASP.NET WebForms",
+    "build_system": "MSBuild",
+    "dependency_injection": "Autofac",
+    "database": "SQL Server with Entity Framework 6",
+    "authentication": "OpenID Connect (Azure AD)"
+  },
+  "modules": [
+    {
+      "name": "eShopModernizedWebForms",
+      "path": "src/eShopModernizedWebForms",
+      "type": "Web Application",
+      "project_file": "eShopModernizedWebForms.csproj",
+      "in_scope": true,
+      "reason": "Main application containing catalog management functionality"
+    }
+  ],
+  "database_tables": [
+    {
+      "name": "Catalog",
+      "description": "Main product catalog items",
+      "foreign_keys": ["CatalogBrandId → CatalogBrand.Id", "CatalogTypeId → CatalogType.Id"]
+    },
+    {
+      "name": "CatalogBrand",
+      "description": "Product brands/manufacturers",
+      "foreign_keys": []
+    },
+    {
+      "name": "CatalogType",
+      "description": "Product categories/types",
+      "foreign_keys": []
+    }
+  ],
+  "entrypoints": [
+    {
+      "type": "web_page",
+      "path": "Default.aspx",
+      "route": "/",
+      "description": "Product catalog list with pagination",
+      "http_method": "GET",
+      "authentication_required": false
+    },
+    {
+      "type": "web_page",
+      "path": "Catalog/Create.aspx",
+      "route": "/Catalog/Create",
+      "description": "Create new catalog item",
+      "http_method": "GET/POST",
+      "authentication_required": true
+    },
+    {
+      "type": "web_page",
+      "path": "Catalog/Edit.aspx",
+      "route": "/Catalog/Edit/{id}",
+      "description": "Edit existing catalog item",
+      "http_method": "GET/POST",
+      "authentication_required": true
+    },
+    {
+      "type": "web_page",
+      "path": "Catalog/Details.aspx",
+      "route": "/Catalog/Details/{id}",
+      "description": "View catalog item details",
+      "http_method": "GET",
+      "authentication_required": false
+    },
+    {
+      "type": "web_page",
+      "path": "Catalog/Delete.aspx",
+      "route": "/Catalog/Delete/{id}",
+      "description": "Delete catalog item confirmation",
+      "http_method": "GET/POST",
+      "authentication_required": true
+    },
+    {
+      "type": "web_service",
+      "path": "Catalog/PicUploader.asmx",
+      "route": "/Catalog/PicUploader.asmx",
+      "description": "Image upload web service (AJAX)",
+      "http_method": "POST",
+      "authentication_required": false
+    }
+  ],
+  "external_integrations": [
+    {
+      "type": "azure_blob_storage",
+      "endpoint": "Azure Storage Account",
+      "usage": "Product image storage and retrieval",
+      "configuration_key": "StorageConnectionString",
+      "optional": true,
+      "fallback": "Local mock storage"
+    },
+    {
+      "type": "azure_active_directory",
+      "endpoint": "Azure AD OpenID Connect",
+      "usage": "User authentication for administrative operations",
+      "configuration_key": "AzureActiveDirectoryClientId",
+      "optional": true,
+      "fallback": "Skip authentication when disabled"
+    },
+    {
+      "type": "azure_key_vault",
+      "endpoint": "Azure Key Vault",
+      "usage": "Secure configuration storage",
+      "configuration_key": "KeyVaultName",
+      "optional": true,
+      "fallback": "User secrets or environment variables"
+    },
+    {
+      "type": "application_insights",
+      "endpoint": "Azure Application Insights",
+      "usage": "Telemetry and logging",
+      "configuration_key": "APPINSIGHTS_INSTRUMENTATIONKEY",
+      "optional": true,
+      "fallback": "Log4Net file logging"
+    }
+  ],
+  "technology_stack": {
+    "backend": {
+      "language": "C#",
+      "framework": "ASP.NET WebForms (.NET Framework 4.7.2)",
+      "data_access": "Entity Framework 6.3.0",
+      "dependency_injection": "Autofac 4.9.4",
+      "logging": "log4net",
+      "authentication": "Microsoft.Owin.Security.OpenIdConnect"
+    },
+    "frontend": {
+      "framework": "ASP.NET WebForms",
+      "styling": "Bootstrap (via bundling)",
+      "scripts": "jQuery (via bundling)",
+      "view_engine": "WebForms markup (.aspx)"
+    },
+    "database": {
+      "provider": "SQL Server",
+      "orm": "Entity Framework 6",
+      "connection_string_name": "CatalogDBContext"
+    }
+  },
+  "configuration_model": {
+    "storage": ["Web.config", "User Secrets", "Environment Variables", "Azure Key Vault"],
+    "key_settings": [
+      "UseMockData",
+      "UseCustomizationData",
+      "UseAzureStorage",
+      "UseAzureActiveDirectory",
+      "UseAzureManagedIdentity"
+    ]
+  },
+  "delivery_surfaces": [
+    {
+      "name": "catalog-list",
+      "type": "web_page",
+      "entrypoint": "Default.aspx",
+      "user_facing": true
+    },
+    {
+      "name": "catalog-create",
+      "type": "web_page",
+      "entrypoint": "Catalog/Create.aspx",
+      "user_facing": true
+    },
+    {
+      "name": "catalog-edit",
+      "type": "web_page",
+      "entrypoint": "Catalog/Edit.aspx",
+      "user_facing": true
+    },
+    {
+      "name": "catalog-details",
+      "type": "web_page",
+      "entrypoint": "Catalog/Details.aspx",
+      "user_facing": true
+    },
+    {
+      "name": "catalog-delete",
+      "type": "web_page",
+      "entrypoint": "Catalog/Delete.aspx",
+      "user_facing": true
+    },
+    {
+      "name": "image-upload",
+      "type": "web_service",
+      "entrypoint": "Catalog/PicUploader.asmx",
+      "user_facing": false
+    }
+  ],
+  "notes": [
+    "This is a simplified catalog management application without shopping cart or orders",
+    "Authentication is optional and controlled by UseAzureActiveDirectory config flag",
+    "Image storage can use Azure Blob Storage or local mock storage",
+    "Application uses HiLo pattern for generating catalog item IDs",
+    "Pagination is implemented at the application level (not database)",
+    "All catalog operations are synchronous (Entity Framework 6)"
+  ]
+}

@@ -1,4 +1,2 @@
-{"timestamp":"2026-03-03T13:31:06-05:00","event":"agent_started","agent":"","description":""}
-{"timestamp":"2026-03-03T13:32:28-05:00","event":"agent_completed","agent":"","status":"completed"}
-{"timestamp":"2026-03-03T13:33:04-05:00","event":"agent_completed","agent":"","status":"completed"}
-{"timestamp":"2026-03-03T13:35:20-05:00","event":"agent_completed","agent":"unknown-agent","status":"completed"}
+{"timestamp":"2026-03-03T13:45:17-05:00","event":"migration_started","mode":"semi-automated","workspace":"C:/Users/pratikp6/codebase/eShopModernizing/eShopModernizedWebFormsSolution","legacy_url":"http://localhost:50586/"}
+{"timestamp":"2026-03-03T13:45:32-05:00","event":"agent_started","agent":"unknown-agent","description":""}

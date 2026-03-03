@@ -4,7 +4,6 @@ description: >
   Per-seam specification agent that executes Spec-Driven Development workflow:
   Requirements → Design → Tasks → Contract.
   Produces implementation-ready specifications with EARS/INCOSE standards.
-model: sonnet
 tools: Read, Write, Glob, Bash, Skill
 permissionMode: acceptEdits
 maxTurns: 50

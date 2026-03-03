@@ -7,7 +7,6 @@ description: >
   MUST run on a machine with the legacy app accessible and running.
   Do NOT run on the development machine — baselines must come from the real system.
   **THIS AGENT MUST COMPLETE BEFORE ANY IMPLEMENTATION BEGINS**
-model: sonnet
 tools: Read, Write, Bash
 permissionMode: default
 ---
