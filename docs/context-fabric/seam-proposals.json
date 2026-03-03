@@ -1,0 +1,339 @@
+{
+  "version": "1.0",
+  "proposal_date": "2026-03-03T00:00:00Z",
+  "application": "eShopModernizedWebForms",
+  "total_seams": 1,
+  "migration_approach": "Single vertical slice (full application)",
+  "seams": [
+    {
+      "seam_id": "catalog-management",
+      "seam_name": "catalog-management",
+      "priority": 1,
+      "status": "proposed",
+      "description": "Complete product catalog management system with CRUD operations and image management",
+      "business_capability": "Product Catalog Management",
+      "user_workflows": [
+        "Browse product catalog with pagination",
+        "View product details",
+        "Create new products (authenticated users)",
+        "Edit existing products (authenticated users)",
+        "Delete products (authenticated users)",
+        "Upload and manage product images"
+      ],
+      "delivery_surfaces": [
+        {
+          "type": "web_page",
+          "name": "Product List",
+          "legacy_path": "Default.aspx",
+          "route": "/",
+          "modern_route": "/api/catalog",
+          "http_methods": ["GET"],
+          "authentication_required": false,
+          "operations": ["list", "search", "paginate"]
+        },
+        {
+          "type": "web_page",
+          "name": "Product Details",
+          "legacy_path": "Catalog/Details.aspx",
+          "route": "/Catalog/Details/{id}",
+          "modern_route": "/api/catalog/{id}",
+          "http_methods": ["GET"],
+          "authentication_required": false,
+          "operations": ["view"]
+        },
+        {
+          "type": "web_page",
+          "name": "Create Product",
+          "legacy_path": "Catalog/Create.aspx",
+          "route": "/Catalog/Create",
+          "modern_route": "/api/catalog",
+          "http_methods": ["GET", "POST"],
+          "authentication_required": true,
+          "operations": ["create"]
+        },
+        {
+          "type": "web_page",
+          "name": "Edit Product",
+          "legacy_path": "Catalog/Edit.aspx",
+          "route": "/Catalog/Edit/{id}",
+          "modern_route": "/api/catalog/{id}",
+          "http_methods": ["GET", "PUT"],
+          "authentication_required": true,
+          "operations": ["update"]
+        },
+        {
+          "type": "web_page",
+          "name": "Delete Product",
+          "legacy_path": "Catalog/Delete.aspx",
+          "route": "/Catalog/Delete/{id}",
+          "modern_route": "/api/catalog/{id}",
+          "http_methods": ["GET", "DELETE"],
+          "authentication_required": true,
+          "operations": ["delete"]
+        },
+        {
+          "type": "web_service",
+          "name": "Image Upload",
+          "legacy_path": "Catalog/PicUploader.asmx",
+          "route": "/Catalog/PicUploader.asmx",
+          "modern_route": "/api/catalog/images",
+          "http_methods": ["POST"],
+          "authentication_required": false,
+          "operations": ["upload"],
+          "security_note": "Legacy endpoint lacks authentication - must add in modern API"
+        }
+      ],
+      "data_ownership": {
+        "owned_tables": {
+          "writes": ["Catalog"],
+          "reads": ["Catalog", "CatalogType", "CatalogBrand"]
+        },
+        "sequences": ["catalog_hilo"],
+        "external_storage": ["Product images (Azure Blob or local mock)"],
+        "ownership_purity": 1.0,
+        "shared_writes": [],
+        "fk_relationships": [
+          "Catalog.CatalogTypeId → CatalogType.Id (within seam)",
+          "Catalog.CatalogBrandId → CatalogBrand.Id (within seam)"
+        ]
+      },
+      "services": {
+        "legacy": [
+          "ICatalogService (interface)",
+          "CatalogService (EF6 implementation)",
+          "CatalogServiceMock (test implementation)",
+          "IImageService (interface)",
+          "ImageAzureStorage (Azure Blob implementation)",
+          "ImageMockStorage (local mock implementation)"
+        ],
+        "modern_equivalents": [
+          "CatalogService (FastAPI async service)",
+          "ImageService (S3-compatible or local storage adapter)"
+        ]
+      },
+      "external_dependencies": [
+        {
+          "name": "Azure Blob Storage",
+          "type": "storage",
+          "purpose": "Product image storage",
+          "adapter_required": true,
+          "adapter_interface": "IImageService",
+          "migration_path": "Replace with S3-compatible storage or local storage adapter",
+          "blocker": false
+        },
+        {
+          "name": "Azure Active Directory",
+          "type": "authentication",
+          "purpose": "User authentication",
+          "adapter_required": false,
+          "migration_path": "Replace with JWT token authentication",
+          "blocker": false
+        },
+        {
+          "name": "SQL Server",
+          "type": "database",
+          "purpose": "Catalog data persistence",
+          "adapter_required": false,
+          "migration_path": "PostgreSQL or SQLite (async SQLAlchemy)",
+          "blocker": false
+        }
+      ],
+      "transaction_boundaries": [
+        {
+          "operation": "create_product",
+          "scope": "single_operation",
+          "tables": ["Catalog"],
+          "external_calls": ["Image storage (if image uploaded)"],
+          "consistency_model": "strong"
+        },
+        {
+          "operation": "update_product",
+          "scope": "single_operation",
+          "tables": ["Catalog"],
+          "external_calls": ["Image storage (if image changed)"],
+          "consistency_model": "strong"
+        },
+        {
+          "operation": "delete_product",
+          "scope": "single_operation",
+          "tables": ["Catalog"],
+          "external_calls": [],
+          "consistency_model": "strong",
+          "note": "Image deletion not implemented in legacy - should add in modern version"
+        }
+      ],
+      "cross_seam_dependencies": {
+        "hard_dependencies": [],
+        "soft_dependencies": [],
+        "shared_infrastructure": ["Authentication", "Logging", "Configuration"]
+      },
+      "blockers": [],
+      "complexity": "medium",
+      "estimated_effort": {
+        "discovery_days": 1,
+        "backend_migration_days": 4,
+        "frontend_migration_days": 3,
+        "testing_days": 2,
+        "total_days": 10
+      },
+      "risk_level": "low",
+      "risks": [
+        {
+          "risk": "HiLo sequence pattern incompatible with modern DB",
+          "mitigation": "Use database auto-increment or UUID generation",
+          "severity": "medium"
+        },
+        {
+          "risk": "Image upload service lacks authentication",
+          "mitigation": "Add JWT authentication to modern API endpoint",
+          "severity": "high"
+        },
+        {
+          "risk": "Synchronous Entity Framework 6 code",
+          "mitigation": "Rewrite with async SQLAlchemy 2.x",
+          "severity": "low"
+        }
+      ],
+      "verification_strategy": {
+        "functional_parity": [
+          "List products with pagination",
+          "View product details",
+          "Create product with image",
+          "Edit product and update image",
+          "Delete product",
+          "Upload image via AJAX"
+        ],
+        "non_functional_parity": [
+          "Response times < 500ms for list operations",
+          "Image upload handles files up to 5MB",
+          "Pagination supports up to 10,000 items"
+        ],
+        "data_migration_validation": [
+          "All Catalog records migrated",
+          "All CatalogType records migrated",
+          "All CatalogBrand records migrated",
+          "All product images accessible"
+        ]
+      },
+      "modern_architecture": {
+        "backend": {
+          "framework": "FastAPI (Python 3.12+)",
+          "api_pattern": "RESTful with OpenAPI spec",
+          "database": "PostgreSQL with async SQLAlchemy 2.x",
+          "authentication": "JWT bearer tokens",
+          "file_storage": "S3-compatible object storage or local filesystem"
+        },
+        "frontend": {
+          "framework": "React 18 with TypeScript",
+          "routing": "React Router v6",
+          "state_management": "TanStack Query for server state",
+          "styling": "Tailwind CSS + shadcn/ui",
+          "forms": "React Hook Form with Zod validation"
+        },
+        "api_endpoints": [
+          "GET /api/catalog?page={page}&size={size} - List products",
+          "GET /api/catalog/{id} - Get product details",
+          "POST /api/catalog - Create product (requires auth)",
+          "PUT /api/catalog/{id} - Update product (requires auth)",
+          "DELETE /api/catalog/{id} - Delete product (requires auth)",
+          "POST /api/catalog/images - Upload product image (requires auth)",
+          "GET /api/catalog/types - Get catalog types",
+          "GET /api/catalog/brands - Get catalog brands"
+        ]
+      },
+      "deployment_strategy": {
+        "approach": "Strangler fig pattern",
+        "steps": [
+          "Deploy modern API alongside legacy",
+          "Deploy modern React frontend",
+          "Route traffic to modern frontend",
+          "Redirect legacy pages to modern routes",
+          "Decommission legacy application"
+        ],
+        "rollback_plan": "DNS/load balancer switch back to legacy",
+        "smoke_tests": [
+          "List products loads",
+          "Create product works",
+          "Edit product works",
+          "Delete product works",
+          "Image upload works"
+        ]
+      },
+      "non_goals": [
+        "Shopping cart functionality (not in original application)",
+        "Order management (not in original application)",
+        "Customer management (not in original application)",
+        "Payment processing (not in original application)",
+        "Real-time inventory updates (not in original application)"
+      ]
+    }
+  ],
+  "migration_order": [
+    {
+      "sequence": 1,
+      "seam": "catalog-management",
+      "rationale": "Only seam in application - complete vertical slice"
+    }
+  ],
+  "shared_infrastructure": {
+    "authentication": {
+      "legacy": "Azure AD OpenID Connect (optional)",
+      "modern": "JWT bearer tokens with configurable identity provider"
+    },
+    "logging": {
+      "legacy": "log4net + Application Insights",
+      "modern": "structlog (JSON) + OpenTelemetry"
+    },
+    "configuration": {
+      "legacy": "Web.config + User Secrets + Azure Key Vault",
+      "modern": "pydantic-settings with .env files + environment variables"
+    },
+    "dependency_injection": {
+      "legacy": "Autofac",
+      "modern": "FastAPI Depends()"
+    }
+  },
+  "success_criteria": {
+    "functional": [
+      "All legacy pages migrated to modern UI",
+      "All CRUD operations work correctly",
+      "Image upload and display work correctly",
+      "Pagination works correctly"
+    ],
+    "non_functional": [
+      "API response times ≤ legacy times",
+      "Zero data loss during migration",
+      "Authentication works correctly",
+      "Image storage migration complete"
+    ],
+    "quality": [
+      "80% backend code coverage",
+      "75% frontend code coverage",
+      "All security scans pass",
+      "Lighthouse score > 90"
+    ]
+  },
+  "rollout_plan": {
+    "phase_1_poc": {
+      "scope": "Read-only operations (list, details)",
+      "duration_days": 5,
+      "deliverables": ["Modern API with GET endpoints", "React list and details pages"]
+    },
+    "phase_2_crud": {
+      "scope": "Write operations (create, edit, delete)",
+      "duration_days": 5,
+      "deliverables": ["Modern API with POST/PUT/DELETE endpoints", "React forms for CRUD"]
+    },
+    "phase_3_production": {
+      "scope": "Production deployment with rollback capability",
+      "duration_days": 3,
+      "deliverables": ["Production deployment", "Monitoring setup", "Documentation"]
+    }
+  },
+  "notes": [
+    "This is the entire application as a single seam - simplest migration path",
+    "No cross-seam coordination needed - clean boundaries",
+    "All external integrations have abstractions - easy to adapt",
+    "Main challenge: replacing Azure-specific services with modern equivalents"
+  ]
+}

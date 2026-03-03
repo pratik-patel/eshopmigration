@@ -1,0 +1,166 @@
+{
+  "version": "1.0",
+  "scoring_date": "2026-03-03T00:00:00Z",
+  "scoring_formula": "score = (cohesion * 10) + (ownership_purity * 10) + bonuses - penalties",
+  "scores": [
+    {
+      "seam_id": "catalog-management-full",
+      "name": "Complete Catalog Management",
+      "metrics": {
+        "cohesion": 0.95,
+        "cohesion_explanation": "All operations work on same domain model, share services, very tight coupling",
+        "ownership_purity": 1.0,
+        "ownership_explanation": "Exclusive writes to Catalog table, no shared writes with other seams",
+        "fk_purity": 1.0,
+        "fk_explanation": "All FK relationships (CatalogTypeId, CatalogBrandId) stay within seam",
+        "menu_alignment": 1.0,
+        "menu_explanation": "All catalog operations naturally grouped together",
+        "permission_coherence": 0.6,
+        "permission_explanation": "Mixed Anonymous + Authenticated - penalty for mixed permissions"
+      },
+      "bonuses": {
+        "fk_purity_bonus": 10,
+        "menu_alignment_bonus": 5,
+        "permission_coherence_bonus": 0,
+        "single_domain_bonus": 5,
+        "existing_service_abstraction_bonus": 5,
+        "total_bonuses": 25
+      },
+      "penalties": {
+        "cross_seam_hard_deps": 0,
+        "shared_writes": 0,
+        "fk_violations": 0,
+        "external_integration_blocker": 0,
+        "mixed_permissions": -3,
+        "transaction_span": 0,
+        "scc_splits": 0,
+        "total_penalties": -3
+      },
+      "final_score": 41.5,
+      "calculation": "(0.95 * 10) + (1.0 * 10) + 25 - 3 = 41.5",
+      "rank": 1,
+      "migration_ready": true,
+      "blockers": []
+    },
+    {
+      "seam_id": "catalog-public-view",
+      "name": "Public Catalog Viewing",
+      "metrics": {
+        "cohesion": 0.85,
+        "cohesion_explanation": "Read-only operations, good cohesion but incomplete functionality",
+        "ownership_purity": 1.0,
+        "ownership_explanation": "No writes - pure read operations",
+        "fk_purity": 1.0,
+        "fk_explanation": "All FK relationships stay within seam (read-only)",
+        "menu_alignment": 0.8,
+        "menu_alignment_bonus": "Read operations grouped, but missing write ops from same context",
+        "permission_coherence": 1.0,
+        "permission_explanation": "Single role (Anonymous) - perfect coherence"
+      },
+      "bonuses": {
+        "fk_purity_bonus": 10,
+        "menu_alignment_bonus": 4,
+        "permission_coherence_bonus": 3,
+        "read_only_safety_bonus": 5,
+        "public_api_bonus": 3,
+        "total_bonuses": 25
+      },
+      "penalties": {
+        "cross_seam_hard_deps": 0,
+        "shared_writes": 0,
+        "fk_violations": 0,
+        "external_integration_blocker": 0,
+        "mixed_permissions": 0,
+        "incomplete_functionality": -10,
+        "requires_coordination_with_admin_seam": -5,
+        "total_penalties": -15
+      },
+      "final_score": 28.5,
+      "calculation": "(0.85 * 10) + (1.0 * 10) + 25 - 15 = 28.5",
+      "rank": 2,
+      "migration_ready": true,
+      "blockers": [],
+      "dependencies": ["catalog-admin (for complete functionality)"]
+    },
+    {
+      "seam_id": "catalog-admin",
+      "name": "Catalog Administration",
+      "metrics": {
+        "cohesion": 0.9,
+        "cohesion_explanation": "All write operations together, good cohesion",
+        "ownership_purity": 1.0,
+        "ownership_explanation": "Exclusive writes to Catalog table",
+        "fk_purity": 1.0,
+        "fk_explanation": "All FK relationships stay within seam",
+        "menu_alignment": 1.0,
+        "menu_alignment_bonus": "All admin operations naturally grouped",
+        "permission_coherence": 1.0,
+        "permission_explanation": "Single role (Authenticated) - perfect coherence"
+      },
+      "bonuses": {
+        "fk_purity_bonus": 10,
+        "menu_alignment_bonus": 5,
+        "permission_coherence_bonus": 3,
+        "admin_isolation_bonus": 5,
+        "total_bonuses": 23
+      },
+      "penalties": {
+        "cross_seam_hard_deps": 0,
+        "shared_writes": 0,
+        "fk_violations": 0,
+        "external_integration_blocker": 0,
+        "mixed_permissions": 0,
+        "incomplete_functionality": -10,
+        "requires_coordination_with_public_seam": -5,
+        "image_upload_security_issue": -5,
+        "total_penalties": -20
+      },
+      "final_score": 22.0,
+      "calculation": "(0.9 * 10) + (1.0 * 10) + 23 - 20 = 22.0",
+      "rank": 3,
+      "migration_ready": true,
+      "blockers": [],
+      "dependencies": ["catalog-public-view (for listing/viewing functionality)"],
+      "security_concerns": ["Image upload service (PicUploader.asmx) lacks authentication"]
+    }
+  ],
+  "optimization_iterations": {
+    "iteration_1": {
+      "changes": "Initial scoring based on evidence",
+      "result": "catalog-management-full ranks highest"
+    },
+    "iteration_2": {
+      "attempted_improvements": "Considered merging read/write seams",
+      "result": "No improvement - catalog-management-full already optimal"
+    },
+    "iteration_3": {
+      "attempted_improvements": "Evaluated splitting by permission boundaries",
+      "result": "Creates coordination overhead, lowers overall score"
+    }
+  },
+  "final_recommendation": {
+    "selected_seam": "catalog-management-full",
+    "score": 41.5,
+    "justification": [
+      "Highest cohesion score - all operations work on same domain",
+      "Perfect data ownership purity - no shared writes",
+      "Clean FK boundaries - no cross-seam table references",
+      "Single domain simplifies migration and deployment",
+      "Can handle permission concerns at API endpoint level"
+    ],
+    "migration_strategy": "Single vertical slice migration",
+    "deployment_approach": "Can be deployed as single microservice or feature module"
+  },
+  "alternative_scenario": {
+    "condition": "If security isolation between public/admin is critical requirement",
+    "recommendation": "Deploy catalog-public-view + catalog-admin as separate seams",
+    "combined_score": 50.5,
+    "tradeoffs": [
+      "Better security isolation",
+      "Independent scaling of public vs admin traffic",
+      "More complex coordination and deployment",
+      "Shared database access requires careful management",
+      "Duplicate code/services across seams"
+    ]
+  }
+}

@@ -1,0 +1,281 @@
+{
+  "version": "1.0",
+  "generated_date": "2026-03-03T00:00:00Z",
+  "application": "eShopModernizedWebForms",
+  "total_assets": 6,
+  "assets_by_type": {
+    "images": 5,
+    "icons": 1,
+    "fonts": 0,
+    "videos": 0,
+    "documents": 0
+  },
+  "assets": [
+    {
+      "id": "brand-logo",
+      "path": "/images/brand.png",
+      "type": "image",
+      "format": "PNG",
+      "used_in": ["Site.Master"],
+      "usage_context": "Header navigation - company brand logo",
+      "usage_frequency": "every page",
+      "size_estimate": "< 50KB",
+      "alt_text": "eShop brand logo",
+      "confidence": "high",
+      "migration_action": "copy_to_public",
+      "modern_path": "public/images/brand.png",
+      "notes": "Used as clickable link to home page"
+    },
+    {
+      "id": "brand-logo-dark",
+      "path": "/images/brand_dark.png",
+      "type": "image",
+      "format": "PNG",
+      "used_in": ["Site.Master"],
+      "usage_context": "Footer - company brand logo (dark variant)",
+      "usage_frequency": "every page",
+      "size_estimate": "< 50KB",
+      "alt_text": "eShop brand logo",
+      "confidence": "high",
+      "migration_action": "copy_to_public",
+      "modern_path": "public/images/brand_dark.png",
+      "notes": "Used in footer section for contrast against dark background"
+    },
+    {
+      "id": "footer-text-image",
+      "path": "/images/main_footer_text.png",
+      "type": "image",
+      "format": "PNG",
+      "used_in": ["Site.Master"],
+      "usage_context": "Footer - footer text/tagline",
+      "usage_frequency": "every page",
+      "size_estimate": "< 100KB",
+      "dimensions": "335x26",
+      "alt_text": "footer text image",
+      "confidence": "high",
+      "migration_action": "replace_with_text",
+      "modern_equivalent": "Text element with CSS styling",
+      "notes": "Consider replacing with actual text for accessibility and SEO"
+    },
+    {
+      "id": "favicon",
+      "path": "/favicon.ico",
+      "type": "icon",
+      "format": "ICO",
+      "used_in": ["Site.Master"],
+      "usage_context": "Browser tab icon",
+      "usage_frequency": "every page",
+      "size_estimate": "< 10KB",
+      "confidence": "high",
+      "migration_action": "copy_to_public",
+      "modern_path": "public/favicon.ico",
+      "notes": "Standard browser favicon"
+    },
+    {
+      "id": "product-images",
+      "path": "/Pics/{filename}",
+      "type": "image",
+      "format": "JPEG/PNG/GIF",
+      "used_in": [
+        "Default.aspx",
+        "Details.aspx",
+        "Create.aspx",
+        "Edit.aspx",
+        "Delete.aspx"
+      ],
+      "usage_context": "Product images - thumbnails and full-size views",
+      "usage_frequency": "per product",
+      "size_estimate": "varies (< 5MB per image)",
+      "confidence": "high",
+      "migration_action": "migrate_to_storage",
+      "modern_storage": "S3-compatible object storage or local filesystem",
+      "modern_path": "storage/products/{filename} or CDN URL",
+      "notes": "Dynamic product images uploaded by users. Need to migrate existing images from /Pics/ directory or Azure Blob Storage. Supported formats: JPEG, PNG, GIF (validated in PicUploader.asmx)"
+    },
+    {
+      "id": "default-product-image",
+      "path": "dummy.png",
+      "type": "image",
+      "format": "PNG",
+      "used_in": [
+        "Create.aspx",
+        "Default.aspx (when product has no image)"
+      ],
+      "usage_context": "Default placeholder for products without uploaded images",
+      "usage_frequency": "per product without image",
+      "size_estimate": "< 50KB",
+      "alt_text": "Product placeholder",
+      "confidence": "high",
+      "migration_action": "copy_to_public",
+      "modern_path": "public/images/product-placeholder.png",
+      "notes": "Default image constant defined in CatalogItem.cs. Should be a neutral product placeholder."
+    }
+  ],
+  "asset_directories": [
+    {
+      "path": "/images/",
+      "purpose": "Static images (branding, UI elements)",
+      "migration_action": "copy_to_public",
+      "modern_path": "public/images/"
+    },
+    {
+      "path": "/Pics/",
+      "purpose": "User-uploaded product images",
+      "migration_action": "migrate_to_storage",
+      "modern_path": "storage/products/ or S3 bucket"
+    }
+  ],
+  "external_storage": [
+    {
+      "service": "Azure Blob Storage",
+      "purpose": "Product image storage (optional in legacy)",
+      "configuration_key": "CatalogConfiguration.UseAzureStorage",
+      "migration_path": "Replace with S3-compatible storage or local filesystem",
+      "notes": "Legacy app supports both local /Pics/ directory and Azure Blob Storage. Modern app should use configurable storage adapter (S3-compatible or local)."
+    }
+  ],
+  "asset_optimization_recommendations": [
+    {
+      "asset": "brand.png",
+      "recommendation": "Convert to SVG if possible for scalability and smaller size"
+    },
+    {
+      "asset": "brand_dark.png",
+      "recommendation": "Convert to SVG if possible for scalability and smaller size"
+    },
+    {
+      "asset": "main_footer_text.png",
+      "recommendation": "Replace with actual text using CSS for better accessibility and SEO"
+    },
+    {
+      "asset": "product images",
+      "recommendation": "Compress images on upload, generate thumbnails (multiple sizes), use WebP format with JPEG/PNG fallback"
+    },
+    {
+      "asset": "favicon.ico",
+      "recommendation": "Generate multi-size favicon (16x16, 32x32, 48x48) or use PNG with manifest.json"
+    }
+  ],
+  "asset_loading_patterns": {
+    "static_images": {
+      "legacy": "Direct <img> tag with src='/images/{filename}'",
+      "modern": "Import from public/ directory or use CDN URL"
+    },
+    "product_images": {
+      "legacy": "Server-side URL construction via ImageService.BuildUrlImage()",
+      "modern": "API returns full image URLs, React components render <img> with lazy loading"
+    },
+    "image_upload": {
+      "legacy": "AJAX POST to PicUploader.asmx, returns temp URL, final upload on form submit",
+      "modern": "React file upload component, POST to /api/catalog/images, returns permanent URL"
+    }
+  },
+  "accessibility_requirements": {
+    "alt_text": {
+      "required": true,
+      "examples": [
+        "Brand logo: 'eShop brand logo'",
+        "Product image: Product name or description",
+        "Placeholder: 'Product placeholder image'"
+      ]
+    },
+    "lazy_loading": {
+      "recommended": true,
+      "apply_to": ["Product thumbnails in list view", "Large product images"]
+    },
+    "responsive_images": {
+      "recommended": true,
+      "apply_to": ["Product images"],
+      "sizes": ["thumbnail (200x200)", "medium (400x400)", "large (800x800)"]
+    }
+  },
+  "migration_checklist": [
+    {
+      "task": "Copy static images to public/ directory",
+      "assets": ["brand.png", "brand_dark.png", "favicon.ico", "dummy.png"],
+      "status": "pending"
+    },
+    {
+      "task": "Optimize static images (compress, convert to SVG if possible)",
+      "assets": ["brand.png", "brand_dark.png"],
+      "status": "pending"
+    },
+    {
+      "task": "Replace footer text image with CSS-styled text",
+      "assets": ["main_footer_text.png"],
+      "status": "pending"
+    },
+    {
+      "task": "Migrate product images from /Pics/ or Azure Blob to modern storage",
+      "assets": ["Product images"],
+      "status": "pending"
+    },
+    {
+      "task": "Set up S3-compatible storage or local filesystem for product images",
+      "assets": ["Product images"],
+      "status": "pending"
+    },
+    {
+      "task": "Implement image upload API endpoint (/api/catalog/images)",
+      "assets": ["Product images"],
+      "status": "pending"
+    },
+    {
+      "task": "Implement image optimization (compression, thumbnails, WebP conversion)",
+      "assets": ["Product images"],
+      "status": "pending"
+    },
+    {
+      "task": "Add alt text to all images in React components",
+      "assets": ["All images"],
+      "status": "pending"
+    },
+    {
+      "task": "Implement lazy loading for product images",
+      "assets": ["Product images"],
+      "status": "pending"
+    },
+    {
+      "task": "Generate multi-size favicon or use manifest.json",
+      "assets": ["favicon.ico"],
+      "status": "pending"
+    }
+  ],
+  "image_service_interface": {
+    "legacy_interface": "IImageService",
+    "methods": [
+      {
+        "method": "BuildUrlImage(CatalogItem item)",
+        "purpose": "Generate product image URL",
+        "returns": "string (URL)"
+      },
+      {
+        "method": "UrlDefaultImage()",
+        "purpose": "Get default placeholder image URL",
+        "returns": "string (URL)"
+      },
+      {
+        "method": "UploadTempImage(HttpPostedFile file, int itemId)",
+        "purpose": "Upload image to temporary storage",
+        "returns": "string (temp URL)"
+      },
+      {
+        "method": "UpdateImage(CatalogItem item)",
+        "purpose": "Move temp image to permanent storage",
+        "returns": "void"
+      }
+    ],
+    "modern_equivalent": "ImageService class with async methods for S3-compatible storage",
+    "notes": "Modern service should support multiple storage backends (S3, Azure Blob, local filesystem) via adapter pattern"
+  },
+  "notes": [
+    "Total of 6 assets identified (5 images, 1 icon)",
+    "Product images are dynamic (user-uploaded) and need migration from /Pics/ or Azure Blob",
+    "Static branding images should be copied to public/ directory",
+    "Footer text image should be replaced with CSS-styled text for accessibility",
+    "Image upload service (PicUploader.asmx) must be replaced with authenticated REST API",
+    "Modern app should implement image optimization (compression, thumbnails, WebP)",
+    "All images must have alt text for accessibility",
+    "Consider using CDN for static assets in production"
+  ]
+}

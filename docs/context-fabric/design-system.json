@@ -1,0 +1,375 @@
+{
+  "version": "1.0",
+  "generated_date": "2026-03-03T00:00:00Z",
+  "application": "eShopModernizedWebForms",
+  "source": "Extracted from ASPX/CSS class names and Bootstrap framework usage",
+  "colors": {
+    "brand": {
+      "primary": "#0078D4",
+      "secondary": "#5C2D91",
+      "note": "Exact hex values not in ASPX files - using common Microsoft brand colors as reference"
+    },
+    "semantic": {
+      "success": "#5CB85C",
+      "danger": "#D9534F",
+      "warning": "#F0AD4E",
+      "info": "#5BC0DE",
+      "note": "Bootstrap 3 default semantic colors"
+    },
+    "text": {
+      "primary": "#333333",
+      "secondary": "#777777",
+      "danger": "#D9534F",
+      "note": "Bootstrap 3 default text colors"
+    },
+    "background": {
+      "body": "#FFFFFF",
+      "muted": "#F5F5F5",
+      "note": "Bootstrap 3 default backgrounds"
+    }
+  },
+  "typography": {
+    "fontFamily": {
+      "base": "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif",
+      "note": "Standard WebForms font stack"
+    },
+    "fontSize": {
+      "base": "14px",
+      "h1": "36px",
+      "h2": "30px",
+      "h3": "24px",
+      "h4": "18px",
+      "h5": "14px",
+      "h6": "12px",
+      "note": "Bootstrap 3 default font sizes"
+    },
+    "fontWeight": {
+      "normal": "400",
+      "bold": "700"
+    },
+    "lineHeight": {
+      "base": "1.428571429",
+      "note": "Bootstrap 3 default line height"
+    }
+  },
+  "spacing": {
+    "grid": {
+      "gutter": "30px",
+      "note": "Bootstrap 3 grid gutter width"
+    },
+    "padding": {
+      "xs": "5px",
+      "sm": "10px",
+      "md": "15px",
+      "lg": "20px",
+      "note": "Common padding values in Bootstrap 3"
+    },
+    "margin": {
+      "xs": "5px",
+      "sm": "10px",
+      "md": "15px",
+      "lg": "20px",
+      "note": "Common margin values in Bootstrap 3"
+    }
+  },
+  "components": {
+    "buttons": {
+      "base_class": "btn",
+      "variants": [
+        {
+          "class": "btn-default",
+          "description": "Default button style",
+          "usage": "Secondary actions"
+        },
+        {
+          "class": "btn-primary",
+          "description": "Primary button style",
+          "usage": "Main actions"
+        },
+        {
+          "class": "btn-success",
+          "description": "Success button style",
+          "usage": "Confirmation actions"
+        },
+        {
+          "class": "btn-danger",
+          "description": "Danger button style",
+          "usage": "Destructive actions"
+        }
+      ],
+      "custom_variants": [
+        {
+          "class": "esh-button",
+          "description": "Base eShop button style"
+        },
+        {
+          "class": "esh-button-primary",
+          "description": "Primary action button (e.g., Create, Save)"
+        },
+        {
+          "class": "esh-button-secondary",
+          "description": "Secondary action button (e.g., Cancel, Back)"
+        },
+        {
+          "class": "esh-button-upload",
+          "description": "File upload button"
+        }
+      ],
+      "padding": "6px 12px",
+      "border_radius": "4px",
+      "note": "Bootstrap 3 button defaults + custom eShop styles"
+    },
+    "forms": {
+      "base_class": "form-control",
+      "input_height": "34px",
+      "label_class": "control-label",
+      "form_group_class": "form-group",
+      "horizontal_form_class": "form-horizontal",
+      "note": "Bootstrap 3 form styles"
+    },
+    "tables": {
+      "base_class": "table",
+      "custom_classes": [
+        {
+          "class": "esh-table",
+          "description": "eShop table container"
+        },
+        {
+          "class": "esh-table-header",
+          "description": "eShop table header row"
+        },
+        {
+          "class": "esh-table-link",
+          "description": "Links within table cells"
+        }
+      ],
+      "note": "Bootstrap 3 table + custom eShop styles"
+    },
+    "images": {
+      "custom_classes": [
+        {
+          "class": "esh-thumbnail",
+          "description": "Product thumbnail in list view",
+          "usage": "Small product images in table rows"
+        },
+        {
+          "class": "esh-picture",
+          "description": "Full-size product image",
+          "usage": "Product details/edit/create pages"
+        }
+      ]
+    },
+    "pagination": {
+      "custom_classes": [
+        {
+          "class": "esh-pager",
+          "description": "Pagination container"
+        },
+        {
+          "class": "esh-pager-wrapper",
+          "description": "Inner pagination wrapper"
+        },
+        {
+          "class": "esh-pager-item",
+          "description": "Individual pagination item"
+        },
+        {
+          "class": "esh-pager-item--navigable",
+          "description": "Clickable pagination link"
+        },
+        {
+          "class": "esh-pager-item--hidden",
+          "description": "Hidden pagination item (e.g., disabled Previous/Next)"
+        }
+      ]
+    },
+    "navigation": {
+      "base_class": "navbar",
+      "variants": [
+        "navbar-light",
+        "navbar-static-top"
+      ],
+      "custom_classes": [
+        {
+          "class": "esh-header-brand",
+          "description": "Header brand/logo area"
+        },
+        {
+          "class": "esh-login-link",
+          "description": "Login/logout link styling"
+        }
+      ]
+    },
+    "layout": {
+      "custom_classes": [
+        {
+          "class": "esh-app-hero",
+          "description": "Hero banner section below header"
+        },
+        {
+          "class": "esh-header",
+          "description": "Header container within hero"
+        },
+        {
+          "class": "esh-header-title",
+          "description": "Main page title in hero"
+        },
+        {
+          "class": "esh-body-title",
+          "description": "Page-level title (h2)"
+        },
+        {
+          "class": "esh-app-footer",
+          "description": "Footer section"
+        },
+        {
+          "class": "esh-app-footer-brand",
+          "description": "Footer brand image"
+        },
+        {
+          "class": "esh-app-footer-text",
+          "description": "Footer text image"
+        }
+      ]
+    }
+  },
+  "grid_system": {
+    "framework": "Bootstrap 3",
+    "columns": 12,
+    "breakpoints": {
+      "xs": "< 768px",
+      "sm": "≥ 768px",
+      "md": "≥ 992px",
+      "lg": "≥ 1200px"
+    },
+    "container_widths": {
+      "sm": "750px",
+      "md": "970px",
+      "lg": "1170px"
+    },
+    "classes": [
+      "container",
+      "row",
+      "col-xs-*",
+      "col-sm-*",
+      "col-md-*",
+      "col-lg-*"
+    ]
+  },
+  "utility_classes": {
+    "visibility": [
+      "hidden",
+      "hidden-xs",
+      "hidden-sm",
+      "hidden-md",
+      "hidden-lg"
+    ],
+    "text_alignment": [
+      "text-left",
+      "text-center",
+      "text-right",
+      "text-justify"
+    ],
+    "text_colors": [
+      "text-muted",
+      "text-primary",
+      "text-success",
+      "text-info",
+      "text-warning",
+      "text-danger"
+    ],
+    "custom_utilities": [
+      {
+        "class": "esh-link-wrapper",
+        "description": "Wrapper for action links"
+      },
+      {
+        "class": "esh-button-actions",
+        "description": "Container for action buttons"
+      },
+      {
+        "class": "esh-price",
+        "description": "Price display styling"
+      },
+      {
+        "class": "esh-loader",
+        "description": "Loading spinner"
+      }
+    ]
+  },
+  "validation_styles": {
+    "classes": [
+      {
+        "class": "field-validation-valid",
+        "description": "Valid field state"
+      },
+      {
+        "class": "field-validation-error",
+        "description": "Invalid field state"
+      },
+      {
+        "class": "text-danger",
+        "description": "Error message text color"
+      }
+    ]
+  },
+  "modern_migration_mapping": {
+    "tailwind_config": {
+      "colors": {
+        "brand": {
+          "primary": "#0078D4",
+          "secondary": "#5C2D91"
+        },
+        "semantic": {
+          "success": "#5CB85C",
+          "danger": "#D9534F",
+          "warning": "#F0AD4E",
+          "info": "#5BC0DE"
+        }
+      },
+      "fontFamily": {
+        "sans": ["Segoe UI", "system-ui", "sans-serif"]
+      },
+      "fontSize": {
+        "xs": "0.75rem",
+        "sm": "0.875rem",
+        "base": "1rem",
+        "lg": "1.125rem",
+        "xl": "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "1.875rem",
+        "4xl": "2.25rem"
+      },
+      "spacing": {
+        "0": "0",
+        "1": "0.25rem",
+        "2": "0.5rem",
+        "3": "0.75rem",
+        "4": "1rem",
+        "5": "1.25rem",
+        "6": "1.5rem",
+        "8": "2rem",
+        "10": "2.5rem"
+      }
+    },
+    "component_mapping": {
+      "btn-default": "bg-gray-200 hover:bg-gray-300 text-gray-800",
+      "btn-primary": "bg-blue-600 hover:bg-blue-700 text-white",
+      "btn-success": "bg-green-600 hover:bg-green-700 text-white",
+      "btn-danger": "bg-red-600 hover:bg-red-700 text-white",
+      "form-control": "border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500",
+      "table": "min-w-full divide-y divide-gray-200",
+      "text-danger": "text-red-600",
+      "hidden": "hidden"
+    }
+  },
+  "notes": [
+    "Exact color values not in ASPX files - using common patterns as reference",
+    "Bootstrap 3 is the base framework - will migrate to Tailwind CSS",
+    "Custom .esh-* classes need to be mapped to Tailwind utilities",
+    "Spacing values follow Bootstrap 3 conventions (multiples of 5px)",
+    "Grid system uses Bootstrap 3 12-column layout",
+    "Modern migration should use shadcn/ui components with Tailwind",
+    "Ensure responsive breakpoints match Bootstrap 3 behavior for consistency"
+  ]
+}

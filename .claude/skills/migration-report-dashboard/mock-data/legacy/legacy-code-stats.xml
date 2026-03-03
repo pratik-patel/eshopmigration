@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mock Legacy Codebase Statistics -->
+<codebase timestamp="2026-03-03T00:00:00Z" application="eShopLegacy">
+
+  <!-- Lines of Code -->
+  <loc>
+    <total value="45820"/>
+    <by_language>
+      <language name="C#" lines="28450" percent="62.1"/>
+      <language name="ASPX" lines="8920" percent="19.5"/>
+      <language name="JavaScript" lines="5230" percent="11.4"/>
+      <language name="CSS" lines="2180" percent="4.8"/>
+      <language name="SQL" lines="1040" percent="2.3"/>
+    </by_language>
+    <breakdown>
+      <source lines="32560" percent="71.0"/>
+      <comments lines="5240" percent="11.4"/>
+      <blank lines="8020" percent="17.5"/>
+    </breakdown>
+  </loc>
+
+  <!-- File Count -->
+  <files>
+    <total count="156"/>
+    <by_type>
+      <type extension=".cs" count="42"/>
+      <type extension=".aspx" count="18"/>
+      <type extension=".aspx.cs" count="18"/>
+      <type extension=".js" count="15"/>
+      <type extension=".css" count="8"/>
+      <type extension=".asmx" count="3"/>
+      <type extension=".config" count="5"/>
+      <type extension=".sql" count="12"/>
+      <type extension="other" count="35"/>
+    </by_type>
+  </files>
+
+  <!-- Code Complexity -->
+  <complexity>
+    <cyclomatic_complexity>
+      <average value="12.5"/>
+      <max value="45"/>
+      <high_complexity_methods count="28" threshold="15"/>
+    </cyclomatic_complexity>
+
+    <maintainability_index>
+      <average value="58"/>
+      <low_maintainability_files count="15" threshold="40"/>
+    </maintainability_index>
+
+    <cognitive_complexity>
+      <average value="18.3"/>
+      <high_complexity_methods count="35" threshold="25"/>
+    </cognitive_complexity>
+  </complexity>
+
+  <!-- Technical Debt -->
+  <technical_debt>
+    <total_debt unit="hours" value="420"/>
+    <debt_ratio unit="percent" value="18.5"/>
+
+    <issues>
+      <critical count="12" hours="120"/>
+      <major count="45" hours="180"/>
+      <minor count="128" hours="120"/>
+    </issues>
+
+    <categories>
+      <category name="Code Smells" count="95" hours="190"/>
+      <category name="Bugs" count="28" hours="112"/>
+      <category name="Vulnerabilities" count="12" hours="96"/>
+      <category name="Duplications" count="50" hours="22"/>
+    </categories>
+  </technical_debt>
+
+  <!-- Duplication -->
+  <duplication>
+    <duplicated_lines value="4580" percent="10.0"/>
+    <duplicated_blocks count="185"/>
+    <duplicated_files count="42"/>
+  </duplication>
+
+  <!-- Dependencies -->
+  <dependencies>
+    <external_packages count="48"/>
+    <outdated_packages count="18"/>
+    <deprecated_apis count="7"/>
+
+    <major_frameworks>
+      <framework name=".NET Framework" version="4.8"/>
+      <framework name="Entity Framework" version="6.4.4"/>
+      <framework name="Autofac" version="4.9.4"/>
+      <framework name="log4net" version="2.0.8"/>
+      <framework name="Bootstrap" version="3.4.1"/>
+      <framework name="jQuery" version="3.4.1"/>
+    </major_frameworks>
+  </dependencies>
+
+  <!-- Code Quality Metrics -->
+  <quality>
+    <code_coverage unit="percent" value="42"/>
+    <test_count value="156"/>
+    <test_pass_rate unit="percent" value="94.2"/>
+
+    <linting_issues>
+      <errors count="0"/>
+      <warnings count="85"/>
+      <info count="245"/>
+    </linting_issues>
+  </quality>
+
+  <!-- Architecture -->
+  <architecture>
+    <pattern name="N-Tier (ASP.NET WebForms)"/>
+    <layers count="3">
+      <layer name="Presentation (ASPX Pages)" files="36"/>
+      <layer name="Business Logic (Services)" files="18"/>
+      <layer name="Data Access (EF6)" files="24"/>
+    </layers>
+
+    <coupling>
+      <afferent_coupling average="8.2"/>
+      <efferent_coupling average="6.5"/>
+      <instability average="0.44"/>
+    </coupling>
+  </architecture>
+
+  <!-- Team Metrics -->
+  <team>
+    <contributors count="8"/>
+    <commits count="1245"/>
+    <commit_frequency unit="per_month" value="85"/>
+    <active_branches count="3"/>
+  </team>
+
+</codebase>

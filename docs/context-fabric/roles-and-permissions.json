@@ -1,0 +1,119 @@
+{
+  "version": "1.0",
+  "extraction_date": "2026-03-03T00:00:00Z",
+  "authentication_model": "Azure Active Directory OpenID Connect (optional)",
+  "authorization_model": "Binary (authenticated vs anonymous)",
+  "roles": [
+    {
+      "name": "Anonymous",
+      "description": "Unauthenticated users",
+      "implicit": true
+    },
+    {
+      "name": "Authenticated",
+      "description": "Any user authenticated via Azure AD",
+      "implicit": true,
+      "source": "Request.IsAuthenticated"
+    }
+  ],
+  "permissions": [
+    {
+      "resource": "catalog-list",
+      "operation": "view",
+      "required_roles": ["Anonymous", "Authenticated"],
+      "page": "Default.aspx",
+      "route": "/"
+    },
+    {
+      "resource": "catalog-details",
+      "operation": "view",
+      "required_roles": ["Anonymous", "Authenticated"],
+      "page": "Catalog/Details.aspx",
+      "route": "/Catalog/Details/{id}"
+    },
+    {
+      "resource": "catalog-item",
+      "operation": "create",
+      "required_roles": ["Authenticated"],
+      "page": "Catalog/Create.aspx",
+      "route": "/Catalog/Create",
+      "enforcement": "OpenID Connect challenge redirect"
+    },
+    {
+      "resource": "catalog-item",
+      "operation": "update",
+      "required_roles": ["Authenticated"],
+      "page": "Catalog/Edit.aspx",
+      "route": "/Catalog/Edit/{id}",
+      "enforcement": "OpenID Connect challenge redirect"
+    },
+    {
+      "resource": "catalog-item",
+      "operation": "delete",
+      "required_roles": ["Authenticated"],
+      "page": "Catalog/Delete.aspx",
+      "route": "/Catalog/Delete/{id}",
+      "enforcement": "OpenID Connect challenge redirect"
+    },
+    {
+      "resource": "product-image",
+      "operation": "upload",
+      "required_roles": ["Anonymous"],
+      "page": "Catalog/PicUploader.asmx",
+      "route": "/Catalog/PicUploader.asmx",
+      "note": "Image upload service has no authentication - potential security issue"
+    }
+  ],
+  "access_control_implementation": {
+    "type": "Page-level checks",
+    "mechanism": "Page_Load event handler checks Request.IsAuthenticated",
+    "challenge_method": "Context.GetOwinContext().Authentication.Challenge",
+    "redirect_after_auth": "RedirectUri property in AuthenticationProperties"
+  },
+  "role_storage": {
+    "provider": "Azure Active Directory",
+    "local_storage": "None (no local user/role tables)",
+    "session_management": "ASP.NET session state (optional Redis)"
+  },
+  "permission_boundaries": {
+    "read_operations": {
+      "public": true,
+      "pages": ["Default.aspx", "Catalog/Details.aspx"],
+      "rationale": "E-commerce catalog should be publicly viewable"
+    },
+    "write_operations": {
+      "public": false,
+      "pages": ["Catalog/Create.aspx", "Catalog/Edit.aspx", "Catalog/Delete.aspx"],
+      "rationale": "Only authenticated users can modify catalog"
+    }
+  },
+  "seam_suggestions": {
+    "catalog-management-read": {
+      "operations": ["list", "details"],
+      "required_roles": ["Anonymous"],
+      "complexity": "low",
+      "can_be_public_api": true
+    },
+    "catalog-management-write": {
+      "operations": ["create", "update", "delete"],
+      "required_roles": ["Authenticated"],
+      "complexity": "medium",
+      "requires_authentication": true
+    }
+  },
+  "security_concerns": [
+    "PicUploader.asmx has no authentication - anyone can upload images",
+    "No role-based access control (RBAC) - all authenticated users have same permissions",
+    "No audit logging of who created/updated/deleted items",
+    "Authentication is optional (UseAzureActiveDirectory flag) - can be completely disabled",
+    "No fine-grained permissions (e.g., separate create vs delete permissions)"
+  ],
+  "migration_recommendations": [
+    "Implement proper JWT-based authentication in modern API",
+    "Add role-based access control (Admin, Editor, Viewer roles)",
+    "Protect image upload endpoint with authentication",
+    "Add audit columns (CreatedBy, CreatedAt, UpdatedBy, UpdatedAt) to database",
+    "Consider separating public catalog viewing from admin management",
+    "Implement rate limiting on public endpoints"
+  ]
+}

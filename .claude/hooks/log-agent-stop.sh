@@ -1,48 +1,27 @@
 #!/bin/bash
 # Log when an agent stops
 # Triggered by SubagentStop hook
+# FIXED: No jq dependency - uses pure bash
 
-# Read stdin input
+# Read stdin input (JSON data from Claude Code)
 INPUT=$(cat)
 
-# Try to extract agent name from multiple sources
-AGENT=""
+# Extract agent_type using pure bash (no jq required)
+AGENT=$(echo "$INPUT" | grep -oP '"agent_type"\s*:\s*"\K[^"]+' 2>/dev/null)
 
-# Method 1: From JSON input (stdin)
-if [ -n "$INPUT" ]; then
-    AGENT=$(echo "$INPUT" | jq -r '.subagent_type // .agent // .name // empty' 2>/dev/null)
-fi
-
-# Method 2: From environment variables
+# Fallback if empty
 if [ -z "$AGENT" ]; then
-    AGENT="${CLAUDE_AGENT_NAME:-${AGENT_NAME:-${SUBAGENT_TYPE:-}}}"
-fi
-
-# Method 3: From command line arguments
-if [ -z "$AGENT" ] && [ $# -gt 0 ]; then
-    AGENT="$1"
-fi
-
-# Method 4: Try to find from recent start log
-if [ -z "$AGENT" ] || [ "$AGENT" == "null" ]; then
-    if [ -f docs/tracking/migration-activity.jsonl ]; then
-        AGENT=$(tail -1 docs/tracking/migration-activity.jsonl | jq -r 'select(.event=="agent_started") | .agent' 2>/dev/null)
-    fi
-fi
-
-# Fallback
-if [ -z "$AGENT" ] || [ "$AGENT" == "null" ]; then
     AGENT="unknown-agent"
 fi
 
-# Get result/status
-RESULT=$(echo "$INPUT" | jq -r '.result // .status // "completed"' 2>/dev/null)
-if [ -z "$RESULT" ] || [ "$RESULT" == "null" ]; then
+# Get result/status using pure bash
+RESULT=$(echo "$INPUT" | grep -oP '"status"\s*:\s*"\K[^"]+' 2>/dev/null)
+if [ -z "$RESULT" ]; then
     RESULT="completed"
 fi
 
-# Get error if any
-ERROR=$(echo "$INPUT" | jq -r '.error // empty' 2>/dev/null)
+# Get error if any using pure bash
+ERROR=$(echo "$INPUT" | grep -oP '"error"\s*:\s*"\K[^"]+' 2>/dev/null)
 
 # Get timestamp
 TIMESTAMP=$(date -Iseconds)

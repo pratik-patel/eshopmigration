@@ -1,0 +1,434 @@
+{
+  "version": "1.0",
+  "generated_date": "2026-03-03T00:00:00Z",
+  "application": "eShopModernizedWebForms",
+  "main_menu": {
+    "type": "header_navigation",
+    "location": "Site.Master header",
+    "items": [
+      {
+        "label": "Brand Logo",
+        "type": "image_link",
+        "action": "navigate_home",
+        "target": "~/",
+        "route": "Default.aspx"
+      },
+      {
+        "label": "Sign in",
+        "type": "link",
+        "action": "trigger_authentication",
+        "visible_when": "anonymous",
+        "auth_mechanism": "OpenID Connect"
+      },
+      {
+        "label": "Hello, {username}!",
+        "type": "text",
+        "visible_when": "authenticated",
+        "dynamic": true
+      },
+      {
+        "label": "Sign out",
+        "type": "link",
+        "action": "logout",
+        "visible_when": "authenticated",
+        "target": "~/"
+      }
+    ]
+  },
+  "navigation_tree": {
+    "Default.aspx": {
+      "screen": "Product List",
+      "route": "/",
+      "auth_required": false,
+      "navigates_to": [
+        {
+          "target": "Create.aspx",
+          "trigger": "Create New button",
+          "modal": false,
+          "route": "/Catalog/Create",
+          "auth_required": true,
+          "returns_to": "Default.aspx"
+        },
+        {
+          "target": "Details.aspx",
+          "trigger": "Details link (per product)",
+          "modal": false,
+          "route": "/Catalog/Details/{id}",
+          "auth_required": false,
+          "parameter": "product ID"
+        },
+        {
+          "target": "Edit.aspx",
+          "trigger": "Edit link (per product)",
+          "modal": false,
+          "route": "/Catalog/Edit/{id}",
+          "auth_required": true,
+          "parameter": "product ID",
+          "returns_to": "Default.aspx"
+        },
+        {
+          "target": "Delete.aspx",
+          "trigger": "Delete link (per product)",
+          "modal": false,
+          "route": "/Catalog/Delete/{id}",
+          "auth_required": true,
+          "parameter": "product ID",
+          "returns_to": "Default.aspx"
+        },
+        {
+          "target": "Default.aspx (paginated)",
+          "trigger": "Previous/Next pagination",
+          "modal": false,
+          "route": "/products/{index}/{size}",
+          "auth_required": false,
+          "parameters": ["page index", "page size"]
+        }
+      ]
+    },
+    "Details.aspx": {
+      "screen": "Product Details",
+      "route": "/Catalog/Details/{id}",
+      "auth_required": false,
+      "navigates_to": [
+        {
+          "target": "Default.aspx",
+          "trigger": "Back to list button",
+          "modal": false,
+          "route": "~/"
+        },
+        {
+          "target": "Edit.aspx",
+          "trigger": "Edit button",
+          "modal": false,
+          "route": "/Catalog/Edit/{id}",
+          "auth_required": true,
+          "parameter": "product ID"
+        }
+      ]
+    },
+    "Create.aspx": {
+      "screen": "Create Product",
+      "route": "/Catalog/Create",
+      "auth_required": true,
+      "navigates_to": [
+        {
+          "target": "Default.aspx",
+          "trigger": "Cancel button",
+          "modal": false,
+          "route": "~/"
+        },
+        {
+          "target": "Default.aspx",
+          "trigger": "Create button (success)",
+          "modal": false,
+          "route": "~/",
+          "note": "After successful product creation"
+        }
+      ],
+      "external_services": [
+        {
+          "service": "PicUploader.asmx",
+          "trigger": "Image file selection",
+          "type": "AJAX",
+          "method": "POST",
+          "purpose": "Upload temporary product image"
+        }
+      ]
+    },
+    "Edit.aspx": {
+      "screen": "Edit Product",
+      "route": "/Catalog/Edit/{id}",
+      "auth_required": true,
+      "navigates_to": [
+        {
+          "target": "Default.aspx",
+          "trigger": "Cancel button",
+          "modal": false,
+          "route": "~/"
+        },
+        {
+          "target": "Default.aspx",
+          "trigger": "Save button (success)",
+          "modal": false,
+          "route": "~/",
+          "note": "After successful product update"
+        }
+      ],
+      "external_services": [
+        {
+          "service": "PicUploader.asmx",
+          "trigger": "Image file selection",
+          "type": "AJAX",
+          "method": "POST",
+          "purpose": "Upload temporary product image"
+        }
+      ]
+    },
+    "Delete.aspx": {
+      "screen": "Delete Confirmation",
+      "route": "/Catalog/Delete/{id}",
+      "auth_required": true,
+      "navigates_to": [
+        {
+          "target": "Default.aspx",
+          "trigger": "Cancel button",
+          "modal": false,
+          "route": "~/"
+        },
+        {
+          "target": "Default.aspx",
+          "trigger": "Delete button (success)",
+          "modal": false,
+          "route": "~/",
+          "note": "After successful product deletion"
+        }
+      ]
+    }
+  },
+  "route_mapping": [
+    {
+      "legacy_route": "/",
+      "legacy_page": "Default.aspx",
+      "modern_route": "/catalog",
+      "modern_component": "CatalogListPage",
+      "http_methods": ["GET"],
+      "query_params": ["page", "size"],
+      "note": "Consider making /catalog the default route or keep / as root"
+    },
+    {
+      "legacy_route": "/products/{index}/{size}",
+      "legacy_page": "Default.aspx",
+      "modern_route": "/catalog?page={index}&size={size}",
+      "modern_component": "CatalogListPage",
+      "http_methods": ["GET"],
+      "note": "Convert route params to query params for better REST API design"
+    },
+    {
+      "legacy_route": "/Catalog/Details/{id}",
+      "legacy_page": "Details.aspx",
+      "modern_route": "/catalog/{id}",
+      "modern_component": "CatalogDetailPage",
+      "http_methods": ["GET"],
+      "note": "Simplified route structure"
+    },
+    {
+      "legacy_route": "/Catalog/Create",
+      "legacy_page": "Create.aspx",
+      "modern_route": "/catalog/create",
+      "modern_component": "CatalogCreatePage",
+      "http_methods": ["GET"],
+      "auth_required": true,
+      "note": "Lower-case route for consistency"
+    },
+    {
+      "legacy_route": "/Catalog/Edit/{id}",
+      "legacy_page": "Edit.aspx",
+      "modern_route": "/catalog/{id}/edit",
+      "modern_component": "CatalogEditPage",
+      "http_methods": ["GET"],
+      "auth_required": true,
+      "note": "RESTful route structure"
+    },
+    {
+      "legacy_route": "/Catalog/Delete/{id}",
+      "legacy_page": "Delete.aspx",
+      "modern_route": null,
+      "modern_component": "DeleteConfirmationDialog (modal)",
+      "http_methods": null,
+      "auth_required": true,
+      "note": "Replace with modal dialog on list or detail page instead of separate page"
+    }
+  ],
+  "api_endpoint_mapping": [
+    {
+      "frontend_route": "/catalog",
+      "api_endpoint": "GET /api/catalog",
+      "query_params": ["page", "size"],
+      "response_model": "PaginatedCatalogItemsResponse",
+      "purpose": "List products with pagination"
+    },
+    {
+      "frontend_route": "/catalog/{id}",
+      "api_endpoint": "GET /api/catalog/{id}",
+      "path_params": ["id"],
+      "response_model": "CatalogItemDetailResponse",
+      "purpose": "Get product details"
+    },
+    {
+      "frontend_route": "/catalog/create",
+      "api_endpoint": "POST /api/catalog",
+      "request_model": "CreateCatalogItemRequest",
+      "response_model": "CatalogItemResponse",
+      "purpose": "Create new product",
+      "auth_required": true
+    },
+    {
+      "frontend_route": "/catalog/{id}/edit",
+      "api_endpoint": "PUT /api/catalog/{id}",
+      "path_params": ["id"],
+      "request_model": "UpdateCatalogItemRequest",
+      "response_model": "CatalogItemResponse",
+      "purpose": "Update existing product",
+      "auth_required": true
+    },
+    {
+      "frontend_route": "/catalog/{id} (delete action)",
+      "api_endpoint": "DELETE /api/catalog/{id}",
+      "path_params": ["id"],
+      "response_model": "DeleteResponse",
+      "purpose": "Delete product",
+      "auth_required": true
+    },
+    {
+      "frontend_component": "ImageUpload",
+      "api_endpoint": "POST /api/catalog/images",
+      "request_model": "multipart/form-data",
+      "response_model": "ImageUploadResponse",
+      "purpose": "Upload product image",
+      "auth_required": true,
+      "legacy_endpoint": "/Catalog/PicUploader.asmx",
+      "security_note": "Legacy endpoint lacks authentication - MUST secure in modern API"
+    },
+    {
+      "frontend_route": "/catalog/create",
+      "api_endpoint": "GET /api/catalog/types",
+      "response_model": "CatalogTypesResponse",
+      "purpose": "Get catalog types for dropdown"
+    },
+    {
+      "frontend_route": "/catalog/create",
+      "api_endpoint": "GET /api/catalog/brands",
+      "response_model": "CatalogBrandsResponse",
+      "purpose": "Get catalog brands for dropdown"
+    }
+  ],
+  "keyboard_shortcuts": {
+    "note": "Legacy application does not implement keyboard shortcuts",
+    "modern_recommendations": [
+      {
+        "key": "Ctrl+N",
+        "action": "Create new product",
+        "route": "/catalog/create"
+      },
+      {
+        "key": "Esc",
+        "action": "Close modal/dialog",
+        "scope": "Global"
+      },
+      {
+        "key": "Ctrl+S",
+        "action": "Save form",
+        "scope": "Create/Edit pages"
+      }
+    ]
+  },
+  "breadcrumbs": {
+    "note": "Legacy application does not implement breadcrumbs",
+    "modern_recommendations": [
+      {
+        "route": "/catalog",
+        "breadcrumb": "Catalog"
+      },
+      {
+        "route": "/catalog/{id}",
+        "breadcrumb": "Catalog > {Product Name}"
+      },
+      {
+        "route": "/catalog/create",
+        "breadcrumb": "Catalog > Create Product"
+      },
+      {
+        "route": "/catalog/{id}/edit",
+        "breadcrumb": "Catalog > {Product Name} > Edit"
+      }
+    ]
+  },
+  "authentication_flows": {
+    "sign_in": {
+      "trigger": "Click 'Sign in' link in header",
+      "legacy_mechanism": "OWIN OpenID Connect challenge",
+      "modern_mechanism": "Redirect to /login, JWT token-based authentication",
+      "redirect_after_login": "Original requested page or /"
+    },
+    "sign_out": {
+      "trigger": "Click 'Sign out' link in header",
+      "legacy_mechanism": "OWIN SignOut, redirect to /",
+      "modern_mechanism": "Clear JWT token, redirect to /",
+      "redirect_after_logout": "/"
+    },
+    "protected_page_access": {
+      "trigger": "Unauthenticated user navigates to Create/Edit/Delete",
+      "legacy_mechanism": "Page_Load checks Request.IsAuthenticated, triggers OWIN challenge",
+      "modern_mechanism": "React protected route wrapper, redirect to /login with return URL"
+    }
+  },
+  "navigation_patterns": {
+    "list_to_detail": {
+      "pattern": "Click product name or Details link",
+      "navigation_type": "Full page navigation",
+      "modern_equivalent": "React Router navigation"
+    },
+    "list_to_create": {
+      "pattern": "Click Create New button",
+      "navigation_type": "Full page navigation",
+      "modern_equivalent": "React Router navigation"
+    },
+    "list_to_edit": {
+      "pattern": "Click Edit link on product row",
+      "navigation_type": "Full page navigation",
+      "modern_equivalent": "React Router navigation"
+    },
+    "list_to_delete": {
+      "pattern": "Click Delete link on product row",
+      "navigation_type": "Full page navigation",
+      "modern_equivalent": "Modal dialog (no navigation)",
+      "note": "Modern UX: show confirmation dialog instead of separate page"
+    },
+    "form_submission": {
+      "pattern": "Click Create/Save button",
+      "navigation_type": "Postback, then redirect to list",
+      "modern_equivalent": "API call, then React Router navigate on success"
+    },
+    "form_cancel": {
+      "pattern": "Click Cancel button",
+      "navigation_type": "Immediate navigation to list",
+      "modern_equivalent": "React Router navigate (no API call)"
+    }
+  },
+  "modern_navigation_enhancements": [
+    {
+      "enhancement": "Delete confirmation modal",
+      "description": "Replace Delete.aspx with modal dialog on list/detail pages",
+      "benefits": ["Fewer page loads", "Better UX", "Faster interaction"]
+    },
+    {
+      "enhancement": "Inline editing",
+      "description": "Allow quick edits directly in the product list table",
+      "benefits": ["Faster edits for simple changes", "Reduced navigation"]
+    },
+    {
+      "enhancement": "Bulk operations",
+      "description": "Add ability to select multiple products and perform bulk actions (delete, update status)",
+      "benefits": ["Improved efficiency for power users"]
+    },
+    {
+      "enhancement": "Search and filters",
+      "description": "Add search bar and filters (by brand, type, price range) on list page",
+      "benefits": ["Improved product discovery", "Better UX for large catalogs"]
+    },
+    {
+      "enhancement": "Breadcrumb navigation",
+      "description": "Add breadcrumbs for better context and navigation",
+      "benefits": ["Improved orientation", "Quick navigation to parent pages"]
+    }
+  ],
+  "notes": [
+    "All navigation is server-side (full page loads) in legacy app",
+    "Modern app will use React Router for client-side navigation",
+    "Delete confirmation should be modal dialog, not separate page",
+    "Consider adding search, filters, and bulk operations in modern app",
+    "Authentication flow should use JWT tokens instead of OpenID Connect session cookies",
+    "Image upload service (PicUploader.asmx) must be secured with authentication",
+    "Route structure simplified for REST API conventions (lower-case, query params for pagination)"
+  ]
+}

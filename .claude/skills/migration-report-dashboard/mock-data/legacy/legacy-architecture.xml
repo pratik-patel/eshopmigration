@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mock Legacy Architecture Description -->
+<architecture timestamp="2026-03-03T00:00:00Z" application="eShopLegacy">
+
+  <!-- Overview -->
+  <overview>
+    <pattern name="N-Tier Architecture (ASP.NET WebForms)"/>
+    <framework name=".NET Framework" version="4.8"/>
+    <deployment_model>Monolithic Web Application</deployment_model>
+    <hosting>IIS 10.0 on Windows Server 2019</hosting>
+  </overview>
+
+  <!-- Architectural Layers -->
+  <layers>
+
+    <!-- Presentation Layer -->
+    <layer name="Presentation" type="UI">
+      <description>ASP.NET WebForms pages with server-side rendering</description>
+      <technology>ASPX Pages, ViewState, Server Controls</technology>
+      <components>
+        <component name="Default.aspx" type="page">
+          <responsibility>Product list display with pagination</responsibility>
+          <dependencies>CatalogService, CatalogViewModel</dependencies>
+        </component>
+        <component name="Catalog/Details.aspx" type="page">
+          <responsibility>Product details display</responsibility>
+          <dependencies>CatalogService, CatalogItemDetail</dependencies>
+        </component>
+        <component name="Catalog/Create.aspx" type="page">
+          <responsibility>Product creation form</responsibility>
+          <dependencies>CatalogService, ImageService, CatalogItemViewModel</dependencies>
+        </component>
+        <component name="Catalog/Edit.aspx" type="page">
+          <responsibility>Product editing form</responsibility>
+          <dependencies>CatalogService, ImageService, CatalogItemViewModel</dependencies>
+        </component>
+        <component name="Catalog/Delete.aspx" type="page">
+          <responsibility>Product deletion confirmation</responsibility>
+          <dependencies>CatalogService</dependencies>
+        </component>
+        <component name="Site.Master" type="master_page">
+          <responsibility>Common layout, navigation, styles</responsibility>
+          <dependencies>Bootstrap 3.4.1, jQuery 3.4.1</dependencies>
+        </component>
+      </components>
+      <communication_pattern>Postback (synchronous)</communication_pattern>
+      <state_management>ViewState, Session State</state_management>
+    </layer>
+
+    <!-- Business Logic Layer -->
+    <layer name="Business Logic" type="service">
+      <description>Service layer with business rules and orchestration</description>
+      <technology>C# Classes, Dependency Injection (Autofac)</technology>
+      <components>
+        <component name="ICatalogService" type="interface">
+          <responsibility>Catalog operations abstraction</responsibility>
+          <methods>
+            <method name="GetCatalogItems" return_type="PaginatedItems&lt;CatalogItem&gt;"/>
+            <method name="GetCatalogItem" return_type="CatalogItem"/>
+            <method name="CreateCatalogItem" return_type="int"/>
+            <method name="UpdateCatalogItem" return_type="void"/>
+            <method name="DeleteCatalogItem" return_type="void"/>
+            <method name="GetCatalogTypes" return_type="List&lt;CatalogType&gt;"/>
+            <method name="GetCatalogBrands" return_type="List&lt;CatalogBrand&gt;"/>
+          </methods>
+        </component>
+        <component name="CatalogService" type="class">
+          <responsibility>Catalog business logic implementation</responsibility>
+          <dependencies>CatalogDBContext, IMapper, IHiLoSequence</dependencies>
+          <patterns>Repository Pattern, Unit of Work</patterns>
+        </component>
+        <component name="IImageService" type="interface">
+          <responsibility>Image storage abstraction</responsibility>
+          <methods>
+            <method name="UploadImage" return_type="string"/>
+            <method name="GetImageUrl" return_type="string"/>
+            <method name="DeleteImage" return_type="void"/>
+          </methods>
+        </component>
+        <component name="ImageAzureStorage" type="class">
+          <responsibility>Azure Blob Storage implementation</responsibility>
+          <dependencies>Azure.Storage.Blobs</dependencies>
+        </component>
+        <component name="ImageMockStorage" type="class">
+          <responsibility>Local filesystem implementation (for development)</responsibility>
+          <dependencies>System.IO</dependencies>
+        </component>
+      </components>
+      <communication_pattern>Synchronous method calls</communication_pattern>
+      <transaction_management>TransactionScope (ambient transactions)</transaction_management>
+    </layer>
+
+    <!-- Data Access Layer -->
+    <layer name="Data Access" type="persistence">
+      <description>Entity Framework 6 with repository pattern</description>
+      <technology>Entity Framework 6.4.4, LINQ to Entities</technology>
+      <components>
+        <component name="CatalogDBContext" type="db_context">
+          <responsibility>Database context with DbSets</responsibility>
+          <entities>
+            <entity name="Catalog" table="Catalog"/>
+            <entity name="CatalogType" table="CatalogType"/>
+            <entity name="CatalogBrand" table="CatalogBrand"/>
+          </entities>
+        </component>
+        <component name="CatalogItemHiLoGenerator" type="sequence">
+          <responsibility>HiLo sequence for generating IDs</responsibility>
+          <pattern>HiLo Pattern (SQL Server-specific)</pattern>
+        </component>
+      </components>
+      <database>
+        <type>SQL Server</type>
+        <version>2019</version>
+        <connection_management>Connection pooling (default 100)</connection_management>
+      </database>
+      <orm_pattern>Active Record (Entity Framework)</orm_pattern>
+    </layer>
+
+  </layers>
+
+  <!-- Cross-Cutting Concerns -->
+  <cross_cutting>
+
+    <concern name="Authentication">
+      <description>Azure Active Directory OpenID Connect (optional)</description>
+      <components>
+        <component name="OWIN Middleware">
+          <configuration>Optional AAD integration via Web.config</configuration>
+        </component>
+      </components>
+    </concern>
+
+    <concern name="Authorization">
+      <description>Role-based authorization for create/edit/delete operations</description>
+      <roles>
+        <role name="Admin" operations="create, edit, delete"/>
+        <role name="User" operations="read"/>
+        <role name="Anonymous" operations="read (limited)"/>
+      </roles>
+    </concern>
+
+    <concern name="Logging">
+      <description>log4net with file and Application Insights appenders</description>
+      <components>
+        <component name="log4net">
+          <appenders>
+            <appender name="FileAppender" target="logs/app.log"/>
+            <appender name="ApplicationInsights" target="Azure Application Insights"/>
+          </appenders>
+        </component>
+      </components>
+    </concern>
+
+    <concern name="Configuration">
+      <description>Web.config with transforms for environments</description>
+      <sources>
+        <source name="Web.config" type="xml"/>
+        <source name="User Secrets" type="json"/>
+        <source name="Azure Key Vault" type="service"/>
+      </sources>
+    </concern>
+
+    <concern name="Dependency Injection">
+      <description>Autofac container with property injection</description>
+      <lifetime_scopes>
+        <scope name="Application" lifetime="singleton"/>
+        <scope name="Request" lifetime="per_request"/>
+        <scope name="Transient" lifetime="transient"/>
+      </lifetime_scopes>
+    </concern>
+
+    <concern name="Error Handling">
+      <description>Global error handling via Application_Error in Global.asax</description>
+      <strategies>
+        <strategy name="Exception Pages" status="enabled"/>
+        <strategy name="Logging to Application Insights" status="enabled"/>
+        <strategy name="Custom Error Pages" status="enabled"/>
+      </strategies>
+    </concern>
+
+  </cross_cutting>
+
+  <!-- External Dependencies -->
+  <external_dependencies>
+
+    <dependency name="Azure Blob Storage">
+      <purpose>Product image storage</purpose>
+      <connection_type>SDK (Azure.Storage.Blobs)</connection_type>
+      <configuration>Connection string in Web.config</configuration>
+      <fallback>ImageMockStorage (local filesystem)</fallback>
+    </dependency>
+
+    <dependency name="Azure Active Directory">
+      <purpose>User authentication (optional)</purpose>
+      <connection_type>OWIN Middleware</connection_type>
+      <configuration>ClientId, Authority in Web.config</configuration>
+      <fallback>Forms authentication</fallback>
+    </dependency>
+
+    <dependency name="SQL Server">
+      <purpose>Data persistence</purpose>
+      <connection_type>ADO.NET (via Entity Framework)</connection_type>
+      <configuration>Connection string in Web.config</configuration>
+      <features_used>
+        <feature>HiLo Sequences</feature>
+        <feature>Foreign Keys</feature>
+        <feature>Indexes</feature>
+      </features_used>
+    </dependency>
+
+    <dependency name="Azure Application Insights">
+      <purpose>Telemetry and monitoring</purpose>
+      <connection_type>SDK</connection_type>
+      <configuration>InstrumentationKey in Web.config</configuration>
+    </dependency>
+
+  </external_dependencies>
+
+  <!-- Design Patterns Used -->
+  <design_patterns>
+    <pattern name="Repository Pattern">
+      <usage>CatalogService wraps Entity Framework queries</usage>
+      <benefit>Abstraction over data access</benefit>
+    </pattern>
+
+    <pattern name="Dependency Injection">
+      <usage>Autofac container resolves services</usage>
+      <benefit>Loose coupling, testability</benefit>
+    </pattern>
+
+    <pattern name="Unit of Work">
+      <usage>DbContext acts as unit of work</usage>
+      <benefit>Transactional consistency</benefit>
+    </pattern>
+
+    <pattern name="Strategy Pattern">
+      <usage>IImageService with multiple implementations</usage>
+      <benefit>Swappable storage backends</benefit>
+    </pattern>
+
+    <pattern name="HiLo Pattern">
+      <usage>CatalogItemHiLoGenerator for ID generation</usage>
+      <benefit>Avoids database roundtrips for IDs</benefit>
+      <caveat>SQL Server-specific, hard to migrate</caveat>
+    </pattern>
+
+    <pattern name="Page Controller">
+      <usage>ASPX pages act as controllers</usage>
+      <benefit>Built into ASP.NET WebForms</benefit>
+      <limitation>Tight coupling between UI and controller logic</limitation>
+    </pattern>
+
+  </design_patterns>
+
+  <!-- Known Technical Debt -->
+  <technical_debt>
+    <debt_item severity="high">
+      <description>ViewState bloat (large page sizes)</description>
+      <impact>Slow page loads, high bandwidth usage</impact>
+      <estimated_effort unit="hours" value="40"/>
+    </debt_item>
+
+    <debt_item severity="high">
+      <description>Synchronous I/O operations</description>
+      <impact>Thread pool starvation under load</impact>
+      <estimated_effort unit="hours" value="60"/>
+    </debt_item>
+
+    <debt_item severity="medium">
+      <description>No automated UI tests for ASPX pages</description>
+      <impact>Manual regression testing required</impact>
+      <estimated_effort unit="hours" value="30"/>
+    </debt_item>
+
+    <debt_item severity="medium">
+      <description>Image upload lacks authentication</description>
+      <impact>Security vulnerability</impact>
+      <estimated_effort unit="hours" value="8"/>
+    </debt_item>
+
+    <debt_item severity="medium">
+      <description>HiLo pattern ties to SQL Server</description>
+      <impact>Hard to migrate to other databases</impact>
+      <estimated_effort unit="hours" value="16"/>
+    </debt_item>
+
+    <debt_item severity="low">
+      <description>Image deletion not implemented on product delete</description>
+      <impact>Orphaned images consume storage</impact>
+      <estimated_effort unit="hours" value="4"/>
+    </debt_item>
+  </technical_debt>
+
+  <!-- Performance Characteristics -->
+  <performance>
+    <scalability>
+      <horizontal_scaling capability="limited">
+        <limitation>Session state stored in-process</limitation>
+        <solution>Migrate to distributed session state (Redis)</solution>
+      </horizontal_scaling>
+
+      <vertical_scaling capability="good">
+        <limitation>Memory usage grows with concurrent users</limitation>
+      </vertical_scaling>
+    </scalability>
+
+    <bottlenecks>
+      <bottleneck>
+        <location>ViewState serialization/deserialization</location>
+        <impact>Adds 200-500ms per request</impact>
+      </bottleneck>
+
+      <bottleneck>
+        <location>Synchronous database queries</location>
+        <impact>Blocks threads under load</impact>
+      </bottleneck>
+
+      <bottleneck>
+        <location>Azure Blob Storage upload (synchronous)</location>
+        <impact>Slow image upload (1-3 seconds)</impact>
+      </bottleneck>
+    </bottlenecks>
+  </performance>
+
+  <!-- Migration Considerations -->
+  <migration_notes>
+    <consideration>
+      <topic>ViewState Elimination</topic>
+      <description>Modern SPA eliminates ViewState entirely</description>
+      <benefit>Smaller payload, faster page loads</benefit>
+    </consideration>
+
+    <consideration>
+      <topic>Async/Await Pattern</topic>
+      <description>Replace synchronous I/O with async operations</description>
+      <benefit>Better scalability, lower resource usage</benefit>
+    </consideration>
+
+    <consideration>
+      <topic>API-First Design</topic>
+      <description>Replace postbacks with REST API calls</description>
+      <benefit>Decoupled frontend, better testability</benefit>
+    </consideration>
+
+    <consideration>
+      <topic>HiLo Replacement</topic>
+      <description>Use database auto-increment or UUIDs</description>
+      <benefit>Database portability</benefit>
+    </consideration>
+
+    <consideration>
+      <topic>Azure Services Abstraction</topic>
+      <description>Use S3-compatible API instead of Azure SDK</description>
+      <benefit>Cloud-agnostic storage</benefit>
+    </consideration>
+  </migration_notes>
+
+</architecture>

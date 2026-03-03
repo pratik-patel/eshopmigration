@@ -1,0 +1,13 @@
+{
+  "title": "Home Page - Catalog manager (Web Forms)",
+  "url": "http://localhost:50586/",
+  "form_fields": [],
+  "buttons": [
+    {
+      "text": "Create New",
+      "type": "a",
+      "className": "btn esh-button esh-button-primary"
+    }
+  ],
+  "captured_at": "2026-03-03T19:04:21.952906Z"
+}

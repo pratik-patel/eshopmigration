@@ -7,11 +7,11 @@ import streamlit as st
 import sys
 from pathlib import Path
 
-# Add parent directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+# Add current directory to path for lib imports
+sys.path.insert(0, str(Path(__file__).parent))
 
-from progress_app.lib.data_loader import MigrationDataLoader
-from progress_app.lib.metrics import MigrationMetrics
+from lib.data_loader import MigrationDataLoader
+from lib.metrics import MigrationMetrics
 
 # Page configuration
 st.set_page_config(
@@ -25,7 +25,7 @@ st.set_page_config(
 @st.cache_resource
 def get_data_loader():
     """Initialize data loader with caching"""
-    return MigrationDataLoader(docs_path="../../docs")
+    return MigrationDataLoader(docs_path="../../../../docs")
 
 loader = get_data_loader()
 metrics = MigrationMetrics(loader)
@@ -232,13 +232,13 @@ try:
             blocker_count = len([i for i in issues.get("issues", [])
                                if i.get("severity") == "critical"])
 
-        blockers = f"{blocker_count} critical" if blocker_count > 0 else "None"
+        blocker_display = f"{blocker_count} critical" if blocker_count > 0 else "None"
 
         seam_data.append({
             "Seam": seam,
             "Status": f"{status_icon} {status_text}",
             "Readiness": f"{score}/100",
-            "Blockers": blockers
+            "Blockers": blocker_display
         })
 
     df = pd.DataFrame(seam_data)

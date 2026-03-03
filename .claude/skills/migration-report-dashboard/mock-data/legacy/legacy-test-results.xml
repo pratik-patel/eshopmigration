@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mock Legacy Test Results -->
+<test_results timestamp="2026-03-03T00:00:00Z" application="eShopLegacy">
+
+  <!-- Summary -->
+  <summary>
+    <total_tests count="156"/>
+    <passed count="147"/>
+    <failed count="5"/>
+    <skipped count="4"/>
+    <pass_rate unit="percent" value="94.2"/>
+    <duration unit="seconds" value="42.5"/>
+  </summary>
+
+  <!-- Coverage -->
+  <coverage>
+    <line_coverage unit="percent" value="42.0"/>
+    <branch_coverage unit="percent" value="35.5"/>
+    <method_coverage unit="percent" value="48.2"/>
+
+    <by_module>
+      <module name="eShopModernizedWebForms" line_coverage="45.2" branch_coverage="38.1"/>
+      <module name="eShopModernizedWebForms.Models" line_coverage="62.5" branch_coverage="55.3"/>
+      <module name="eShopModernizedWebForms.Services" line_coverage="58.8" branch_coverage="51.2"/>
+      <module name="eShopModernizedWebForms.Services.Catalog" line_coverage="75.4" branch_coverage="68.9"/>
+      <module name="eShopModernizedWebForms.Services.Image" line_coverage="48.3" branch_coverage="42.1"/>
+      <module name="eShopModernizedWebForms.ViewModel" line_coverage="28.5" branch_coverage="22.8"/>
+    </by_module>
+  </coverage>
+
+  <!-- Test Suites -->
+  <test_suites>
+
+    <!-- Unit Tests -->
+    <suite name="UnitTests" type="unit">
+      <total count="98"/>
+      <passed count="95"/>
+      <failed count="2"/>
+      <skipped count="1"/>
+      <duration unit="seconds" value="12.8"/>
+
+      <test_cases>
+        <test name="CatalogService_GetAll_ReturnsAllItems" status="passed" duration="0.15"/>
+        <test name="CatalogService_GetById_ReturnsCorrectItem" status="passed" duration="0.12"/>
+        <test name="CatalogService_Create_InsertsNewItem" status="passed" duration="0.18"/>
+        <test name="CatalogService_Update_ModifiesExistingItem" status="passed" duration="0.16"/>
+        <test name="CatalogService_Delete_RemovesItem" status="passed" duration="0.14"/>
+        <test name="ImageService_Upload_SavesFile" status="failed" duration="0.22">
+          <failure message="ArgumentNullException: Value cannot be null. Parameter name: imageStream"/>
+        </test>
+        <test name="ImageService_GetUrl_ReturnsCorrectPath" status="passed" duration="0.11"/>
+        <test name="HiLoGenerator_GetNextValue_IncrementsSequence" status="passed" duration="0.13"/>
+      </test_cases>
+    </suite>
+
+    <!-- Integration Tests -->
+    <suite name="IntegrationTests" type="integration">
+      <total count="42"/>
+      <passed count="39"/>
+      <failed count="2"/>
+      <skipped count="1"/>
+      <duration unit="seconds" value="22.5"/>
+
+      <test_cases>
+        <test name="Database_Connection_Succeeds" status="passed" duration="0.85"/>
+        <test name="CatalogRepository_GetAll_FetchesFromDatabase" status="passed" duration="1.12"/>
+        <test name="CatalogRepository_Insert_CommitsToDatabase" status="passed" duration="1.35"/>
+        <test name="ImageStorage_Upload_SavesToBlobStorage" status="failed" duration="2.45">
+          <failure message="Azure.RequestFailedException: Storage account connection string not found"/>
+        </test>
+        <test name="Authentication_Login_ValidatesCredentials" status="skipped">
+          <skip_reason>Azure AD not configured in test environment</skip_reason>
+        </test>
+      </test_cases>
+    </suite>
+
+    <!-- UI Tests -->
+    <suite name="UITests" type="ui">
+      <total count="16"/>
+      <passed count="13"/>
+      <failed count="1"/>
+      <skipped count="2"/>
+      <duration unit="seconds" value="7.2"/>
+
+      <test_cases>
+        <test name="HomePage_Loads_Successfully" status="passed" duration="0.42"/>
+        <test name="ProductList_Pagination_Works" status="passed" duration="0.58"/>
+        <test name="ProductDetails_DisplaysCorrectInfo" status="passed" duration="0.45"/>
+        <test name="CreateProduct_SubmitsForm_Successfully" status="passed" duration="0.68"/>
+        <test name="EditProduct_UpdatesData_Successfully" status="passed" duration="0.72"/>
+        <test name="DeleteProduct_RemovesItem_Successfully" status="failed" duration="0.55">
+          <failure message="Element not found: #deleteButton"/>
+        </test>
+        <test name="ImageUpload_UploadsFile_Successfully" status="skipped">
+          <skip_reason>Test data not available</skip_reason>
+        </test>
+      </test_cases>
+    </suite>
+
+  </test_suites>
+
+  <!-- Failed Tests Detail -->
+  <failures>
+    <failure>
+      <test_name>ImageService_Upload_SavesFile</test_name>
+      <test_suite>UnitTests</test_suite>
+      <error_type>ArgumentNullException</error_type>
+      <message>Value cannot be null. Parameter name: imageStream</message>
+      <stack_trace>
+        at eShopModernizedWebForms.Services.ImageService.SaveImage(Stream imageStream, String fileName)
+        at eShopModernizedWebForms.Tests.Unit.ImageServiceTests.ImageService_Upload_SavesFile()
+      </stack_trace>
+    </failure>
+
+    <failure>
+      <test_name>ImageStorage_Upload_SavesToBlobStorage</test_name>
+      <test_suite>IntegrationTests</test_suite>
+      <error_type>Azure.RequestFailedException</error_type>
+      <message>Storage account connection string not found</message>
+      <stack_trace>
+        at Azure.Storage.Blobs.BlobContainerClient..ctor(String connectionString, String containerName)
+        at eShopModernizedWebForms.Services.ImageAzureStorage.UploadImage(Stream imageStream)
+      </stack_trace>
+    </failure>
+
+    <failure>
+      <test_name>DeleteProduct_RemovesItem_Successfully</test_name>
+      <test_suite>UITests</test_suite>
+      <error_type>ElementNotFoundException</error_type>
+      <message>Element not found: #deleteButton</message>
+      <stack_trace>
+        at Selenium.WebDriver.FindElement(By selector)
+        at eShopModernizedWebForms.Tests.UI.CatalogTests.DeleteProduct_RemovesItem_Successfully()
+      </stack_trace>
+    </failure>
+  </failures>
+
+  <!-- Test Trends (Last 30 Days) -->
+  <trends>
+    <pass_rate_history>
+      <datapoint date="2026-02-01" value="92.5"/>
+      <datapoint date="2026-02-08" value="93.1"/>
+      <datapoint date="2026-02-15" value="91.8"/>
+      <datapoint date="2026-02-22" value="93.7"/>
+      <datapoint date="2026-03-01" value="94.2"/>
+    </pass_rate_history>
+
+    <coverage_history>
+      <datapoint date="2026-02-01" value="40.2"/>
+      <datapoint date="2026-02-08" value="40.8"/>
+      <datapoint date="2026-02-15" value="41.5"/>
+      <datapoint date="2026-02-22" value="41.8"/>
+      <datapoint date="2026-03-01" value="42.0"/>
+    </coverage_history>
+  </trends>
+
+</test_results>

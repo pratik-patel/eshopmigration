@@ -1,0 +1,10 @@
+{
+  "analysis_date": "2026-03-03T19:04:39.146097Z",
+  "total_screens_discovered": 6,
+  "screens_in_seams": 6,
+  "uncovered_screens": 0,
+  "coverage_percentage": 100.0,
+  "mode": "real_baseline",
+  "note": "All screens from seam-proposals.json were captured from running application",
+  "authentication_blockers": 3
+}

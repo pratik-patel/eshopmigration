@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "extraction_date": "2026-03-03T00:00:00Z",
+  "source": "Entity Framework 6 Code First model configuration",
+  "database_provider": "SQL Server",
+  "connection_string_name": "CatalogDBContext",
+  "tables": [
+    {
+      "name": "Catalog",
+      "description": "Main product catalog items",
+      "columns": [
+        {"name": "Id", "type": "int", "pk": true, "nullable": false, "generated": false},
+        {"name": "Name", "type": "nvarchar(50)", "pk": false, "nullable": false},
+        {"name": "Description", "type": "nvarchar(max)", "pk": false, "nullable": true},
+        {"name": "Price", "type": "decimal(18,2)", "pk": false, "nullable": false},
+        {"name": "PictureFileName", "type": "nvarchar(max)", "pk": false, "nullable": false},
+        {"name": "CatalogTypeId", "type": "int", "pk": false, "nullable": false, "fk": true},
+        {"name": "CatalogBrandId", "type": "int", "pk": false, "nullable": false, "fk": true},
+        {"name": "AvailableStock", "type": "int", "pk": false, "nullable": false},
+        {"name": "RestockThreshold", "type": "int", "pk": false, "nullable": false},
+        {"name": "MaxStockThreshold", "type": "int", "pk": false, "nullable": false},
+        {"name": "OnReorder", "type": "bit", "pk": false, "nullable": false}
+      ],
+      "foreign_keys": [
+        {
+          "column": "CatalogTypeId",
+          "references_table": "CatalogType",
+          "references_column": "Id",
+          "relationship": "many-to-one",
+          "required": true
+        },
+        {
+          "column": "CatalogBrandId",
+          "references_table": "CatalogBrand",
+          "references_column": "Id",
+          "relationship": "many-to-one",
+          "required": true
+        }
+      ],
+      "indexes": [
+        {"name": "PK_Catalog", "columns": ["Id"], "unique": true}
+      ]
+    },
+    {
+      "name": "CatalogType",
+      "description": "Product types/categories",
+      "columns": [
+        {"name": "Id", "type": "int", "pk": true, "nullable": false, "identity": true},
+        {"name": "Type", "type": "nvarchar(100)", "pk": false, "nullable": false}
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {"name": "PK_CatalogType", "columns": ["Id"], "unique": true}
+      ]
+    },
+    {
+      "name": "CatalogBrand",
+      "description": "Product brands/manufacturers",
+      "columns": [
+        {"name": "Id", "type": "int", "pk": true, "nullable": false, "identity": true},
+        {"name": "Brand", "type": "nvarchar(100)", "pk": false, "nullable": false}
+      ],
+      "foreign_keys": [],
+      "indexes": [
+        {"name": "PK_CatalogBrand", "columns": ["Id"], "unique": true}
+      ]
+    }
+  ],
+  "sequences": [
+    {
+      "name": "catalog_hilo",
+      "description": "HiLo sequence for generating Catalog IDs",
+      "start_value": 1,
+      "increment": 10
+    },
+    {
+      "name": "catalog_brand_hilo",
+      "description": "HiLo sequence for generating CatalogBrand IDs",
+      "start_value": 1,
+      "increment": 10
+    },
+    {
+      "name": "catalog_type_hilo",
+      "description": "HiLo sequence for generating CatalogType IDs",
+      "start_value": 1,
+      "increment": 10
+    }
+  ],
+  "foreign_key_graph": {
+    "nodes": ["Catalog", "CatalogType", "CatalogBrand"],
+    "edges": [
+      {"from": "Catalog", "to": "CatalogType", "via": "CatalogTypeId"},
+      {"from": "Catalog", "to": "CatalogBrand", "via": "CatalogBrandId"}
+    ]
+  },
+  "data_ownership_analysis": {
+    "catalog_seam": {
+      "owns_writes": ["Catalog", "CatalogType", "CatalogBrand"],
+      "owns_reads": ["Catalog", "CatalogType", "CatalogBrand"],
+      "shared_writes": [],
+      "shared_reads": []
+    }
+  },
+  "notes": [
+    "All tables are tightly coupled - Catalog references both CatalogType and CatalogBrand",
+    "No data sharing between seams - single domain (catalog management)",
+    "HiLo pattern used for ID generation (non-standard approach)",
+    "Foreign keys are required (nullable: false) - cannot delete types/brands if in use",
+    "No audit columns (CreatedAt, UpdatedAt, CreatedBy, etc.)",
+    "PictureUri is not persisted - computed at runtime"
+  ]
+}

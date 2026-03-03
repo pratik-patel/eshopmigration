@@ -1,0 +1,642 @@
+openapi: 3.1.0
+info:
+  title: Catalog Management API
+  version: v1
+  description: |
+    Complete product catalog management system for e-commerce platform.
+    Supports CRUD operations for products, image upload, and reference data retrieval.
+
+    **Authentication**: JWT bearer tokens required for write operations (POST, PUT, DELETE).
+    **Pagination**: Offset-based with configurable page size (max 100 items per page).
+    **Image Storage**: S3-compatible storage with temp/permanent separation.
+
+servers:
+  - url: http://localhost:8000/api
+    description: Development server
+  - url: https://api.example.com/api
+    description: Production server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /catalog:
+    get:
+      summary: List catalog items with pagination
+      operationId: listCatalogItems
+      tags:
+        - Catalog
+      security: []  # Public endpoint
+      parameters:
+        - $ref: '#/components/parameters/PageParam'
+        - $ref: '#/components/parameters/SizeParam'
+      responses:
+        '200':
+          description: Catalog items retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemListResponse'
+              example:
+                items:
+                  - id: 1
+                    name: "Laptop Computer"
+                    description: "High-performance laptop with 16GB RAM"
+                    price: 999.99
+                    picture_filename: "laptop.png"
+                    picture_uri: "https://storage.example.com/pics/1/laptop.png"
+                    catalog_brand:
+                      id: 1
+                      brand: "Microsoft"
+                    catalog_type:
+                      id: 1
+                      type: "Electronics"
+                    available_stock: 100
+                    restock_threshold: 10
+                    max_stock_threshold: 500
+                    on_reorder: false
+                pagination:
+                  page_index: 0
+                  page_size: 10
+                  total_items: 245
+                  total_pages: 25
+        '400':
+          $ref: '#/components/responses/ValidationError'
+
+    post:
+      summary: Create new catalog item
+      operationId: createCatalogItem
+      tags:
+        - Catalog
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogItemCreate'
+            example:
+              name: "Wireless Mouse"
+              description: "Ergonomic wireless mouse with USB receiver"
+              price: 29.99
+              catalog_brand_id: 1
+              catalog_type_id: 1
+              available_stock: 50
+              restock_threshold: 5
+              max_stock_threshold: 200
+              temp_image_name: "/temp/abc123/mouse.png"
+      responses:
+        '201':
+          description: Catalog item created successfully
+          headers:
+            Location:
+              description: URL of created resource
+              schema:
+                type: string
+              example: "/api/catalog/123"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /catalog/{itemId}:
+    get:
+      summary: Get single catalog item by ID
+      operationId: getCatalogItem
+      tags:
+        - Catalog
+      security: []  # Public endpoint
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      responses:
+        '200':
+          description: Catalog item retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    put:
+      summary: Update existing catalog item
+      operationId: updateCatalogItem
+      tags:
+        - Catalog
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogItemUpdate'
+      responses:
+        '200':
+          description: Catalog item updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      summary: Delete catalog item
+      operationId: deleteCatalogItem
+      tags:
+        - Catalog
+      security:
+        - BearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ItemIdParam'
+      responses:
+        '204':
+          description: Catalog item deleted successfully
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /catalog/images:
+    post:
+      summary: Upload product image to temporary storage
+      operationId: uploadCatalogImage
+      tags:
+        - Catalog
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image file (JPEG, PNG, or GIF, max 5MB)
+      responses:
+        '200':
+          description: Image uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageUploadResponse'
+              example:
+                temp_image_url: "https://storage.example.com/temp/abc123/product.png"
+                temp_image_name: "/temp/abc123/product.png"
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /catalog/brands:
+    get:
+      summary: List all catalog brands
+      operationId: listCatalogBrands
+      tags:
+        - Reference Data
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: Catalog brands retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatalogBrandResponse'
+              example:
+                - id: 1
+                  brand: "Microsoft"
+                - id: 2
+                  brand: "Nike"
+
+  /catalog/types:
+    get:
+      summary: List all catalog types
+      operationId: listCatalogTypes
+      tags:
+        - Reference Data
+      security: []  # Public endpoint
+      responses:
+        '200':
+          description: Catalog types retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CatalogTypeResponse'
+              example:
+                - id: 1
+                  type: "Electronics"
+                - id: 2
+                  type: "Clothing"
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: |
+        JWT bearer token authentication.
+        Obtain token via POST /api/auth/login (not part of this specification).
+
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Page index (0-based)
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      example: 0
+
+    SizeParam:
+      name: size
+      in: query
+      description: Items per page (max 100)
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 10
+
+    ItemIdParam:
+      name: itemId
+      in: path
+      required: true
+      description: Catalog item ID (positive integer)
+      schema:
+        type: integer
+        minimum: 1
+      example: 123
+
+  schemas:
+    CatalogBrandResponse:
+      type: object
+      required:
+        - id
+        - brand
+      properties:
+        id:
+          type: integer
+          description: Brand ID
+          example: 1
+        brand:
+          type: string
+          description: Brand name
+          maxLength: 100
+          example: "Microsoft"
+
+    CatalogTypeResponse:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: integer
+          description: Type ID
+          example: 1
+        type:
+          type: string
+          description: Type name
+          maxLength: 100
+          example: "Electronics"
+
+    CatalogItemResponse:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - picture_filename
+        - picture_uri
+        - catalog_brand
+        - catalog_type
+        - available_stock
+        - restock_threshold
+        - max_stock_threshold
+        - on_reorder
+      properties:
+        id:
+          type: integer
+          description: Catalog item ID
+          example: 1
+        name:
+          type: string
+          description: Product name
+          maxLength: 50
+          example: "Laptop Computer"
+        description:
+          type: string
+          nullable: true
+          description: Product description
+          example: "High-performance laptop with 16GB RAM"
+        price:
+          type: number
+          format: decimal
+          description: Product price (max 2 decimal places)
+          minimum: 0
+          maximum: 1000000
+          example: 999.99
+        picture_filename:
+          type: string
+          description: Image filename (stored in database)
+          maxLength: 255
+          example: "laptop.png"
+        picture_uri:
+          type: string
+          format: uri
+          description: Full image URL (computed at runtime)
+          example: "https://storage.example.com/pics/1/laptop.png"
+        catalog_brand:
+          $ref: '#/components/schemas/CatalogBrandResponse'
+        catalog_type:
+          $ref: '#/components/schemas/CatalogTypeResponse'
+        available_stock:
+          type: integer
+          description: Current stock level
+          minimum: 0
+          maximum: 10000000
+          example: 100
+        restock_threshold:
+          type: integer
+          description: Stock level that triggers reorder alert
+          minimum: 0
+          maximum: 10000000
+          example: 10
+        max_stock_threshold:
+          type: integer
+          description: Maximum stock capacity
+          minimum: 0
+          maximum: 10000000
+          example: 500
+        on_reorder:
+          type: boolean
+          description: Whether product is currently on reorder
+          example: false
+
+    CatalogItemCreate:
+      type: object
+      required:
+        - name
+        - price
+        - catalog_brand_id
+        - catalog_type_id
+        - available_stock
+        - restock_threshold
+        - max_stock_threshold
+      properties:
+        name:
+          type: string
+          description: Product name
+          minLength: 1
+          maxLength: 50
+          example: "Wireless Mouse"
+        description:
+          type: string
+          nullable: true
+          description: Product description
+          example: "Ergonomic wireless mouse with USB receiver"
+        price:
+          type: number
+          format: decimal
+          description: Product price (max 2 decimal places)
+          minimum: 0
+          maximum: 1000000
+          example: 29.99
+        catalog_brand_id:
+          type: integer
+          description: Brand ID (must exist in catalog_brand table)
+          minimum: 1
+          example: 1
+        catalog_type_id:
+          type: integer
+          description: Type ID (must exist in catalog_type table)
+          minimum: 1
+          example: 1
+        available_stock:
+          type: integer
+          description: Initial stock level
+          minimum: 0
+          maximum: 10000000
+          example: 50
+        restock_threshold:
+          type: integer
+          description: Stock level that triggers reorder alert
+          minimum: 0
+          maximum: 10000000
+          example: 5
+        max_stock_threshold:
+          type: integer
+          description: Maximum stock capacity
+          minimum: 0
+          maximum: 10000000
+          example: 200
+        temp_image_name:
+          type: string
+          nullable: true
+          description: Temp image path (returned from POST /catalog/images)
+          example: "/temp/abc123/mouse.png"
+
+    CatalogItemUpdate:
+      type: object
+      required:
+        - name
+        - price
+        - catalog_brand_id
+        - catalog_type_id
+        - available_stock
+        - restock_threshold
+        - max_stock_threshold
+      properties:
+        name:
+          type: string
+          description: Product name
+          minLength: 1
+          maxLength: 50
+          example: "Wireless Mouse (Updated)"
+        description:
+          type: string
+          nullable: true
+          description: Product description
+          example: "Updated description"
+        price:
+          type: number
+          format: decimal
+          description: Product price (max 2 decimal places)
+          minimum: 0
+          maximum: 1000000
+          example: 34.99
+        catalog_brand_id:
+          type: integer
+          description: Brand ID (must exist in catalog_brand table)
+          minimum: 1
+          example: 1
+        catalog_type_id:
+          type: integer
+          description: Type ID (must exist in catalog_type table)
+          minimum: 1
+          example: 1
+        available_stock:
+          type: integer
+          description: Updated stock level
+          minimum: 0
+          maximum: 10000000
+          example: 75
+        restock_threshold:
+          type: integer
+          description: Stock level that triggers reorder alert
+          minimum: 0
+          maximum: 10000000
+          example: 10
+        max_stock_threshold:
+          type: integer
+          description: Maximum stock capacity
+          minimum: 0
+          maximum: 10000000
+          example: 250
+        temp_image_name:
+          type: string
+          nullable: true
+          description: Temp image path (if replacing existing image)
+          example: "/temp/xyz789/new-mouse.png"
+
+    PaginationMetadata:
+      type: object
+      required:
+        - page_index
+        - page_size
+        - total_items
+        - total_pages
+      properties:
+        page_index:
+          type: integer
+          description: Current page index (0-based)
+          minimum: 0
+          example: 0
+        page_size:
+          type: integer
+          description: Items per page
+          minimum: 1
+          maximum: 100
+          example: 10
+        total_items:
+          type: integer
+          description: Total number of items across all pages
+          minimum: 0
+          example: 245
+        total_pages:
+          type: integer
+          description: Total number of pages
+          minimum: 0
+          example: 25
+
+    CatalogItemListResponse:
+      type: object
+      required:
+        - items
+        - pagination
+      properties:
+        items:
+          type: array
+          description: Catalog items on current page
+          items:
+            $ref: '#/components/schemas/CatalogItemResponse'
+        pagination:
+          $ref: '#/components/schemas/PaginationMetadata'
+
+    ImageUploadResponse:
+      type: object
+      required:
+        - temp_image_url
+        - temp_image_name
+      properties:
+        temp_image_url:
+          type: string
+          format: uri
+          description: Full URL of uploaded temp image (for preview)
+          example: "https://storage.example.com/temp/abc123/product.png"
+        temp_image_name:
+          type: string
+          description: Temp image path (used in create/update requests)
+          example: "/temp/abc123/product.png"
+
+    ErrorResponse:
+      type: object
+      required:
+        - detail
+      properties:
+        detail:
+          type: string
+          description: Human-readable error message
+          example: "Product with id '999' not found"
+        correlation_id:
+          type: string
+          format: uuid
+          description: Correlation ID for tracing (on 5xx errors)
+          example: "550e8400-e29b-41d4-a716-446655440000"
+        field:
+          type: string
+          description: Field name causing validation error (on 400 errors)
+          example: "price"
+
+  responses:
+    ValidationError:
+      description: Validation error (invalid input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            detail: "Page size must be between 1 and 100"
+            field: "size"
+
+    Unauthorized:
+      description: Authentication required or token invalid
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            detail: "Authentication required"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            detail: "Product with id '999' not found"
+
+tags:
+  - name: Catalog
+    description: Product catalog CRUD operations
+  - name: Reference Data
+    description: Reference data (brands, types) for dropdowns

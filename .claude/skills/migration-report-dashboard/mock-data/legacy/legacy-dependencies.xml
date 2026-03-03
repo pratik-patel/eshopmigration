@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Mock Legacy Dependencies and Vulnerabilities -->
+<dependencies timestamp="2026-03-03T00:00:00Z" application="eShopLegacy">
+
+  <!-- Summary -->
+  <summary>
+    <total_packages count="48"/>
+    <outdated_packages count="18"/>
+    <vulnerable_packages count="12"/>
+    <deprecated_packages count="5"/>
+  </summary>
+
+  <!-- Vulnerability Overview -->
+  <vulnerabilities>
+    <critical count="3"/>
+    <high count="5"/>
+    <medium count="8"/>
+    <low count="15"/>
+    <total count="31"/>
+  </vulnerabilities>
+
+  <!-- NuGet Packages (.NET) -->
+  <nuget_packages>
+
+    <!-- Critical Vulnerabilities -->
+    <package name="Newtonsoft.Json" current_version="11.0.2" latest_version="13.0.3" outdated="true">
+      <vulnerabilities>
+        <vulnerability severity="high" cve="CVE-2024-21907">
+          <description>Improper Handling of Exceptional Conditions in Newtonsoft.Json</description>
+          <cvss_score>7.5</cvss_score>
+          <published>2024-02-08</published>
+          <remediation>Upgrade to version 13.0.1 or later</remediation>
+        </vulnerability>
+      </vulnerabilities>
+    </package>
+
+    <package name="System.IdentityModel.Tokens.Jwt" current_version="5.6.0" latest_version="7.3.1" outdated="true">
+      <vulnerabilities>
+        <vulnerability severity="critical" cve="CVE-2024-21319">
+          <description>Improper Validation of Array Index in JWT token handling</description>
+          <cvss_score>9.1</cvss_score>
+          <published>2024-01-09</published>
+          <remediation>Upgrade to version 6.34.0 or later</remediation>
+        </vulnerability>
+      </vulnerabilities>
+    </package>
+
+    <package name="EntityFramework" current_version="6.4.4" latest_version="6.5.1" outdated="true">
+      <vulnerabilities>
+        <vulnerability severity="medium" cve="CVE-2023-28363">
+          <description>SQL Injection vulnerability in Entity Framework 6</description>
+          <cvss_score>6.3</cvss_score>
+          <published>2023-11-14</published>
+          <remediation>Upgrade to version 6.5.0 or later</remediation>
+        </vulnerability>
+      </vulnerabilities>
+    </package>
+
+    <!-- Other Vulnerable Packages -->
+    <package name="log4net" current_version="2.0.8" latest_version="2.0.17" outdated="true">
+      <vulnerabilities>
+        <vulnerability severity="high" cve="CVE-2018-1285">
+          <description>Deserialization vulnerability in log4net</description>
+          <cvss_score>7.5</cvss_score>
+          <published>2018-05-18</published>
+          <remediation>Upgrade to version 2.0.10 or later</remediation>
+        </vulnerability>
+      </vulnerabilities>
+    </package>
+
+    <package name="Microsoft.AspNet.WebPages" current_version="3.2.7" latest_version="3.3.0" outdated="true">
+      <vulnerabilities>
+        <vulnerability severity="medium" cve="CVE-2022-24513">
+          <description>Cross-site scripting vulnerability</description>
+          <cvss_score>6.1</cvss_score>
+          <published>2022-05-10</published>
+          <remediation>Upgrade to version 3.3.0 or later</remediation>
+        </vulnerability>
+      </vulnerabilities>
+    </package>
+
+    <!-- Outdated But Not Vulnerable -->
+    <package name="Autofac" current_version="4.9.4" latest_version="8.0.0" outdated="true">
+      <vulnerabilities/>
+    </package>
+
+    <package name="Microsoft.ApplicationInsights" current_version="2.14.0" latest_version="2.22.0" outdated="true">
+      <vulnerabilities/>
+    </package>
+
+    <!-- Up-to-date Packages -->
+    <package name="Microsoft.Azure.Storage.Blob" current_version="11.2.3" latest_version="11.2.3" outdated="false">
+      <vulnerabilities/>
+    </package>
+
+    <package name="Microsoft.Extensions.Configuration" current_version="3.1.0" latest_version="3.1.32" outdated="true">
+      <vulnerabilities/>
+    </package>
+
+  </nuget_packages>
+
+  <!-- JavaScript/NPM Packages -->
+  <npm_packages>
+
+    <package name="bootstrap" current_version="3.4.1" latest_version="5.3.2" outdated="true">
+      <vulnerabilities>
+        <vulnerability severity="medium" cve="CVE-2019-8331">
+          <description>Cross-site scripting (XSS) in data-target property</description>
+          <cvss_score>6.1</cvss_score>
+          <published>2019-02-20</published>
+          <remediation>Upgrade to version 4.3.1 or later</remediation>
+        </vulnerability>
+      </vulnerabilities>
+    </package>
+
+    <package name="jquery" current_version="3.4.1" latest_version="3.7.1" outdated="true">
+      <vulnerabilities>
+        <vulnerability severity="medium" cve="CVE-2020-11022">
+          <description>Cross-site scripting vulnerability in jQuery HTML parsing</description>
+          <cvss_score>6.1</cvss_score>
+          <published>2020-04-29</published>
+          <remediation>Upgrade to version 3.5.0 or later</remediation>
+        </vulnerability>
+        <vulnerability severity="medium" cve="CVE-2020-11023">
+          <description>Regex denial of service in jQuery HTML parsing</description>
+          <cvss_score>6.5</cvss_score>
+          <published>2020-04-29</published>
+          <remediation>Upgrade to version 3.5.0 or later</remediation>
+        </vulnerability>
+      </vulnerabilities>
+    </package>
+
+    <package name="moment" current_version="2.24.0" latest_version="2.30.1" outdated="true" deprecated="true">
+      <deprecation_notice>Package is deprecated. Use date-fns or dayjs instead.</deprecation_notice>
+      <vulnerabilities>
+        <vulnerability severity="high" cve="CVE-2022-31129">
+          <description>Path traversal vulnerability in moment.js</description>
+          <cvss_score>7.5</cvss_score>
+          <published>2022-07-06</published>
+          <remediation>Upgrade to version 2.29.4 or migrate to alternative library</remediation>
+        </vulnerability>
+      </vulnerabilities>
+    </package>
+
+  </npm_packages>
+
+  <!-- Dependency Tree Health -->
+  <dependency_health>
+    <direct_dependencies count="18"/>
+    <transitive_dependencies count="30"/>
+    <dependency_depth max="5" average="2.8"/>
+
+    <conflicts>
+      <conflict>
+        <description>Multiple versions of System.Security.Cryptography.Algorithms</description>
+        <versions>4.3.0, 4.3.1</versions>
+        <severity>low</severity>
+      </conflict>
+    </conflicts>
+  </dependency_health>
+
+  <!-- License Compliance -->
+  <licenses>
+    <compliant count="42"/>
+    <non_compliant count="2"/>
+    <unknown count="4"/>
+
+    <non_compliant_packages>
+      <package name="SomeGPL" license="GPL-3.0" reason="Copyleft license incompatible with commercial use"/>
+      <package name="AnotherRestrictive" license="Custom" reason="Unknown license restrictions"/>
+    </non_compliant_packages>
+  </licenses>
+
+  <!-- Remediation Summary -->
+  <remediation>
+    <actions>
+      <action priority="critical" count="3">
+        <description>Immediate upgrade required for critical vulnerabilities</description>
+        <estimated_effort unit="hours" value="8"/>
+      </action>
+
+      <action priority="high" count="5">
+        <description>Upgrade vulnerable packages with high severity CVEs</description>
+        <estimated_effort unit="hours" value="12"/>
+      </action>
+
+      <action priority="medium" count="8">
+        <description>Update outdated packages with medium vulnerabilities</description>
+        <estimated_effort unit="hours" value="16"/>
+      </action>
+
+      <action priority="low" count="15">
+        <description>Update remaining outdated packages (no known vulnerabilities)</description>
+        <estimated_effort unit="hours" value="20"/>
+      </action>
+
+      <action priority="deprecation" count="5">
+        <description>Replace deprecated packages</description>
+        <estimated_effort unit="hours" value="40"/>
+      </action>
+    </actions>
+
+    <total_effort unit="hours" value="96"/>
+  </remediation>
+
+</dependencies>

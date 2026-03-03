@@ -1,0 +1,82 @@
+{
+  "title": "Edit - Catalog manager (Web Forms)",
+  "url": "http://localhost:50586/Catalog/Edit/1",
+  "form_fields": [
+    {
+      "id": "MainContent_Name",
+      "name": "ctl00$MainContent$Name",
+      "type": "text",
+      "value": ".NET Bot Black Hoodie",
+      "placeholder": ""
+    },
+    {
+      "id": "MainContent_Description",
+      "name": "ctl00$MainContent$Description",
+      "type": "text",
+      "value": ".NET Bot Black Hoodie",
+      "placeholder": ""
+    },
+    {
+      "id": "MainContent_BrandDropDownList",
+      "name": "ctl00$MainContent$BrandDropDownList",
+      "type": "select-one",
+      "value": "2",
+      "placeholder": ""
+    },
+    {
+      "id": "MainContent_TypeDropDownList",
+      "name": "ctl00$MainContent$TypeDropDownList",
+      "type": "select-one",
+      "value": "2",
+      "placeholder": ""
+    },
+    {
+      "id": "MainContent_Price",
+      "name": "ctl00$MainContent$Price",
+      "type": "text",
+      "value": "19.5",
+      "placeholder": ""
+    },
+    {
+      "id": "MainContent_PictureFileName",
+      "name": "ctl00$MainContent$PictureFileName",
+      "type": "text",
+      "value": "1.png",
+      "placeholder": ""
+    },
+    {
+      "id": "MainContent_Stock",
+      "name": "ctl00$MainContent$Stock",
+      "type": "text",
+      "value": "100",
+      "placeholder": ""
+    },
+    {
+      "id": "MainContent_Restock",
+      "name": "ctl00$MainContent$Restock",
+      "type": "text",
+      "value": "0",
+      "placeholder": ""
+    },
+    {
+      "id": "MainContent_Maxstock",
+      "name": "ctl00$MainContent$Maxstock",
+      "type": "text",
+      "value": "0",
+      "placeholder": ""
+    }
+  ],
+  "buttons": [
+    {
+      "text": "[ Cancel ]",
+      "type": "a",
+      "className": "btn esh-button esh-button-secondary"
+    },
+    {
+      "text": "[ Save ]",
+      "type": "input",
+      "className": "btn esh-button esh-button-primary"
+    }
+  ],
+  "captured_at": "2026-03-03T19:04:35.410363Z"
+}

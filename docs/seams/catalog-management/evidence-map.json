@@ -1,0 +1,290 @@
+{
+  "seam": "catalog-management",
+  "version": "1.0",
+  "generated_date": "2026-03-03T00:00:00Z",
+  "triggers": [
+    {
+      "screen": "Default.aspx",
+      "control": "Page",
+      "event": "Load",
+      "handler_symbol": "Page_Load",
+      "handler_file": "src/eShopModernizedWebForms/Default.aspx.cs",
+      "handler_line": 25,
+      "confidence": "high",
+      "evidence": "Default.aspx.cs:25-48"
+    },
+    {
+      "screen": "Default.aspx",
+      "control": "PaginationNext",
+      "event": "Click",
+      "handler_symbol": "(route navigation)",
+      "handler_file": "src/eShopModernizedWebForms/Default.aspx.cs",
+      "handler_line": 57,
+      "confidence": "high",
+      "evidence": "Default.aspx.cs:57-59"
+    },
+    {
+      "screen": "Default.aspx",
+      "control": "PaginationPrevious",
+      "event": "Click",
+      "handler_symbol": "(route navigation)",
+      "handler_file": "src/eShopModernizedWebForms/Default.aspx.cs",
+      "handler_line": 61,
+      "confidence": "high",
+      "evidence": "Default.aspx.cs:61-63"
+    },
+    {
+      "screen": "Details.aspx",
+      "control": "Page",
+      "event": "Load",
+      "handler_symbol": "Page_Load",
+      "handler_file": "src/eShopModernizedWebForms/Catalog/Details.aspx.cs",
+      "handler_line": 17,
+      "confidence": "high",
+      "evidence": "Catalog/Details.aspx.cs:17-24"
+    },
+    {
+      "screen": "Create.aspx",
+      "control": "Page",
+      "event": "Load",
+      "handler_symbol": "Page_Load",
+      "handler_file": "src/eShopModernizedWebForms/Catalog/Create.aspx.cs",
+      "handler_line": 21,
+      "confidence": "high",
+      "evidence": "Catalog/Create.aspx.cs:21-38"
+    },
+    {
+      "screen": "Create.aspx",
+      "control": "Create Button",
+      "event": "Click",
+      "handler_symbol": "Create_Click",
+      "handler_file": "src/eShopModernizedWebForms/Catalog/Create.aspx.cs",
+      "handler_line": 50,
+      "confidence": "high",
+      "evidence": "Catalog/Create.aspx.cs:50-82"
+    },
+    {
+      "screen": "Edit.aspx",
+      "control": "Page",
+      "event": "Load",
+      "handler_symbol": "Page_Load",
+      "handler_file": "src/eShopModernizedWebForms/Catalog/Edit.aspx.cs",
+      "handler_line": 24,
+      "confidence": "high",
+      "evidence": "Catalog/Edit.aspx.cs:24-50"
+    },
+    {
+      "screen": "Edit.aspx",
+      "control": "Save Button",
+      "event": "Click",
+      "handler_symbol": "Save_Click",
+      "handler_file": "src/eShopModernizedWebForms/Catalog/Edit.aspx.cs",
+      "handler_line": 62,
+      "confidence": "high",
+      "evidence": "Catalog/Edit.aspx.cs:62-93"
+    },
+    {
+      "screen": "Delete.aspx",
+      "control": "Page",
+      "event": "Load",
+      "handler_symbol": "Page_Load",
+      "handler_file": "src/eShopModernizedWebForms/Catalog/Delete.aspx.cs",
+      "handler_line": 20,
+      "confidence": "high",
+      "evidence": "Catalog/Delete.aspx.cs:20-32"
+    },
+    {
+      "screen": "Delete.aspx",
+      "control": "Delete Button",
+      "event": "Click",
+      "handler_symbol": "Delete_Click",
+      "handler_file": "src/eShopModernizedWebForms/Catalog/Delete.aspx.cs",
+      "handler_line": 34,
+      "confidence": "high",
+      "evidence": "Catalog/Delete.aspx.cs:34-39"
+    },
+    {
+      "screen": "PicUploader.asmx",
+      "control": "Web Service",
+      "event": "UploadImage",
+      "handler_symbol": "UploadImage",
+      "handler_file": "src/eShopModernizedWebForms/Catalog/PicUploader.asmx.cs",
+      "handler_line": 32,
+      "confidence": "high",
+      "evidence": "Catalog/PicUploader.asmx.cs:32-62"
+    }
+  ],
+  "flows": [
+    {
+      "flow_id": "list_products_paginated",
+      "trigger_id": "Default.aspx.Page.Load",
+      "description": "List products with pagination",
+      "call_path": [
+        {"file": "Default.aspx.cs", "symbol": "Page_Load", "line": 25},
+        {"file": "Default.aspx.cs", "symbol": "PaginationParamsAreSet", "line": 31},
+        {"file": "Services/CatalogService.cs", "symbol": "GetCatalogItemsPaginated", "line": 20},
+        {"file": "Services/CatalogService.cs", "symbol": "db.CatalogItems.Include(...).OrderBy(...).Skip(...).Take(...)", "line": 24}
+      ],
+      "boundaries": ["database_read"],
+      "side_effects": [
+        "Reads: Catalog, CatalogBrand, CatalogType tables",
+        "Count query: db.CatalogItems.LongCount()",
+        "Paginated query with navigation properties"
+      ],
+      "data_access": {
+        "reads": ["Catalog", "CatalogBrand", "CatalogType"],
+        "writes": []
+      },
+      "transaction_scope": "none",
+      "notes": "Eager loads navigation properties, always orders by Id ascending"
+    },
+    {
+      "flow_id": "view_product_details",
+      "trigger_id": "Details.aspx.Page.Load",
+      "description": "View single product details",
+      "call_path": [
+        {"file": "Catalog/Details.aspx.cs", "symbol": "Page_Load", "line": 17},
+        {"file": "Services/CatalogService.cs", "symbol": "FindCatalogItem", "line": 36},
+        {"file": "Services/CatalogService.cs", "symbol": "db.CatalogItems.Include(...).FirstOrDefault(...)", "line": 38}
+      ],
+      "boundaries": ["database_read"],
+      "side_effects": [
+        "Reads: Single Catalog record with CatalogBrand and CatalogType"
+      ],
+      "data_access": {
+        "reads": ["Catalog", "CatalogBrand", "CatalogType"],
+        "writes": []
+      },
+      "transaction_scope": "none",
+      "notes": "Returns null if product not found (no explicit error handling)"
+    },
+    {
+      "flow_id": "create_product",
+      "trigger_id": "Create.aspx.Create Button.Click",
+      "description": "Create new product with optional image",
+      "call_path": [
+        {"file": "Catalog/Create.aspx.cs", "symbol": "Create_Click", "line": 50},
+        {"file": "Catalog/Create.aspx.cs", "symbol": "ModelState validation", "line": 52},
+        {"file": "Catalog/Create.aspx.cs", "symbol": "Construct CatalogItem", "line": 54},
+        {"file": "Services/CatalogService.cs", "symbol": "CreateCatalogItem", "line": 50},
+        {"file": "Models/CatalogItemHiLoGenerator.cs", "symbol": "GetNextSequenceValue", "line": 13},
+        {"file": "Services/CatalogService.cs", "symbol": "db.CatalogItems.Add + db.SaveChanges", "line": 53},
+        {"file": "Services/ImageAzureStorage.cs", "symbol": "UpdateImage (if temp image)", "line": 65}
+      ],
+      "boundaries": ["database_write", "azure_blob_storage_write"],
+      "side_effects": [
+        "Writes: INSERT into Catalog table",
+        "External: Copy image from temp to permanent storage (if TempImageName provided)",
+        "External: Delete temp image after copy"
+      ],
+      "data_access": {
+        "reads": ["catalog_hilo sequence"],
+        "writes": ["Catalog", "Azure Blob Storage (pics container)"]
+      },
+      "transaction_scope": "implicit_savechanges",
+      "notes": "Image update is NOT in DB transaction (potential inconsistency), HiLo ID generation uses SQL Server sequence"
+    },
+    {
+      "flow_id": "update_product",
+      "trigger_id": "Edit.aspx.Save Button.Click",
+      "description": "Update existing product with optional image replacement",
+      "call_path": [
+        {"file": "Catalog/Edit.aspx.cs", "symbol": "Save_Click", "line": 62},
+        {"file": "Catalog/Edit.aspx.cs", "symbol": "ModelState validation", "line": 64},
+        {"file": "Catalog/Edit.aspx.cs", "symbol": "Construct CatalogItem", "line": 66},
+        {"file": "Services/ImageAzureStorage.cs", "symbol": "UpdateImage (if temp image)", "line": 65},
+        {"file": "Services/CatalogService.cs", "symbol": "UpdateCatalogItem", "line": 57},
+        {"file": "Services/CatalogService.cs", "symbol": "db.Entry(...).State = Modified + db.SaveChanges", "line": 59}
+      ],
+      "boundaries": ["azure_blob_storage_write", "database_write"],
+      "side_effects": [
+        "Writes: UPDATE Catalog table",
+        "External: Delete old product images (if new image uploaded)",
+        "External: Copy temp image to permanent storage",
+        "External: Delete temp image"
+      ],
+      "data_access": {
+        "reads": ["Catalog (for existing data)"],
+        "writes": ["Catalog", "Azure Blob Storage (pics container)"]
+      },
+      "transaction_scope": "implicit_savechanges",
+      "notes": "Image update happens BEFORE DB update (potential inconsistency if DB fails)"
+    },
+    {
+      "flow_id": "delete_product",
+      "trigger_id": "Delete.aspx.Delete Button.Click",
+      "description": "Delete product (image NOT deleted - orphaned)",
+      "call_path": [
+        {"file": "Catalog/Delete.aspx.cs", "symbol": "Delete_Click", "line": 34},
+        {"file": "Services/CatalogService.cs", "symbol": "RemoveCatalogItem", "line": 63},
+        {"file": "Services/CatalogService.cs", "symbol": "db.CatalogItems.Remove + db.SaveChanges", "line": 65}
+      ],
+      "boundaries": ["database_write"],
+      "side_effects": [
+        "Writes: DELETE from Catalog table",
+        "MISSING: Image deletion from storage (orphaned images)"
+      ],
+      "data_access": {
+        "reads": [],
+        "writes": ["Catalog"]
+      },
+      "transaction_scope": "implicit_savechanges",
+      "notes": "Image is NOT deleted from blob storage (technical debt)"
+    },
+    {
+      "flow_id": "upload_image_ajax",
+      "trigger_id": "PicUploader.asmx.UploadImage",
+      "description": "Upload image to temp storage via AJAX",
+      "call_path": [
+        {"file": "Catalog/PicUploader.asmx.cs", "symbol": "UploadImage", "line": 32},
+        {"file": "Catalog/PicUploader.asmx.cs", "symbol": "Resolve IImageService from Autofac", "line": 36},
+        {"file": "Catalog/PicUploader.asmx.cs", "symbol": "IsValidImage (format check)", "line": 43},
+        {"file": "Services/ImageAzureStorage.cs", "symbol": "UploadTempImage", "line": 87},
+        {"file": "Catalog/PicUploader.asmx.cs", "symbol": "Return JSON with temp URL", "line": 52}
+      ],
+      "boundaries": ["azure_blob_storage_write"],
+      "side_effects": [
+        "Writes: Upload image to pics/temp/{guid}/ or pics/{itemId}/temp/ folder",
+        "Returns: JSON with temp image URL and path"
+      ],
+      "data_access": {
+        "reads": [],
+        "writes": ["Azure Blob Storage (pics container, temp folder)"]
+      },
+      "transaction_scope": "none",
+      "notes": "SECURITY ISSUE: No authentication check (open endpoint), no file size limit"
+    }
+  ],
+  "external_calls": [
+    {
+      "type": "database",
+      "target": "SQL Server",
+      "operations": ["SELECT", "INSERT", "UPDATE", "DELETE"],
+      "adapter": "Entity Framework 6 (CatalogDBContext)",
+      "used_in_flows": ["list_products_paginated", "view_product_details", "create_product", "update_product", "delete_product"]
+    },
+    {
+      "type": "cloud_storage",
+      "target": "Azure Blob Storage",
+      "operations": ["Upload", "Copy", "Delete"],
+      "adapter": "IImageService (ImageAzureStorage implementation)",
+      "used_in_flows": ["create_product", "update_product", "upload_image_ajax"]
+    },
+    {
+      "type": "authentication",
+      "target": "Azure Active Directory",
+      "operations": ["Challenge", "Validate"],
+      "adapter": "OWIN OpenID Connect middleware",
+      "used_in_flows": ["create_product", "update_product", "delete_product"]
+    }
+  ],
+  "cross_seam_edges": [],
+  "notes": [
+    "All flows traced to stable boundaries (DB, cloud storage, auth)",
+    "No cross-seam dependencies (single seam application)",
+    "Transaction management is implicit (Entity Framework SaveChanges)",
+    "Image operations are not in DB transaction scope (potential inconsistency)",
+    "HiLo sequence pattern is SQL Server-specific",
+    "Synchronous operations (no async/await in legacy code)"
+  ]
+}
