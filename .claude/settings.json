@@ -1,20 +1,42 @@
 {
   "hooks": {
-    "post-write": {
-      "description": "Run code review and security analysis after writing code",
-      "command": "bash .claude/scripts/post-code-hook.sh \"{{file_path}}\"",
-      "background": false
-    },
-    "post-edit": {
-      "description": "Run code review and security analysis after editing code",
-      "command": "bash .claude/scripts/post-code-hook.sh \"{{file_path}}\"",
-      "background": false
-    },
-    "post-implementation": {
-      "description": "Run comprehensive quality checks after seam implementation",
-      "command": "bash .claude/scripts/post-implementation-hook.sh \"{{seam_name}}\"",
-      "background": false
-    }
+    "SubagentStart": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/log-agent-start.sh"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": ".claude/hooks/log-agent-stop.sh"
+          },
+          {
+            "type": "command",
+            "command": ".claude/hooks/capture-quality-metrics.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/scripts/post-code-hook.sh"
+          }
+        ]
+      }
+    ]
   },
   "quality_gates": {
     "code_coverage": {

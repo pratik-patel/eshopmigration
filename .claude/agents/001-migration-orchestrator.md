@@ -184,6 +184,14 @@ if [ "$found_legacy" = false ]; then
 fi
 
 echo "📂 Working directory: $(pwd)"
+
+# Log migration start
+mkdir -p docs/tracking
+TIMESTAMP=$(date -Iseconds)
+MODE_TYPE=$([ "$USE_SYNTHETIC_BASELINES" == "true" ] && echo "full-automation" || echo "semi-automated")
+echo "{\"timestamp\":\"$TIMESTAMP\",\"event\":\"migration_started\",\"mode\":\"$MODE_TYPE\",\"workspace\":\"$(pwd)\"}" >> docs/tracking/migration-activity.jsonl
+
+echo "✅ Migration tracking initialized: docs/tracking/migration-activity.jsonl"
 ```
 
 ---
@@ -470,17 +478,24 @@ invoke_agent() {
 ## Final Report
 
 ```bash
+# Log migration completion
+TIMESTAMP=$(date -Iseconds)
+SEAM_COUNT=$(jq '.seams | length' docs/context-fabric/seam-proposals.json 2>/dev/null || echo "0")
+echo "{\"timestamp\":\"$TIMESTAMP\",\"event\":\"migration_completed\",\"seam_count\":$SEAM_COUNT}" >> docs/tracking/migration-activity.jsonl
+
 echo "
 🎉 Migration Complete
 
 **Mode:** $USE_SYNTHETIC_BASELINES == true ? 'Full Automation' : 'Semi-Automated'
-**Seams:** $(jq '.seams | length' docs/context-fabric/seam-proposals.json)
+**Seams:** $SEAM_COUNT
 
 **Next Steps:**
 1. Review outputs: docs/seams/*/requirements.md
 2. Run tests: cd backend && pytest
 3. Start services: docker-compose up
 4. Manual review: http://localhost:3000
+
+**Tracking Data:** docs/tracking/migration-activity.jsonl
 "
 ```
 

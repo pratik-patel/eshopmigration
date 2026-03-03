@@ -37,12 +37,20 @@ docs/context-fabric/
 - **`coverage-audit.json`** — Per-module coverage breakdown
   - **Need:** Module name, file count, covered count, uncovered count, coverage %
   - **When:** Phase 0 (for coverage heatmap in Phase 0 dashboard page)
-  - **Fix:** Add to seam-discovery agent output
+  - **✅ DATA SOURCE:** Derive from `manifest.json` + `seam-proposals.json`
+    - `manifest.json` has all files per module
+    - `seam-proposals.json` has which files are in seams
+    - Dashboard calculates: `coverage_pct = (files_in_seams / total_files) * 100`
+  - **Fix:** Dashboard parses existing files (no agent change needed)
 
 - **`seam-proposals-history.json`** — Discovery iteration tracking
   - **Need:** Each iteration: timestamp, seams discovered, coverage %, changes
   - **When:** Phase 0 (for discovery timeline visualization)
-  - **Fix:** Track iterations in separate file, append on each re-run
+  - **✅ DATA SOURCE:** Derive from `migration-activity.jsonl`
+    - Hook logs `{"event":"agent_completed","agent":"seam-discovery","timestamp":"..."}`
+    - Dashboard reads seam-proposals.json at each seam-discovery completion timestamp
+    - Tracks iteration progression over time
+  - **Fix:** Dashboard parses activity log + seam-proposals snapshots
 
 - **`navigation-map.json`** — Menu structure, routes
   - **Need:** Menu hierarchy, screen names, routes, parent-child relationships
@@ -968,3 +976,260 @@ def parse_tasks_md(tasks_md_path):
 ---
 
 **Ready to prioritize and implement the missing artifacts!** 🚀
+
+---
+
+## 🗺️ Data Source Reference (For Agent Updates)
+
+**Use this table when updating agent instructions or creating hooks.**
+
+| Data File | Data Source | How Generated | When Available |
+|-----------|-------------|---------------|----------------|
+| **migration-activity.jsonl** | ✅ **Hooks** (SubagentStart/Stop) | `.claude/hooks/log-agent-*.sh` | Throughout migration |
+| **tasks-status.json** | ⚠️ **Parse tasks.md** | Dashboard parses `docs/seams/{seam}/tasks.md` directly | After Phase 3 |
+| **test-results-backend.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-quality-metrics.sh` runs pytest | After backend impl |
+| **test-results-frontend.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-quality-metrics.sh` runs vitest | After frontend impl |
+| **coverage-backend.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-quality-metrics.sh` runs pytest --cov | After backend impl |
+| **coverage-frontend.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-quality-metrics.sh` runs coverage | After frontend impl |
+| **parity-results.json** | ⚠️ **Parse VERIFICATION_SUMMARY.md** | Dashboard parses `docs/legacy-golden/parity-results/{seam}/VERIFICATION_SUMMARY.md` | After Phase 6 |
+| **requirements-stats.json** | ⚠️ **Parse requirements.md** | Dashboard counts EARS patterns in `docs/seams/{seam}/requirements.md` | After Phase 3 |
+| **design-components.json** | ⚠️ **Parse design.md** | Dashboard extracts components from `docs/seams/{seam}/design.md` Section 3 | After Phase 3 |
+| **contract-summary.json** | ⚠️ **Parse openapi.yaml** | Dashboard analyzes `docs/seams/{seam}/contracts/openapi.yaml` | After Phase 3 |
+| **data-access.json** | ⚠️ **Parse discovery.md** | Dashboard extracts from `docs/seams/{seam}/discovery.md` | After Phase 1 |
+| **security-review.json** | ⚠️ **Parse security-review.md** | Dashboard parses `docs/seams/{seam}/security-review.md` | After Phase 6 |
+| **code-quality.json** | ✅ **Hook** (SubagentStop) | `.claude/hooks/capture-quality-metrics.sh` runs ruff/mypy | After impl |
+| **implementation-roadmap.json** | ⚠️ **Parse implementation-roadmap.md** | Dashboard parses `docs/implementation-roadmap.md` | After Phase 4 |
+| **coverage-audit.json** | ⚠️ **Derive from manifest.json + seam-proposals.json** | Dashboard calculates per-module coverage | Phase 0 |
+| **architecture-diagram.json** | ⚠️ **Parse CLAUDE.md + architecture-design.md** | Dashboard extracts layers/tech stack | Available always |
+
+---
+
+## 🎯 Implementation Strategy
+
+### ✅ Hooks Capture Real-time Data (Preferred)
+**What:** Test results, coverage, code quality (ruff, mypy, eslint)
+**How:** SubagentStop hook runs quality tools after agent completes
+**Location:** `.claude/hooks/capture-quality-metrics.sh`
+
+### ⚠️ Dashboard Parses Source Files (No Duplication)
+**What:** Tasks, requirements, design components, contracts, parity
+**Why:** Source markdown/YAML files already exist — don't duplicate
+**How:** Dashboard reads and parses on-demand
+
+### ❌ Agent Generates Only When Necessary
+**What:** coverage-audit.json (Phase 0 only)
+**Why:** No source file to parse, aggregated data needed
+**How:** Agent 101 tracks module coverage during discovery
+
+---
+
+## 📋 Dashboard Data Derivation Guide
+
+**How to calculate missing data from existing files:**
+
+### Coverage Audit (Per-Module Coverage)
+
+**Source Files:**
+- `docs/context-fabric/manifest.json` - all files per module
+- `docs/context-fabric/seam-proposals.json` - files mapped to seams
+
+**Calculation:**
+```python
+def calculate_coverage_audit(manifest, seams):
+    coverage = []
+    for module in manifest['modules']:
+        total_files = len(module['files'])
+        covered_files = 0
+
+        for file in module['files']:
+            if file_in_any_seam(file, seams):
+                covered_files += 1
+
+        coverage.append({
+            "module_name": module['name'],
+            "total_files": total_files,
+            "covered_files": covered_files,
+            "uncovered_files": total_files - covered_files,
+            "coverage_pct": (covered_files / total_files) * 100
+        })
+    return coverage
+```
+
+---
+
+### Discovery Iterations Timeline
+
+**Source Files:**
+- `docs/tracking/migration-activity.jsonl` - agent completion events
+- `docs/context-fabric/seam-proposals.json` - seam list
+
+**Calculation:**
+```python
+def get_discovery_iterations(activity_log):
+    iterations = []
+    for event in activity_log:
+        if event['agent'] == 'seam-discovery' and event['event'] == 'agent_completed':
+            # Read seam-proposals.json state at this timestamp
+            seams = load_seams_at_timestamp(event['timestamp'])
+            iterations.append({
+                "iteration": len(iterations) + 1,
+                "timestamp": event['timestamp'],
+                "seams_discovered": len(seams),
+                "coverage_pct": calculate_coverage(seams)
+            })
+    return iterations
+```
+
+---
+
+### Task Status (Real-time Progress)
+
+**Source Files:**
+- `docs/seams/{seam}/tasks.md` - checklist with `- [ ]` and `- [x]`
+
+**Calculation:**
+```python
+def parse_task_status(tasks_md):
+    lines = tasks_md.split('\n')
+    tasks = []
+    current_phase = None
+
+    for line in lines:
+        if line.startswith('## '):
+            current_phase = extract_phase(line)  # Backend/Frontend/Testing
+        elif line.startswith('- ['):
+            status = 'done' if '[x]' in line else 'todo'
+            title = line.split(']', 1)[1].strip()
+            tasks.append({
+                "id": f"T{len(tasks)+1}",
+                "title": title,
+                "status": status,
+                "phase": current_phase
+            })
+
+    return {
+        "total_tasks": len(tasks),
+        "completed": sum(1 for t in tasks if t['status'] == 'done'),
+        "todo": sum(1 for t in tasks if t['status'] == 'todo'),
+        "tasks": tasks
+    }
+```
+
+---
+
+### Requirements Stats
+
+**Source Files:**
+- `docs/seams/{seam}/requirements.md` - EARS patterns
+
+**Calculation:**
+```python
+def count_ears_patterns(requirements_md):
+    patterns = {
+        "ubiquitous": len(re.findall(r'\*\*Ubiquitous\*\*', requirements_md)),
+        "event_driven": len(re.findall(r'\*\*Event-Driven\*\*', requirements_md)),
+        "unwanted": len(re.findall(r'\*\*Unwanted\*\*', requirements_md)),
+        "state_driven": len(re.findall(r'\*\*State-Driven\*\*', requirements_md)),
+        "optional": len(re.findall(r'\*\*Optional\*\*', requirements_md)),
+        "complex": len(re.findall(r'\*\*Complex\*\*', requirements_md))
+    }
+    return {
+        "total_requirements": sum(patterns.values()),
+        "ears_distribution": patterns
+    }
+```
+
+---
+
+### Design Components Tree
+
+**Source Files:**
+- `docs/seams/{seam}/design.md` - Section 3: Component Architecture
+
+**Calculation:**
+```python
+def extract_component_tree(design_md):
+    # Parse markdown section "## 3. Component Architecture"
+    section = extract_section(design_md, "3. Component Architecture")
+
+    # Extract component hierarchy from markdown structure
+    components = []
+    for line in section.split('\n'):
+        if line.startswith('### '):
+            components.append({
+                "name": line.replace('###', '').strip(),
+                "type": "page",
+                "children": []
+            })
+        elif line.startswith('- **'):
+            component_name = extract_component_name(line)
+            components[-1]['children'].append({
+                "name": component_name,
+                "type": "component"
+            })
+
+    return components
+```
+
+---
+
+### Contract Summary
+
+**Source Files:**
+- `docs/seams/{seam}/contracts/openapi.yaml`
+
+**Calculation:**
+```python
+import yaml
+
+def summarize_contract(openapi_path):
+    spec = yaml.safe_load(open(openapi_path))
+
+    return {
+        "endpoint_count": len(spec.get('paths', {})),
+        "schema_count": len(spec.get('components', {}).get('schemas', {})),
+        "methods": {
+            "GET": count_methods(spec, 'get'),
+            "POST": count_methods(spec, 'post'),
+            "PUT": count_methods(spec, 'put'),
+            "DELETE": count_methods(spec, 'delete')
+        }
+    }
+```
+
+---
+
+## 📋 Dashboard Implementation Checklist
+
+When building dashboard pages:
+
+1. **Check if source file exists first**
+   - ✅ tasks.md → Parse directly (see derivation guide above)
+   - ✅ requirements.md → Count EARS patterns (see guide)
+   - ✅ design.md → Extract components (see guide)
+   - ✅ openapi.yaml → Count endpoints (see guide)
+
+2. **Use hook-generated data if available**
+   - ✅ test-results-*.json (from hooks)
+   - ✅ coverage-*.json (from hooks)
+   - ✅ code-quality.json (from hooks)
+
+3. **Derive from multiple sources if needed**
+   - ✅ coverage-audit (manifest + seams)
+   - ✅ discovery iterations (activity log + seams)
+   - ✅ task status (parse tasks.md)
+
+---
+
+## 🔄 Update Process for Agents
+
+**If you need to add data capture:**
+
+1. **First:** Can dashboard parse an existing file? → YES: Add parsing logic to dashboard
+2. **Second:** Can a hook capture it automatically? → YES: Add to `.claude/hooks/capture-quality-metrics.sh`
+3. **Last resort:** Must agent generate it? → Add to agent instructions (avoid duplication)
+
+**Example:**
+- ❌ Don't make agent 105 generate tasks-status.json → Dashboard parses tasks.md
+- ✅ Let hook capture test results → Hook runs pytest/vitest after agent completes
+- ✅ Let agent 101 generate coverage-audit.json → No source file exists, aggregation needed
