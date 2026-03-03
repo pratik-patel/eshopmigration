@@ -1,0 +1,119 @@
+# Python (exclude .claude from these patterns)
+backend/**/__pycache__/
+frontend/**/__pycache__/
+tests/**/__pycache__/
+docs/**/__pycache__/
+
+# Python compiled files (exclude .claude)
+backend/**/*.py[cod]
+frontend/**/*.py[cod]
+tests/**/*.py[cod]
+docs/**/*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Poetry
+poetry.lock
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# Node.js / Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+package-lock.json
+
+# Build artifacts
+dist/
+dist-ssr/
+*.local
+
+# Testing
+.coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.hypothesis/
+coverage/
+*.cover
+*.py,cover
+.cache
+nosetests.xml
+coverage.xml
+*.coveragerc
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Agent execution files (root level MD files from agent runs)
+# Only specific agent-generated temporary files
+/APPLICATION_RUNNING.md
+/DATABASE_SCHEMA_COMPARISON.md
+/PARITY_TESTS_QUICK_START.md
+/SETUP_COMPLETE_SUMMARY.md
+/START_BACKEND.md
+/STATIC_ASSETS_MIGRATION_UPDATE.md
+/STATIC_ASSETS_QUICK_START.md
+/UI_INVENTORY_COMPLETION_REPORT.md
+
+# Agent skill data and cache directories
+# Note: .claude folder contents should be tracked (per user request)
+
+# Parity test results (generated)
+legacy-golden/parity-results/
+
+# Temporary test scripts (not permanent tests)
+test_api.py
+test_client.py
+scan_static_assets.py
+validate_openapi.py
