@@ -1,0 +1,80 @@
+{
+  "seam_id": "catalog-list",
+  "discovery_date": "2026-03-02T00:00:00Z",
+  "strategy": "read_only",
+  "read_targets": [
+    {
+      "name": "CatalogItems",
+      "type": "table",
+      "access_pattern": "SELECT with OFFSET/LIMIT",
+      "operations": ["SELECT", "COUNT"],
+      "evidence": "CatalogService.cs:24-32",
+      "fields": [
+        "Id",
+        "Name",
+        "Description",
+        "Price",
+        "PictureFileName",
+        "PictureUri",
+        "CatalogTypeId",
+        "CatalogBrandId",
+        "AvailableStock",
+        "RestockThreshold",
+        "MaxStockThreshold",
+        "OnReorder"
+      ],
+      "joins": [
+        {
+          "table": "CatalogBrands",
+          "type": "INNER JOIN",
+          "on": "CatalogItems.CatalogBrandId = CatalogBrands.Id"
+        },
+        {
+          "table": "CatalogTypes",
+          "type": "INNER JOIN",
+          "on": "CatalogItems.CatalogTypeId = CatalogTypes.Id"
+        }
+      ],
+      "filters": [],
+      "ordering": "ORDER BY Id ASC",
+      "pagination": "OFFSET (page_size * page_index) ROWS FETCH NEXT page_size ROWS ONLY"
+    },
+    {
+      "name": "CatalogBrands",
+      "type": "table",
+      "access_pattern": "INNER JOIN",
+      "operations": ["SELECT (via JOIN)"],
+      "evidence": "CatalogService.cs:27",
+      "fields": ["Id", "Brand"],
+      "notes": "Accessed only via navigation property in CatalogItem"
+    },
+    {
+      "name": "CatalogTypes",
+      "type": "table",
+      "access_pattern": "INNER JOIN",
+      "operations": ["SELECT (via JOIN)"],
+      "evidence": "CatalogService.cs:28",
+      "fields": ["Id", "Type"],
+      "notes": "Accessed only via navigation property in CatalogItem"
+    }
+  ],
+  "write_targets": [],
+  "unknown_targets": [],
+  "shared_write_conflicts": [],
+  "shared_read_access": {
+    "CatalogItems": [
+      "catalog-list",
+      "catalog-crud"
+    ],
+    "CatalogBrands": [
+      "catalog-list",
+      "catalog-crud"
+    ],
+    "CatalogTypes": [
+      "catalog-list",
+      "catalog-crud"
+    ]
+  },
+  "transaction_scope": "none",
+  "notes": "This seam performs only read operations. No writes, no transactions, no conflicts possible."
+}

@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Legacy eShop CSS classes - to be extracted from Content/Site.css */
+
+/* Table styles */
+.esh-table {
+  @apply w-full;
+}
+
+.esh-table-header {
+  @apply bg-gray-100 font-semibold;
+}
+
+.esh-thumbnail {
+  @apply w-20 h-20 object-cover rounded;
+}
+
+.esh-price {
+  @apply font-bold text-green-600;
+}
+
+.esh-table-link {
+  @apply text-eshop-primary hover:underline;
+}
+
+/* Button styles */
+.esh-button {
+  @apply px-4 py-2 rounded font-medium transition-colors;
+}
+
+.esh-button-primary {
+  @apply bg-eshop-primary text-white hover:bg-blue-700;
+}
+
+.esh-button-secondary {
+  @apply bg-eshop-secondary text-white hover:bg-gray-700;
+}
+
+/* Pagination styles */
+.esh-pager {
+  @apply mt-4;
+}
+
+.esh-pager-wrapper {
+  @apply flex items-center justify-center space-x-4;
+}
+
+.esh-pager-item {
+  @apply px-3 py-2;
+}
+
+.esh-pager-item--navigable {
+  @apply text-eshop-primary hover:underline cursor-pointer;
+}
+
+.esh-pager-item--hidden {
+  @apply hidden;
+}
+
+/* Form styles */
+.esh-form-information {
+  @apply text-sm text-gray-600 italic;
+}
+
+.esh-button-actions {
+  @apply flex justify-end space-x-2;
+}
+
+/* Body title */
+.esh-body-title {
+  @apply text-2xl font-bold mb-4;
+}
+
+/* Picture display (Edit/Details/Delete pages) */
+.esh-picture {
+  @apply w-full h-auto rounded shadow-md;
+}

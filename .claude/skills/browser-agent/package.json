@@ -1,0 +1,20 @@
+{
+  "name": "browser-agent-skill",
+  "version": "1.0.0",
+  "description": "Browser automation skill for UI discovery and parity verification",
+  "scripts": {
+    "discover": "npx playwright test scripts/discover.spec.ts",
+    "verify": "npx playwright test scripts/verify.spec.ts",
+    "report:baseline": "node scripts/generate-baseline-index.js",
+    "report:parity": "node scripts/generate-parity-report.js",
+    "install:browsers": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.40.0",
+    "pngjs": "^7.0.0",
+    "pixelmatch": "^5.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}

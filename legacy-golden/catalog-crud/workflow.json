@@ -1,0 +1,243 @@
+{
+  "name": "catalog-crud",
+  "description": "Create, Read, Update, Delete catalog items",
+  "steps": [
+    {
+      "action": "create",
+      "description": "Fill form to create new catalog item"
+    },
+    {
+      "action": "edit",
+      "description": "Modify existing catalog item"
+    },
+    {
+      "action": "details",
+      "description": "View catalog item details"
+    },
+    {
+      "action": "delete",
+      "description": "Delete catalog item with confirmation"
+    }
+  ],
+  "screenshots": [
+    "001_create_form.png",
+    "002_edit_form.png",
+    "003_details_view.png",
+    "004_delete_confirm.png"
+  ],
+  "forms": {
+    "create": {
+      "url": "http://localhost:50586/Catalog/Create",
+      "fields": [
+        {
+          "name": "ctl00$MainContent$Name",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Description",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Brand",
+          "type": "select-one",
+          "label": "",
+          "required": false,
+          "value": "1",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Type",
+          "type": "select-one",
+          "label": "",
+          "required": false,
+          "value": "1",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Price",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "0.00",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Stock",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "0",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Restock",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "0",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Maxstock",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "0",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$ctl06",
+          "type": "submit",
+          "label": "[ Cancel ]",
+          "required": false,
+          "value": "[ Create ]",
+          "visible": true
+        }
+      ],
+      "field_count": 9
+    },
+    "edit": {
+      "url": "http://localhost:50586/Catalog/Edit/1",
+      "fields": [
+        {
+          "name": "ctl00$MainContent$Name",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": ".NET Bot Black Hoodie",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Description",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": ".NET Bot Black Hoodie",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$BrandDropDownList",
+          "type": "select-one",
+          "label": "",
+          "required": false,
+          "value": "2",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$TypeDropDownList",
+          "type": "select-one",
+          "label": "",
+          "required": false,
+          "value": "2",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Price",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "19.5",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$PictureFileName",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "1.png",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Stock",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "100",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Restock",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "0",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$Maxstock",
+          "type": "text",
+          "label": "",
+          "required": false,
+          "value": "0",
+          "visible": true
+        },
+        {
+          "name": "ctl00$MainContent$ctl07",
+          "type": "submit",
+          "label": "[ Cancel ]",
+          "required": false,
+          "value": "[ Save ]",
+          "visible": true
+        }
+      ],
+      "field_count": 10
+    },
+    "details": {
+      "url": "http://localhost:50586/Catalog/Details/1",
+      "fields": [
+        {
+          "label": "Name",
+          "value": ".NET Bot Black Hoodie"
+        },
+        {
+          "label": "Description",
+          "value": ".NET Bot Black Hoodie"
+        },
+        {
+          "label": "Brand",
+          "value": ".NET"
+        },
+        {
+          "label": "Type",
+          "value": "T-Shirt"
+        },
+        {
+          "label": "Price",
+          "value": "19.5"
+        },
+        {
+          "label": "Picture name",
+          "value": "1.png"
+        },
+        {
+          "label": "Stock",
+          "value": "100"
+        },
+        {
+          "label": "Restock",
+          "value": "0"
+        },
+        {
+          "label": "Max stock",
+          "value": "0"
+        }
+      ]
+    },
+    "delete": {
+      "url": "http://localhost:50586/Catalog/Delete/1",
+      "confirmation": {
+        "heading": "Catalog manager (Web Forms)",
+        "hasConfirmButton": true,
+        "confirmButtonText": "[ Delete ]"
+      }
+    }
+  }
+}

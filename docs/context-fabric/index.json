@@ -1,0 +1,140 @@
+{
+  "generated_at": "2026-03-02T00:00:00Z",
+  "codebase": "eShopLegacyWebForms",
+  "framework": "ASP.NET WebForms 4.7.2",
+  "migration_target": {
+    "backend": "Python 3.12+ FastAPI",
+    "frontend": "React 18 + TypeScript + Vite"
+  },
+  "artifacts": {
+    "project_facts": "docs/context-fabric/project-facts.json",
+    "manifest": "docs/context-fabric/manifest.json",
+    "seam_proposals": "docs/context-fabric/seam-proposals.json",
+    "coverage_audit": "docs/context-fabric/coverage-audit.json",
+    "dependency_graph": "docs/context-fabric/dependency-graph.json",
+    "business_rules": "docs/context-fabric/business-rules.json",
+    "database_access": "docs/context-fabric/database-access.md"
+  },
+  "seams": [
+    {
+      "id": "catalog-list",
+      "name": "Catalog List & Pagination",
+      "spec": "docs/seams/catalog-list/spec.md",
+      "priority": 1,
+      "status": "pending_discovery"
+    },
+    {
+      "id": "catalog-crud",
+      "name": "Catalog CRUD Operations",
+      "spec": "docs/seams/catalog-crud/spec.md",
+      "priority": 2,
+      "status": "pending_discovery"
+    },
+    {
+      "id": "data-access",
+      "name": "Data Access Layer",
+      "spec": "docs/seams/data-access/spec.md",
+      "priority": 3,
+      "status": "pending_discovery"
+    },
+    {
+      "id": "static-pages",
+      "name": "Static Pages",
+      "spec": "docs/seams/static-pages/spec.md",
+      "priority": 4,
+      "status": "pending_discovery"
+    }
+  ],
+  "search_index": {
+    "pages": {
+      "Default.aspx": {
+        "seam": "catalog-list",
+        "purpose": "Product catalog listing with pagination",
+        "route": "/"
+      },
+      "Catalog/Create.aspx": {
+        "seam": "catalog-crud",
+        "purpose": "Create new catalog item",
+        "route": "/Catalog/Create"
+      },
+      "Catalog/Edit.aspx": {
+        "seam": "catalog-crud",
+        "purpose": "Edit catalog item",
+        "route": "/Catalog/Edit/{id}"
+      },
+      "Catalog/Details.aspx": {
+        "seam": "catalog-crud",
+        "purpose": "View catalog item details",
+        "route": "/Catalog/Details/{id}"
+      },
+      "Catalog/Delete.aspx": {
+        "seam": "catalog-crud",
+        "purpose": "Delete catalog item",
+        "route": "/Catalog/Delete/{id}"
+      },
+      "About.aspx": {
+        "seam": "static-pages",
+        "purpose": "About page",
+        "route": "/About"
+      },
+      "Contact.aspx": {
+        "seam": "static-pages",
+        "purpose": "Contact page",
+        "route": "/Contact"
+      }
+    },
+    "models": {
+      "CatalogItem": {
+        "seam": "data-access",
+        "type": "entity",
+        "file": "Models/CatalogItem.cs"
+      },
+      "CatalogBrand": {
+        "seam": "data-access",
+        "type": "entity",
+        "file": "Models/CatalogBrand.cs"
+      },
+      "CatalogType": {
+        "seam": "data-access",
+        "type": "entity",
+        "file": "Models/CatalogType.cs"
+      },
+      "PaginatedItemsViewModel": {
+        "seam": "catalog-list",
+        "type": "viewmodel",
+        "file": "ViewModel/PaginatedItemsViewModel.cs"
+      }
+    },
+    "services": {
+      "ICatalogService": {
+        "seam": "data-access",
+        "type": "interface",
+        "file": "Services/ICatalogService.cs"
+      },
+      "CatalogService": {
+        "seam": "data-access",
+        "type": "implementation",
+        "file": "Services/CatalogService.cs"
+      },
+      "CatalogServiceMock": {
+        "seam": "data-access",
+        "type": "mock",
+        "file": "Services/CatalogServiceMock.cs"
+      }
+    }
+  },
+  "statistics": {
+    "total_pages": 7,
+    "total_models": 7,
+    "total_services": 3,
+    "total_seams": 4,
+    "total_business_rules": 28,
+    "total_types": 35,
+    "coverage": "100%"
+  },
+  "next_steps": [
+    "Run ui-behavior-extractor to extract UI layouts from .aspx files",
+    "Run architecture-bootstrap to generate backend/frontend skeletons",
+    "Run per-seam migration pipeline starting with data-access seam"
+  ]
+}

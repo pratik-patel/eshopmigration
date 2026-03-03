@@ -1,0 +1,241 @@
+{
+  "seam_id": "catalog-list",
+  "discovery_date": "2026-03-02T00:00:00Z",
+  "inputs": [
+    {
+      "name": "page_size",
+      "type": "integer",
+      "source": "query_parameter",
+      "evidence": ["Default.aspx.cs:26", "ui-behavior.md"],
+      "required": false,
+      "default": 10,
+      "validation": {
+        "minimum": 1,
+        "maximum": 100
+      },
+      "description": "Number of items per page"
+    },
+    {
+      "name": "page_index",
+      "type": "integer",
+      "source": "query_parameter",
+      "evidence": ["Default.aspx.cs:27", "ui-behavior.md"],
+      "required": false,
+      "default": 0,
+      "validation": {
+        "minimum": 0
+      },
+      "description": "Page number (zero-based)"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "page_index",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": ["PaginatedItemsViewModel.cs:ActualPage"],
+      "description": "Current page number (zero-based)"
+    },
+    {
+      "name": "page_size",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": ["PaginatedItemsViewModel.cs:ItemsPerPage"],
+      "description": "Number of items per page"
+    },
+    {
+      "name": "total_items",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": ["PaginatedItemsViewModel.cs:TotalItems"],
+      "description": "Total count of all items across all pages"
+    },
+    {
+      "name": "total_pages",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": ["PaginatedItemsViewModel.cs:TotalPages"],
+      "description": "Total number of pages"
+    },
+    {
+      "name": "data",
+      "type": "array",
+      "source": "data_path",
+      "evidence": ["PaginatedItemsViewModel.cs:Data"],
+      "description": "Array of catalog items for current page",
+      "items_schema": "CatalogItemDto"
+    }
+  ],
+  "catalog_item_fields": [
+    {
+      "name": "id",
+      "type": "integer",
+      "source": "both",
+      "evidence": ["CatalogItem.cs:11", "ui-behavior.md (actions column)"],
+      "ui_display": "hidden",
+      "purpose": "Navigation links (Edit/Details/Delete)"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "source": "both",
+      "evidence": ["CatalogItem.cs:12", "ui-behavior.md (column 2)"],
+      "ui_display": "table_column_2",
+      "purpose": "Product name"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "nullable": true,
+      "source": "both",
+      "evidence": ["CatalogItem.cs:13", "ui-behavior.md (column 3)"],
+      "ui_display": "table_column_3",
+      "purpose": "Product description"
+    },
+    {
+      "name": "price",
+      "type": "number",
+      "format": "decimal",
+      "source": "both",
+      "evidence": ["CatalogItem.cs:14", "ui-behavior.md (column 6)"],
+      "ui_display": "table_column_6",
+      "ui_format": "$XX.XX",
+      "purpose": "Product price (currency formatted)"
+    },
+    {
+      "name": "picture_file_name",
+      "type": "string",
+      "source": "both",
+      "evidence": ["CatalogItem.cs:15", "ui-behavior.md (column 1 & 7)"],
+      "ui_display": "table_column_1_image, table_column_7_text",
+      "purpose": "Image filename for display and text column"
+    },
+    {
+      "name": "picture_uri",
+      "type": "string",
+      "nullable": true,
+      "source": "data_path",
+      "evidence": ["CatalogItem.cs:16"],
+      "ui_display": "none",
+      "purpose": "Legacy field, not displayed"
+    },
+    {
+      "name": "catalog_type_id",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": ["CatalogItem.cs:17"],
+      "ui_display": "hidden",
+      "purpose": "Foreign key to CatalogTypes"
+    },
+    {
+      "name": "catalog_brand_id",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": ["CatalogItem.cs:18"],
+      "ui_display": "hidden",
+      "purpose": "Foreign key to CatalogBrands"
+    },
+    {
+      "name": "available_stock",
+      "type": "integer",
+      "source": "both",
+      "evidence": ["CatalogItem.cs:19", "ui-behavior.md (column 8)"],
+      "ui_display": "table_column_8",
+      "purpose": "Current stock level"
+    },
+    {
+      "name": "restock_threshold",
+      "type": "integer",
+      "source": "both",
+      "evidence": ["CatalogItem.cs:20", "ui-behavior.md (column 9)"],
+      "ui_display": "table_column_9",
+      "purpose": "Minimum stock level before reorder"
+    },
+    {
+      "name": "max_stock_threshold",
+      "type": "integer",
+      "source": "both",
+      "evidence": ["CatalogItem.cs:21", "ui-behavior.md (column 10)"],
+      "ui_display": "table_column_10",
+      "purpose": "Maximum stock level"
+    },
+    {
+      "name": "on_reorder",
+      "type": "boolean",
+      "source": "data_path",
+      "evidence": ["CatalogItem.cs:22"],
+      "ui_display": "none",
+      "purpose": "Reorder flag (not displayed in list)"
+    },
+    {
+      "name": "catalog_brand",
+      "type": "object",
+      "source": "both",
+      "evidence": ["CatalogService.cs:27", "ui-behavior.md (column 4)"],
+      "ui_display": "table_column_4",
+      "purpose": "Brand information (navigation property)",
+      "nested_fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "source": "data_path",
+          "evidence": ["CatalogBrand.cs"],
+          "ui_display": "hidden"
+        },
+        {
+          "name": "brand",
+          "type": "string",
+          "source": "both",
+          "evidence": ["CatalogBrand.cs", "ui-behavior.md (column 4)"],
+          "ui_display": "table_column_4",
+          "purpose": "Brand name"
+        }
+      ]
+    },
+    {
+      "name": "catalog_type",
+      "type": "object",
+      "source": "both",
+      "evidence": ["CatalogService.cs:28", "ui-behavior.md (column 5)"],
+      "ui_display": "table_column_5",
+      "purpose": "Type information (navigation property)",
+      "nested_fields": [
+        {
+          "name": "id",
+          "type": "integer",
+          "source": "data_path",
+          "evidence": ["CatalogType.cs"],
+          "ui_display": "hidden"
+        },
+        {
+          "name": "type",
+          "type": "string",
+          "source": "both",
+          "evidence": ["CatalogType.cs", "ui-behavior.md (column 5)"],
+          "ui_display": "table_column_5",
+          "purpose": "Type name"
+        }
+      ]
+    }
+  ],
+  "filters_sorts_paging": [
+    {
+      "name": "ordering",
+      "type": "sort",
+      "source": "data_path",
+      "evidence": ["CatalogService.cs:29"],
+      "value": "Id ASC",
+      "ui_control": "none",
+      "notes": "Hardcoded sort order, no UI control"
+    },
+    {
+      "name": "pagination",
+      "type": "paging",
+      "source": "both",
+      "evidence": ["CatalogService.cs:30-31", "ui-behavior.md"],
+      "implementation": "OFFSET/LIMIT",
+      "ui_controls": ["Previous button", "Next button", "Page counter"]
+    }
+  ],
+  "notes": "All fields are confirmed from both code inspection and UI behavior documentation. Navigation properties (catalog_brand, catalog_type) must be eagerly loaded to avoid N+1 queries."
+}

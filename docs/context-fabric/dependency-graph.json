@@ -1,0 +1,129 @@
+{
+  "generated_at": "2026-03-02T00:00:00Z",
+  "nodes": [
+    {"id": "Default.aspx", "type": "page", "seam": "catalog-list"},
+    {"id": "Catalog/Create.aspx", "type": "page", "seam": "catalog-crud"},
+    {"id": "Catalog/Edit.aspx", "type": "page", "seam": "catalog-crud"},
+    {"id": "Catalog/Details.aspx", "type": "page", "seam": "catalog-crud"},
+    {"id": "Catalog/Delete.aspx", "type": "page", "seam": "catalog-crud"},
+    {"id": "About.aspx", "type": "page", "seam": "static-pages"},
+    {"id": "Contact.aspx", "type": "page", "seam": "static-pages"},
+    {"id": "ICatalogService", "type": "interface", "seam": "data-access"},
+    {"id": "CatalogService", "type": "service", "seam": "data-access"},
+    {"id": "CatalogServiceMock", "type": "service", "seam": "data-access"},
+    {"id": "CatalogItem", "type": "model", "seam": "data-access"},
+    {"id": "CatalogBrand", "type": "model", "seam": "data-access"},
+    {"id": "CatalogType", "type": "model", "seam": "data-access"},
+    {"id": "CatalogDBContext", "type": "dbcontext", "seam": "data-access"},
+    {"id": "PaginatedItemsViewModel", "type": "viewmodel", "seam": "catalog-list"},
+    {"id": "Site.Master", "type": "layout", "seam": "layout"},
+    {"id": "ApplicationModule", "type": "infrastructure", "seam": "infrastructure"},
+    {"id": "RouteConfig", "type": "infrastructure", "seam": "infrastructure"}
+  ],
+  "edges": [
+    {"from": "Default.aspx", "to": "ICatalogService", "type": "uses"},
+    {"from": "Default.aspx", "to": "PaginatedItemsViewModel", "type": "uses"},
+    {"from": "Default.aspx", "to": "CatalogItem", "type": "displays"},
+    {"from": "Default.aspx", "to": "Site.Master", "type": "inherits"},
+
+    {"from": "Catalog/Create.aspx", "to": "ICatalogService", "type": "uses"},
+    {"from": "Catalog/Create.aspx", "to": "CatalogItem", "type": "creates"},
+    {"from": "Catalog/Create.aspx", "to": "CatalogBrand", "type": "references"},
+    {"from": "Catalog/Create.aspx", "to": "CatalogType", "type": "references"},
+    {"from": "Catalog/Create.aspx", "to": "Site.Master", "type": "inherits"},
+
+    {"from": "Catalog/Edit.aspx", "to": "ICatalogService", "type": "uses"},
+    {"from": "Catalog/Edit.aspx", "to": "CatalogItem", "type": "updates"},
+    {"from": "Catalog/Edit.aspx", "to": "CatalogBrand", "type": "references"},
+    {"from": "Catalog/Edit.aspx", "to": "CatalogType", "type": "references"},
+    {"from": "Catalog/Edit.aspx", "to": "Site.Master", "type": "inherits"},
+
+    {"from": "Catalog/Details.aspx", "to": "ICatalogService", "type": "uses"},
+    {"from": "Catalog/Details.aspx", "to": "CatalogItem", "type": "displays"},
+    {"from": "Catalog/Details.aspx", "to": "Site.Master", "type": "inherits"},
+
+    {"from": "Catalog/Delete.aspx", "to": "ICatalogService", "type": "uses"},
+    {"from": "Catalog/Delete.aspx", "to": "CatalogItem", "type": "deletes"},
+    {"from": "Catalog/Delete.aspx", "to": "Site.Master", "type": "inherits"},
+
+    {"from": "About.aspx", "to": "Site.Master", "type": "inherits"},
+    {"from": "Contact.aspx", "to": "Site.Master", "type": "inherits"},
+
+    {"from": "CatalogService", "to": "ICatalogService", "type": "implements"},
+    {"from": "CatalogService", "to": "CatalogDBContext", "type": "uses"},
+    {"from": "CatalogService", "to": "CatalogItem", "type": "manages"},
+    {"from": "CatalogService", "to": "CatalogBrand", "type": "queries"},
+    {"from": "CatalogService", "to": "CatalogType", "type": "queries"},
+
+    {"from": "CatalogServiceMock", "to": "ICatalogService", "type": "implements"},
+    {"from": "CatalogServiceMock", "to": "CatalogItem", "type": "mocks"},
+
+    {"from": "CatalogDBContext", "to": "CatalogItem", "type": "manages"},
+    {"from": "CatalogDBContext", "to": "CatalogBrand", "type": "manages"},
+    {"from": "CatalogDBContext", "to": "CatalogType", "type": "manages"},
+
+    {"from": "CatalogItem", "to": "CatalogBrand", "type": "references"},
+    {"from": "CatalogItem", "to": "CatalogType", "type": "references"},
+
+    {"from": "PaginatedItemsViewModel", "to": "CatalogItem", "type": "contains"},
+
+    {"from": "ApplicationModule", "to": "ICatalogService", "type": "registers"},
+    {"from": "ApplicationModule", "to": "CatalogService", "type": "registers"},
+    {"from": "ApplicationModule", "to": "CatalogServiceMock", "type": "registers"},
+    {"from": "ApplicationModule", "to": "CatalogDBContext", "type": "registers"}
+  ],
+  "strongly_connected_components": [
+    {
+      "id": "scc-1",
+      "nodes": ["CatalogItem", "CatalogBrand", "CatalogType"],
+      "description": "Core catalog entities with foreign key relationships"
+    }
+  ],
+  "dependency_layers": {
+    "layer_1_pages": [
+      "Default.aspx",
+      "Catalog/Create.aspx",
+      "Catalog/Edit.aspx",
+      "Catalog/Details.aspx",
+      "Catalog/Delete.aspx",
+      "About.aspx",
+      "Contact.aspx"
+    ],
+    "layer_2_services": [
+      "ICatalogService",
+      "CatalogService",
+      "CatalogServiceMock"
+    ],
+    "layer_3_data": [
+      "CatalogDBContext",
+      "CatalogItem",
+      "CatalogBrand",
+      "CatalogType"
+    ],
+    "layer_4_infrastructure": [
+      "ApplicationModule",
+      "RouteConfig",
+      "Site.Master"
+    ]
+  },
+  "cross_seam_dependencies": [
+    {
+      "from_seam": "catalog-list",
+      "to_seam": "data-access",
+      "via": "ICatalogService",
+      "type": "service_dependency"
+    },
+    {
+      "from_seam": "catalog-crud",
+      "to_seam": "data-access",
+      "via": "ICatalogService",
+      "type": "service_dependency"
+    },
+    {
+      "from_seam": "catalog-list",
+      "to_seam": "catalog-crud",
+      "via": "navigation_links",
+      "type": "navigation"
+    }
+  ]
+}

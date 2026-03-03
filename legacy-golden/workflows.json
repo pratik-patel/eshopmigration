@@ -1,0 +1,69 @@
+[
+  {
+    "name": "Home Page - Catalog manager (Web Forms)",
+    "url": "http://localhost:50586",
+    "steps": [],
+    "screenshots": [
+      "screen_000_depth0.png"
+    ],
+    "element_count": 39
+  },
+  {
+    "name": "Create - Catalog manager (Web Forms)",
+    "url": "http://localhost:50586/Catalog/Create",
+    "steps": [
+      {
+        "action": "click",
+        "target": ".btn.esh-button.esh-button-primary",
+        "value": null,
+        "description": "Click 'Create New'",
+        "timestamp": "2026-03-02T22:40:14.423226"
+      }
+    ],
+    "screenshots": [
+      "screen_001_depth1.png"
+    ],
+    "element_count": 16
+  },
+  {
+    "name": "Home Page - Catalog manager (Web Forms)",
+    "url": "http://localhost:50586/",
+    "steps": [
+      {
+        "action": "click",
+        "target": ".btn.esh-button.esh-button-primary",
+        "value": null,
+        "description": "Click 'Create New'",
+        "timestamp": "2026-03-02T22:40:14.423226"
+      },
+      {
+        "action": "click",
+        "target": ".btn.esh-button.esh-button-secondary",
+        "value": null,
+        "description": "Click '[ Cancel ]'",
+        "timestamp": "2026-03-02T22:40:20.571512"
+      }
+    ],
+    "screenshots": [
+      "screen_002_depth2.png"
+    ],
+    "element_count": 39
+  },
+  {
+    "name": "Edit - Catalog manager (Web Forms)",
+    "url": "http://localhost:50586/Catalog/Edit/1",
+    "steps": [
+      {
+        "action": "click",
+        "target": ".esh-table-link",
+        "value": null,
+        "description": "Click 'Edit'",
+        "timestamp": "2026-03-02T22:40:28.348410"
+      }
+    ],
+    "screenshots": [
+      "screen_003_depth1.png"
+    ],
+    "element_count": 17
+  }
+]

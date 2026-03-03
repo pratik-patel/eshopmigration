@@ -1,0 +1,30 @@
+{
+  "name": "static-pages",
+  "description": "Static and informational pages",
+  "pages": [
+    {
+      "title": "Home Page - Catalog manager (Web Forms)",
+      "url": "http://localhost:50586/Default/index/-1/size/10",
+      "href": "/Default/index/-1/size/10",
+      "link_text": "Previous",
+      "screenshot": "005_page_0_Previous.png"
+    },
+    {
+      "title": "Home Page - Catalog manager (Web Forms)",
+      "url": "http://localhost:50586/Default/index/1/size/10",
+      "href": "/Default/index/1/size/10",
+      "link_text": "Next",
+      "screenshot": "006_page_1_Next.png"
+    }
+  ],
+  "screenshots": [
+    "005_page_0_Previous.png",
+    "006_page_1_Next.png"
+  ],
+  "steps": [
+    {
+      "action": "navigate",
+      "description": "Visit 2 static/info pages"
+    }
+  ]
+}

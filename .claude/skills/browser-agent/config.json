@@ -1,0 +1,33 @@
+{
+  "discovery": {
+    "maxDepth": 5,
+    "maxDurationMs": 300000,
+    "screenshotFormat": "png",
+    "fullPageScreenshots": true,
+    "waitForNetworkIdle": true,
+    "excludePatterns": [
+      "*/logout",
+      "*/delete/*",
+      "*/admin/*",
+      "*/signout"
+    ]
+  },
+  "verification": {
+    "pixelDiffThreshold": 0.05,
+    "viewportSizes": [
+      { "width": 1920, "height": 1080 },
+      { "width": 1366, "height": 768 }
+    ],
+    "ignoreRegions": [
+      ".timestamp",
+      ".version-info",
+      ".user-avatar",
+      "[data-testid='dynamic-timestamp']"
+    ]
+  },
+  "browser": {
+    "headless": true,
+    "slowMo": 100,
+    "timeout": 30000
+  }
+}

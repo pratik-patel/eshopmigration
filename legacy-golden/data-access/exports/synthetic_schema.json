@@ -1,0 +1,200 @@
+{
+  "source": "SYNTHETIC - Derived from EF6 model annotations and CatalogDBContext",
+  "captured_at": "2026-03-02T00:00:00Z",
+  "description": "Complete database schema from Entity Framework 6",
+  "database": {
+    "provider": "Microsoft SQL Server (legacy) / SQLite (migration)",
+    "version": "SQL Server LocalDB (legacy) / SQLite 3.x (migration)",
+    "collation": "SQL_Latin1_General_CP1_CI_AS"
+  },
+  "tables": [
+    {
+      "name": "CatalogItems",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "INT",
+          "nullable": false,
+          "primary_key": true,
+          "auto_increment": true,
+          "identity": "IDENTITY(1,1)"
+        },
+        {
+          "name": "Name",
+          "type": "NVARCHAR(MAX)",
+          "nullable": false
+        },
+        {
+          "name": "Description",
+          "type": "NVARCHAR(MAX)",
+          "nullable": true
+        },
+        {
+          "name": "Price",
+          "type": "DECIMAL(18, 2)",
+          "nullable": false
+        },
+        {
+          "name": "PictureFileName",
+          "type": "NVARCHAR(MAX)",
+          "nullable": true,
+          "default": "'dummy.png'"
+        },
+        {
+          "name": "PictureUri",
+          "type": "NVARCHAR(MAX)",
+          "nullable": true
+        },
+        {
+          "name": "CatalogTypeId",
+          "type": "INT",
+          "nullable": false,
+          "foreign_key": {
+            "table": "CatalogTypes",
+            "column": "Id",
+            "on_delete": "NO ACTION"
+          }
+        },
+        {
+          "name": "CatalogBrandId",
+          "type": "INT",
+          "nullable": false,
+          "foreign_key": {
+            "table": "CatalogBrands",
+            "column": "Id",
+            "on_delete": "NO ACTION"
+          }
+        },
+        {
+          "name": "AvailableStock",
+          "type": "INT",
+          "nullable": false,
+          "default": 0
+        },
+        {
+          "name": "RestockThreshold",
+          "type": "INT",
+          "nullable": false,
+          "default": 0
+        },
+        {
+          "name": "MaxStockThreshold",
+          "type": "INT",
+          "nullable": false,
+          "default": 0
+        },
+        {
+          "name": "OnReorder",
+          "type": "BIT",
+          "nullable": false,
+          "default": 0
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PK_CatalogItems",
+          "type": "PRIMARY KEY",
+          "columns": ["Id"]
+        },
+        {
+          "name": "IX_CatalogBrandId",
+          "type": "INDEX",
+          "columns": ["CatalogBrandId"]
+        },
+        {
+          "name": "IX_CatalogTypeId",
+          "type": "INDEX",
+          "columns": ["CatalogTypeId"]
+        }
+      ],
+      "constraints": [
+        {
+          "name": "FK_CatalogItems_CatalogBrands",
+          "type": "FOREIGN KEY",
+          "columns": ["CatalogBrandId"],
+          "references": {
+            "table": "CatalogBrands",
+            "columns": ["Id"]
+          },
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "name": "FK_CatalogItems_CatalogTypes",
+          "type": "FOREIGN KEY",
+          "columns": ["CatalogTypeId"],
+          "references": {
+            "table": "CatalogTypes",
+            "columns": ["Id"]
+          },
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        }
+      ]
+    },
+    {
+      "name": "CatalogBrands",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "INT",
+          "nullable": false,
+          "primary_key": true,
+          "auto_increment": true,
+          "identity": "IDENTITY(1,1)"
+        },
+        {
+          "name": "Brand",
+          "type": "NVARCHAR(MAX)",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PK_CatalogBrands",
+          "type": "PRIMARY KEY",
+          "columns": ["Id"]
+        }
+      ],
+      "constraints": []
+    },
+    {
+      "name": "CatalogTypes",
+      "columns": [
+        {
+          "name": "Id",
+          "type": "INT",
+          "nullable": false,
+          "primary_key": true,
+          "auto_increment": true,
+          "identity": "IDENTITY(1,1)"
+        },
+        {
+          "name": "Type",
+          "type": "NVARCHAR(MAX)",
+          "nullable": false
+        }
+      ],
+      "indexes": [
+        {
+          "name": "PK_CatalogTypes",
+          "type": "PRIMARY KEY",
+          "columns": ["Id"]
+        }
+      ],
+      "constraints": []
+    }
+  ],
+  "migration_notes": {
+    "type_mapping": {
+      "INT": "INTEGER (SQLite)",
+      "NVARCHAR(MAX)": "TEXT (SQLite)",
+      "DECIMAL(18, 2)": "REAL (SQLite) or NUMERIC(18, 2) (PostgreSQL)",
+      "BIT": "INTEGER (SQLite, 0/1)"
+    },
+    "identity_generation": "AUTO INCREMENT (SQLite) instead of IDENTITY(1,1)",
+    "foreign_keys": "SQLite enforces FK constraints when PRAGMA foreign_keys = ON",
+    "collation": "SQLite uses UTF-8 by default, no need for NVARCHAR distinction"
+  },
+  "seed_data_reference": "backend/app/core/seed.py - generates initial 5 brands, 4 types, 12 items"
+}

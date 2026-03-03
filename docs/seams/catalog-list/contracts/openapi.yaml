@@ -1,0 +1,425 @@
+openapi: 3.1.0
+info:
+  title: Catalog List API
+  description: |
+    Paginated product listing endpoint for eShop catalog.
+
+    **Seam**: catalog-list
+    **Priority**: 1 (High)
+    **Status**: Implementation Complete
+
+    **Source**: Migrated from Default.aspx + CatalogService.GetCatalogItemsPaginated()
+
+    **Evidence**:
+    - docs/seams/catalog-list/discovery.md
+    - docs/seams/catalog-list/ui-behavior.md
+    - docs/seams/catalog-list/contracts/required-fields.json
+  version: 1.0.0
+  contact:
+    name: Migration Team
+
+servers:
+  - url: http://localhost:8000/api
+    description: Local development server
+  - url: http://localhost:5173/api
+    description: Frontend dev proxy
+
+paths:
+  /catalog/items:
+    get:
+      operationId: getCatalogItems
+      summary: Get paginated catalog items
+      description: |
+        Returns a paginated list of catalog items with brand and type information.
+
+        **Legacy Endpoint**: Default.aspx (WebForms page)
+        **Legacy Method**: CatalogService.GetCatalogItemsPaginated(pageSize, pageIndex)
+
+        **Business Rules**:
+        - Default page size: 10 items
+        - Default page index: 0 (first page)
+        - Items ordered by ID ascending
+        - Navigation properties (CatalogBrand, CatalogType) eagerly loaded
+
+        **UI Display**:
+        - Table with 10 columns
+        - Pagination controls (Previous/Next)
+        - "Showing X to Y of Z products - Page N - M"
+      tags:
+        - Catalog
+      parameters:
+        - name: page_size
+          in: query
+          description: |
+            Number of items per page.
+
+            **Default**: 10
+            **Range**: 1-100
+
+            **Evidence**: Default.aspx.cs:15 (DefaultPageSize constant)
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 10
+          example: 10
+
+        - name: page_index
+          in: query
+          description: |
+            Page number (zero-based).
+
+            **Default**: 0 (first page)
+            **Minimum**: 0
+
+            **Evidence**: Default.aspx.cs:16 (DefaultPageIndex constant)
+          required: false
+          schema:
+            type: integer
+            minimum: 0
+            default: 0
+          example: 0
+
+      responses:
+        '200':
+          description: |
+            Successfully retrieved paginated catalog items.
+
+            **Response includes**:
+            - Pagination metadata (page_index, page_size, total_items, total_pages)
+            - Array of catalog items with joined brand and type data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedCatalogItemsResponse'
+              examples:
+                first_page:
+                  summary: First page with 10 items
+                  value:
+                    page_index: 0
+                    page_size: 10
+                    total_items: 12
+                    total_pages: 2
+                    data:
+                      - id: 1
+                        name: ".NET Bot Black Hoodie"
+                        description: ".NET Bot Black Hoodie, and more"
+                        price: 19.50
+                        picture_file_name: "1.png"
+                        picture_uri: null
+                        catalog_type_id: 2
+                        catalog_brand_id: 1
+                        available_stock: 100
+                        restock_threshold: 0
+                        max_stock_threshold: 0
+                        on_reorder: false
+                        catalog_type:
+                          id: 2
+                          type: "T-Shirt"
+                        catalog_brand:
+                          id: 1
+                          brand: ".NET"
+                      - id: 2
+                        name: ".NET Black & White Mug"
+                        description: ".NET Black & White Mug"
+                        price: 8.50
+                        picture_file_name: "2.png"
+                        picture_uri: null
+                        catalog_type_id: 1
+                        catalog_brand_id: 1
+                        available_stock: 89
+                        restock_threshold: 0
+                        max_stock_threshold: 0
+                        on_reorder: true
+                        catalog_type:
+                          id: 1
+                          type: "Mug"
+                        catalog_brand:
+                          id: 1
+                          brand: ".NET"
+                second_page:
+                  summary: Second page with 2 remaining items
+                  value:
+                    page_index: 1
+                    page_size: 10
+                    total_items: 12
+                    total_pages: 2
+                    data:
+                      - id: 11
+                        name: "Cup<T> Sheet"
+                        description: "Cup<T> Sheet"
+                        price: 8.50
+                        picture_file_name: "11.png"
+                        picture_uri: null
+                        catalog_type_id: 3
+                        catalog_brand_id: 2
+                        available_stock: 3
+                        restock_threshold: 0
+                        max_stock_threshold: 0
+                        on_reorder: false
+                        catalog_type:
+                          id: 3
+                          type: "Sheet"
+                        catalog_brand:
+                          id: 2
+                          brand: "Other"
+                      - id: 12
+                        name: "Prism White TShirt"
+                        description: "Prism White TShirt"
+                        price: 12.00
+                        picture_file_name: "12.png"
+                        picture_uri: null
+                        catalog_type_id: 2
+                        catalog_brand_id: 2
+                        available_stock: 56
+                        restock_threshold: 0
+                        max_stock_threshold: 0
+                        on_reorder: false
+                        catalog_type:
+                          id: 2
+                          type: "T-Shirt"
+                        catalog_brand:
+                          id: 2
+                          brand: "Other"
+                empty_catalog:
+                  summary: Empty catalog (no products)
+                  value:
+                    page_index: 0
+                    page_size: 10
+                    total_items: 0
+                    total_pages: 0
+                    data: []
+
+        '400':
+          description: |
+            Bad request - invalid query parameters.
+
+            **Validation Errors**:
+            - page_size < 1 or > 100
+            - page_index < 0
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "validation_error"
+                message: "Invalid query parameters"
+                detail:
+                  page_size: "Must be between 1 and 100"
+
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                code: "internal_error"
+                message: "An unexpected error occurred"
+                detail: null
+
+components:
+  schemas:
+    PaginatedCatalogItemsResponse:
+      type: object
+      description: |
+        Paginated response containing catalog items and pagination metadata.
+
+        **Source**: PaginatedItemsViewModel<CatalogItem> (ViewModel/PaginatedItemsViewModel.cs)
+      required:
+        - page_index
+        - page_size
+        - total_items
+        - total_pages
+        - data
+      properties:
+        page_index:
+          type: integer
+          description: Current page number (zero-based)
+          minimum: 0
+          example: 0
+        page_size:
+          type: integer
+          description: Number of items per page
+          minimum: 1
+          maximum: 100
+          example: 10
+        total_items:
+          type: integer
+          description: Total count of items across all pages
+          minimum: 0
+          example: 12
+        total_pages:
+          type: integer
+          description: Total number of pages
+          minimum: 0
+          example: 2
+        data:
+          type: array
+          description: Array of catalog items for current page
+          items:
+            $ref: '#/components/schemas/CatalogItemDto'
+
+    CatalogItemDto:
+      type: object
+      description: |
+        Catalog item with brand and type information (navigation properties).
+
+        **Source**: CatalogItem (Models/CatalogItem.cs) with .Include(c => c.CatalogBrand).Include(c => c.CatalogType)
+
+        **UI Mapping**:
+        - Column 1: picture_file_name → /pics/{picture_file_name} image
+        - Column 2: name
+        - Column 3: description
+        - Column 4: catalog_brand.brand
+        - Column 5: catalog_type.type
+        - Column 6: price (formatted: $XX.XX)
+        - Column 7: picture_file_name (text)
+        - Column 8: available_stock
+        - Column 9: restock_threshold
+        - Column 10: max_stock_threshold
+        - Actions: Edit | Details | Delete (using id)
+      required:
+        - id
+        - name
+        - price
+        - picture_file_name
+        - catalog_type_id
+        - catalog_brand_id
+        - available_stock
+        - restock_threshold
+        - max_stock_threshold
+        - on_reorder
+        - catalog_type
+        - catalog_brand
+      properties:
+        id:
+          type: integer
+          description: Unique product identifier
+          example: 1
+        name:
+          type: string
+          description: Product name
+          minLength: 1
+          example: ".NET Bot Black Hoodie"
+        description:
+          type: string
+          nullable: true
+          description: Product description (optional)
+          example: ".NET Bot Black Hoodie, and more"
+        price:
+          type: number
+          format: decimal
+          description: Product price (2 decimal places)
+          minimum: 0
+          maximum: 1000000
+          example: 19.50
+        picture_file_name:
+          type: string
+          description: Image filename (stored in /pics/ folder)
+          example: "1.png"
+        picture_uri:
+          type: string
+          nullable: true
+          description: Legacy field for image URI (not used)
+          example: null
+        catalog_type_id:
+          type: integer
+          description: Foreign key to CatalogTypes table
+          example: 2
+        catalog_brand_id:
+          type: integer
+          description: Foreign key to CatalogBrands table
+          example: 1
+        available_stock:
+          type: integer
+          description: Current stock level
+          minimum: 0
+          maximum: 10000000
+          example: 100
+        restock_threshold:
+          type: integer
+          description: Minimum stock level before reorder
+          minimum: 0
+          maximum: 10000000
+          example: 0
+        max_stock_threshold:
+          type: integer
+          description: Maximum stock level
+          minimum: 0
+          maximum: 10000000
+          example: 0
+        on_reorder:
+          type: boolean
+          description: Whether product is currently on reorder
+          example: false
+        catalog_type:
+          $ref: '#/components/schemas/CatalogTypeDto'
+        catalog_brand:
+          $ref: '#/components/schemas/CatalogBrandDto'
+
+    CatalogBrandDto:
+      type: object
+      description: |
+        Catalog brand information.
+
+        **Source**: CatalogBrand (Models/CatalogBrand.cs)
+      required:
+        - id
+        - brand
+      properties:
+        id:
+          type: integer
+          description: Unique brand identifier
+          example: 1
+        brand:
+          type: string
+          description: Brand name
+          example: ".NET"
+
+    CatalogTypeDto:
+      type: object
+      description: |
+        Catalog type information.
+
+        **Source**: CatalogType (Models/CatalogType.cs)
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: integer
+          description: Unique type identifier
+          example: 2
+        type:
+          type: string
+          description: Type name
+          example: "T-Shirt"
+
+    ErrorResponse:
+      type: object
+      description: Standard error response format
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Error code identifier
+          example: "validation_error"
+        message:
+          type: string
+          description: Human-readable error message
+          example: "Invalid query parameters"
+        detail:
+          type: object
+          nullable: true
+          description: Additional error details (field-specific errors)
+          additionalProperties: true
+          example:
+            page_size: "Must be between 1 and 100"
+
+tags:
+  - name: Catalog
+    description: Catalog item operations

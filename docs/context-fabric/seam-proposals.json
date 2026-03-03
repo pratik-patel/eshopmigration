@@ -1,0 +1,213 @@
+{
+  "generated_at": "2026-03-02T00:00:00Z",
+  "total_seams": 4,
+  "seams": [
+    {
+      "id": "catalog-list",
+      "name": "Catalog List & Pagination",
+      "priority": 1,
+      "complexity": "medium",
+      "description": "Product catalog listing page with pagination, filtering, and navigation to CRUD operations",
+      "pages": ["Default.aspx"],
+      "routes": ["/", "/Default.aspx"],
+      "models": ["CatalogItem", "CatalogBrand", "CatalogType", "PaginatedItemsViewModel"],
+      "services": ["ICatalogService", "CatalogService", "CatalogServiceMock"],
+      "database_operations": ["SELECT with JOIN", "Pagination"],
+      "ui_components": [
+        "Product thumbnail images",
+        "Product data table (Name, Description, Brand, Type, Price, Stock info)",
+        "Pagination controls (Previous/Next, page counter)",
+        "Action links (Edit, Details, Delete)",
+        "Create New button"
+      ],
+      "business_rules": [
+        "Display 10 items per page",
+        "Show product image from Pics folder",
+        "Display price with currency formatting",
+        "Show stock levels (Available, Restock threshold, Max stock)"
+      ],
+      "dependencies": {
+        "external": [],
+        "cross_seam": ["catalog-edit", "catalog-details", "catalog-delete", "catalog-create"]
+      },
+      "migration_notes": [
+        "Images from Pics/ folder must be copied to frontend/public/pics/",
+        "Maintain exact table layout and column order",
+        "Preserve pagination logic (page size, current page, total pages)",
+        "Keep same CSS classes for styling (esh-table, esh-button, esh-thumbnail, etc.)"
+      ]
+    },
+    {
+      "id": "catalog-crud",
+      "name": "Catalog CRUD Operations",
+      "priority": 2,
+      "complexity": "high",
+      "description": "Create, Edit, Details, and Delete operations for catalog items",
+      "pages": [
+        "Catalog/Create.aspx",
+        "Catalog/Edit.aspx",
+        "Catalog/Details.aspx",
+        "Catalog/Delete.aspx"
+      ],
+      "routes": [
+        "/Catalog/Create",
+        "/Catalog/Edit/{id}",
+        "/Catalog/Details/{id}",
+        "/Catalog/Delete/{id}"
+      ],
+      "models": ["CatalogItem", "CatalogBrand", "CatalogType"],
+      "services": ["ICatalogService"],
+      "database_operations": [
+        "INSERT (Create)",
+        "UPDATE (Edit)",
+        "SELECT BY ID (Details, Edit, Delete)",
+        "DELETE (Delete)"
+      ],
+      "ui_components": [
+        "Form fields (Name, Description, Price, Stock fields)",
+        "Dropdown lists (Brand, Type)",
+        "Validation messages",
+        "Submit/Cancel buttons",
+        "Image filename input",
+        "Readonly details view",
+        "Delete confirmation"
+      ],
+      "business_rules": [
+        "Price: positive decimal with max 2 decimals, range 0-9999999999999999.99",
+        "Stock fields: integer range 0-10000000",
+        "Picture filename defaults to 'dummy.png'",
+        "Required fields: Name, Price, Brand, Type",
+        "Delete requires confirmation"
+      ],
+      "validation_rules": [
+        "Price regex: ^\\d+(\\.\\d{0,2})*$",
+        "Stock range validation",
+        "Required field validation"
+      ],
+      "dependencies": {
+        "external": [],
+        "cross_seam": ["catalog-list"]
+      },
+      "migration_notes": [
+        "Preserve all validation rules exactly",
+        "Maintain form layout and field order",
+        "Keep same validation error messages",
+        "Implement client-side and server-side validation",
+        "Preserve dropdown population from database"
+      ]
+    },
+    {
+      "id": "data-access",
+      "name": "Data Access Layer",
+      "priority": 3,
+      "complexity": "medium",
+      "description": "Entity Framework DbContext, database initialization, and HiLo ID generation",
+      "pages": [],
+      "routes": [],
+      "models": [
+        "CatalogDBContext",
+        "CatalogItemHiLoGenerator",
+        "CatalogDBInitializer",
+        "PreconfiguredData"
+      ],
+      "services": ["CatalogService"],
+      "database_operations": [
+        "DbContext initialization",
+        "Database seeding",
+        "HiLo ID generation",
+        "CRUD operations via EF6"
+      ],
+      "business_rules": [
+        "Use HiLo pattern for ID generation",
+        "Seed initial catalog data on first run",
+        "Support mock data mode (UseMockData config)",
+        "Multiple active result sets enabled"
+      ],
+      "dependencies": {
+        "external": ["SQL Server LocalDB", "Entity Framework 6"],
+        "cross_seam": []
+      },
+      "migration_notes": [
+        "Replace EF6 with SQLAlchemy 2.x async",
+        "Preserve HiLo ID generation pattern if needed",
+        "Seed same initial data from PreconfiguredData",
+        "Support mock service for testing",
+        "Use async database operations in FastAPI"
+      ]
+    },
+    {
+      "id": "static-pages",
+      "name": "Static Pages",
+      "priority": 4,
+      "complexity": "low",
+      "description": "About and Contact pages",
+      "pages": ["About.aspx", "Contact.aspx"],
+      "routes": ["/About", "/Contact"],
+      "models": [],
+      "services": [],
+      "database_operations": [],
+      "ui_components": [
+        "Static content",
+        "Text and headings",
+        "Site layout integration"
+      ],
+      "business_rules": [],
+      "dependencies": {
+        "external": [],
+        "cross_seam": []
+      },
+      "migration_notes": [
+        "Simple static React pages",
+        "No backend API needed",
+        "Preserve content and layout",
+        "Low priority - can be done last"
+      ]
+    }
+  ],
+  "shared_components": {
+    "layout": {
+      "name": "Site Layout & Navigation",
+      "components": ["Site.Master", "Site.Mobile.Master", "ViewSwitcher"],
+      "description": "Master page layout with navigation, mobile view switching",
+      "migration_notes": [
+        "Create React App Shell with navigation",
+        "Implement responsive design (no need for separate mobile master page)",
+        "Use React Router for navigation",
+        "Apply CSS from Content/ folder"
+      ]
+    },
+    "infrastructure": {
+      "name": "Application Infrastructure",
+      "components": ["Global.asax", "RouteConfig", "BundleConfig", "ApplicationModule"],
+      "description": "App startup, routing, bundling, DI configuration",
+      "migration_notes": [
+        "Replace Autofac with FastAPI Depends() DI",
+        "Replace ASP.NET routing with FastAPI routes",
+        "Replace bundling with Vite",
+        "No need for Global.asax equivalent"
+      ]
+    }
+  },
+  "cross_cutting_concerns": {
+    "images": {
+      "source": "Pics/*.png (13 product images)",
+      "destination": "frontend/public/pics/",
+      "action": "Copy all PNG files"
+    },
+    "css": {
+      "source": "Content/*.css",
+      "destination": "frontend/src/styles/",
+      "action": "Convert to Tailwind CSS or keep as imported styles"
+    },
+    "scripts": {
+      "source": "Scripts/*.js",
+      "destination": "Not needed - React handles interactivity",
+      "action": "Analyze for business logic, rewrite in React"
+    },
+    "fonts": {
+      "source": "fonts/*",
+      "destination": "frontend/public/fonts/",
+      "action": "Copy if custom fonts used"
+    }
+  }
+}

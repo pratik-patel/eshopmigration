@@ -1,0 +1,230 @@
+{
+  "source": "SYNTHETIC - Generated from backend/app/core/seed.py",
+  "captured_at": "2026-03-02T00:00:00Z",
+  "page_index": 0,
+  "page_size": 10,
+  "total_items": 12,
+  "total_pages": 2,
+  "data": [
+    {
+      "id": 1,
+      "name": ".NET Bot Black Hoodie",
+      "description": ".NET Bot Black Hoodie, and more",
+      "price": 19.50,
+      "picture_file_name": "1.png",
+      "picture_uri": null,
+      "catalog_type_id": 2,
+      "catalog_brand_id": 1,
+      "available_stock": 100,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": false,
+      "catalog_type": {
+        "id": 2,
+        "type": "T-Shirt"
+      },
+      "catalog_brand": {
+        "id": 1,
+        "brand": ".NET"
+      }
+    },
+    {
+      "id": 2,
+      "name": ".NET Black & White Mug",
+      "description": ".NET Black & White Mug",
+      "price": 8.50,
+      "picture_file_name": "2.png",
+      "picture_uri": null,
+      "catalog_type_id": 1,
+      "catalog_brand_id": 1,
+      "available_stock": 89,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": true,
+      "catalog_type": {
+        "id": 1,
+        "type": "Mug"
+      },
+      "catalog_brand": {
+        "id": 1,
+        "brand": ".NET"
+      }
+    },
+    {
+      "id": 3,
+      "name": "Prism White T-Shirt",
+      "description": "Prism White T-Shirt",
+      "price": 12.00,
+      "picture_file_name": "3.png",
+      "picture_uri": null,
+      "catalog_type_id": 2,
+      "catalog_brand_id": 2,
+      "available_stock": 56,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": false,
+      "catalog_type": {
+        "id": 2,
+        "type": "T-Shirt"
+      },
+      "catalog_brand": {
+        "id": 2,
+        "brand": "Other"
+      }
+    },
+    {
+      "id": 4,
+      "name": ".NET Foundation T-shirt",
+      "description": ".NET Foundation T-shirt",
+      "price": 12.00,
+      "picture_file_name": "4.png",
+      "picture_uri": null,
+      "catalog_type_id": 2,
+      "catalog_brand_id": 1,
+      "available_stock": 120,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": false,
+      "catalog_type": {
+        "id": 2,
+        "type": "T-Shirt"
+      },
+      "catalog_brand": {
+        "id": 1,
+        "brand": ".NET"
+      }
+    },
+    {
+      "id": 5,
+      "name": "Roslyn Red Sheet",
+      "description": "Roslyn Red Sheet",
+      "price": 8.50,
+      "picture_file_name": "5.png",
+      "picture_uri": null,
+      "catalog_type_id": 3,
+      "catalog_brand_id": 2,
+      "available_stock": 55,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": false,
+      "catalog_type": {
+        "id": 3,
+        "type": "Sheet"
+      },
+      "catalog_brand": {
+        "id": 2,
+        "brand": "Other"
+      }
+    },
+    {
+      "id": 6,
+      "name": ".NET Blue Hoodie",
+      "description": ".NET Blue Hoodie",
+      "price": 12.00,
+      "picture_file_name": "6.png",
+      "picture_uri": null,
+      "catalog_type_id": 2,
+      "catalog_brand_id": 1,
+      "available_stock": 17,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": false,
+      "catalog_type": {
+        "id": 2,
+        "type": "T-Shirt"
+      },
+      "catalog_brand": {
+        "id": 1,
+        "brand": ".NET"
+      }
+    },
+    {
+      "id": 7,
+      "name": "Roslyn Red T-Shirt",
+      "description": "Roslyn Red T-Shirt",
+      "price": 12.00,
+      "picture_file_name": "7.png",
+      "picture_uri": null,
+      "catalog_type_id": 2,
+      "catalog_brand_id": 2,
+      "available_stock": 8,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": false,
+      "catalog_type": {
+        "id": 2,
+        "type": "T-Shirt"
+      },
+      "catalog_brand": {
+        "id": 2,
+        "brand": "Other"
+      }
+    },
+    {
+      "id": 8,
+      "name": "Kudu Purple Hoodie",
+      "description": "Kudu Purple Hoodie",
+      "price": 8.50,
+      "picture_file_name": "8.png",
+      "picture_uri": null,
+      "catalog_type_id": 2,
+      "catalog_brand_id": 2,
+      "available_stock": 34,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": false,
+      "catalog_type": {
+        "id": 2,
+        "type": "T-Shirt"
+      },
+      "catalog_brand": {
+        "id": 2,
+        "brand": "Other"
+      }
+    },
+    {
+      "id": 9,
+      "name": "Cup<T> White Mug",
+      "description": "Cup<T> White Mug",
+      "price": 12.00,
+      "picture_file_name": "9.png",
+      "picture_uri": null,
+      "catalog_type_id": 1,
+      "catalog_brand_id": 2,
+      "available_stock": 76,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": false,
+      "catalog_type": {
+        "id": 1,
+        "type": "Mug"
+      },
+      "catalog_brand": {
+        "id": 2,
+        "brand": "Other"
+      }
+    },
+    {
+      "id": 10,
+      "name": ".NET Foundation Sheet",
+      "description": ".NET Foundation Sheet",
+      "price": 12.00,
+      "picture_file_name": "10.png",
+      "picture_uri": null,
+      "catalog_type_id": 3,
+      "catalog_brand_id": 1,
+      "available_stock": 11,
+      "restock_threshold": 0,
+      "max_stock_threshold": 0,
+      "on_reorder": false,
+      "catalog_type": {
+        "id": 3,
+        "type": "Sheet"
+      },
+      "catalog_brand": {
+        "id": 1,
+        "brand": ".NET"
+      }
+    }
+  ]
+}

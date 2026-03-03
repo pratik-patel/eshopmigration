@@ -1,0 +1,170 @@
+# Migration Report Dashboard Configuration
+
+legacy:
+  name: "Legacy Application"
+  frontend_url: "http://localhost:8080"
+  backend_url: "http://localhost:8080/api"
+  database:
+    type: "sqlserver"  # sqlserver, postgresql, mysql, sqlite
+    url: "Server=localhost;Database=LegacyDB;User=sa;Password=YourPassword"
+  sonarqube_project: "legacy-app"
+  source_path: "../legacy-app"
+  language: "csharp"  # csharp, java, python
+
+modern:
+  name: "Modern Application"
+  frontend_url: "http://localhost:5173"
+  backend_url: "http://localhost:8000"
+  database:
+    type: "postgresql"
+    url: "postgresql://localhost/modern_db"
+  sonarqube_project: "modern-app"
+  source_path: "../eshopmigration"
+  language: "python"
+
+sonarqube:
+  url: "http://localhost:9000"
+  token: "${SONAR_TOKEN}"  # Set via environment variable
+
+collection:
+  lighthouse:
+    enabled: true
+    runs: 3
+    throttling: "4g"
+    categories: ["performance", "accessibility", "best-practices", "seo"]
+
+  api:
+    timeout: 30
+    retries: 2
+    verify_ssl: false
+    auth:
+      type: "none"  # none, basic, bearer, oauth2
+
+  database:
+    sample_queries: true
+    slow_query_threshold_ms: 100
+    max_sample_size: 1000
+
+  coverage:
+    legacy_path: "../legacy-app/coverage"
+    modern_path: "../eshopmigration/coverage"
+    format: "lcov"  # lcov, cobertura, jacoco
+
+  performance:
+    load_test_duration: 60
+    concurrent_users: 100
+    ramp_up_time: 10
+
+scoring:
+  weights:
+    frontend: 0.25
+    backend: 0.25
+    database: 0.10
+    quality: 0.20
+    nfr: 0.15
+    integration: 0.05
+
+  frontend_weights:
+    feature_parity: 0.60
+    performance: 0.20
+    accessibility: 0.20
+
+  backend_weights:
+    api_parity: 0.50
+    performance: 0.30
+    error_handling: 0.20
+
+  database_weights:
+    schema_parity: 0.40
+    performance: 0.40
+    integrity: 0.20
+
+  quality_weights:
+    sonarqube: 0.50
+    coverage: 0.30
+    security: 0.20
+
+  nfr_weights:
+    performance: 0.40
+    security: 0.30
+    observability: 0.30
+
+  thresholds:
+    # Frontend
+    lighthouse_performance: 90
+    lighthouse_accessibility: 95
+    lighthouse_best_practices: 90
+    lighthouse_seo: 90
+
+    # Backend
+    api_response_time_ms: 200
+    api_error_rate: 0.01
+    api_parity: 0.95
+
+    # Database
+    query_time_ms: 100
+    schema_parity: 0.98
+
+    # Quality
+    test_coverage: 80
+    sonar_reliability: "A"
+    sonar_security: "A"
+    sonar_maintainability: "A"
+    code_duplication: 3.0
+
+    # NFR
+    response_time_p95_ms: 500
+    response_time_p99_ms: 1000
+    error_rate: 0.001
+    uptime: 99.9
+
+dashboard:
+  title: "Migration Assessment Dashboard"
+  port: 8501
+  theme: "light"
+  auto_refresh: false
+  refresh_interval: 60
+  cache_ttl: 3600
+  max_data_points: 1000
+
+export:
+  output_dir: "./reports"
+  formats: ["pdf", "html", "json", "excel"]
+  include_screenshots: true
+  include_raw_data: false
+
+alerts:
+  enabled: true
+  rules:
+    - name: "Critical Performance Regression"
+      condition: "modern.lighthouse.performance < legacy.lighthouse.performance - 10"
+      severity: "critical"
+
+    - name: "Low Test Coverage"
+      condition: "modern.coverage.total < 80"
+      severity: "warning"
+
+    - name: "API Parity Below Threshold"
+      condition: "api_parity < 0.95"
+      severity: "critical"
+
+    - name: "High SonarQube Issues"
+      condition: "modern.sonar.bugs + modern.sonar.vulnerabilities > 10"
+      severity: "high"
+
+integrations:
+  github:
+    enabled: false
+    token: "${GITHUB_TOKEN}"
+    repo: "org/repo"
+
+  jira:
+    enabled: false
+    url: "https://jira.company.com"
+    token: "${JIRA_TOKEN}"
+    project: "MIG"
+
+  slack:
+    enabled: false
+    webhook_url: "${SLACK_WEBHOOK_URL}"
+    channel: "#migration-status"

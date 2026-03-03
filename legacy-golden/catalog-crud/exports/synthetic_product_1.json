@@ -1,0 +1,27 @@
+{
+  "source": "SYNTHETIC - Generated from backend/app/core/seed.py",
+  "captured_at": "2026-03-02T00:00:00Z",
+  "description": "Product ID 1 data for Edit/Details/Delete workflows",
+  "data": {
+    "id": 1,
+    "name": ".NET Bot Black Hoodie",
+    "description": ".NET Bot Black Hoodie, and more",
+    "price": 19.50,
+    "picture_file_name": "1.png",
+    "picture_uri": null,
+    "catalog_type_id": 2,
+    "catalog_brand_id": 1,
+    "available_stock": 100,
+    "restock_threshold": 0,
+    "max_stock_threshold": 0,
+    "on_reorder": false,
+    "catalog_type": {
+      "id": 2,
+      "type": "T-Shirt"
+    },
+    "catalog_brand": {
+      "id": 1,
+      "brand": ".NET"
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "migration-report-dashboard",
+  "version": "1.0.0",
+  "description": "Node.js dependencies for migration report dashboard (Lighthouse, bundle analysis)",
+  "scripts": {
+    "lighthouse": "node scripts/run-lighthouse.js",
+    "bundle-analyze": "webpack-bundle-analyzer"
+  },
+  "dependencies": {
+    "lighthouse": "^11.4.0",
+    "chrome-launcher": "^1.1.0",
+    "puppeteer": "^21.9.0",
+    "webpack-bundle-analyzer": "^4.10.1",
+    "axe-core": "^4.8.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5"
+  }
+}
