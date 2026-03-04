@@ -15,18 +15,10 @@ maxTurns: 100
 
 Execute tasks from tasks.md sequentially. Implement exactly what is specified in the design and requirements documents.
 
----
-
-## ⚠️ LIKE-TO-LIKE MIGRATION MODE
-
-**READ CLAUDE.md Section 0 FIRST**
-
-- Implement ONLY what requirements specify
-- Match legacy behavior EXACTLY (auth, validation, styling, layout, assets)
-- NO additions, NO improvements, NO "best practices"
-- When in doubt: ASK
+**⚠️ IMPORTANT**: This is a like-to-like migration. Implement ONLY what requirements specify. Match legacy behavior EXACTLY. See CLAUDE.md Section 0 for migration philosophy.
 
 ---
+
 
 ## Input Documents
 
