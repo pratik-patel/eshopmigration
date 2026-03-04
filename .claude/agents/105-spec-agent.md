@@ -764,6 +764,174 @@ Create `docs/seams/{seam}/design.md` following the template above.
 
 Create an actionable implementation plan with a checklist of coding tasks. Each task must be concrete enough for an implementation agent to execute without ambiguity.
 
+## Task Tagging System (MANDATORY)
+
+Every task MUST be tagged with one of the following tags to enable proper sequencing by the implementation agent:
+
+### Required Tags
+
+- **[CONTRACT]** — OpenAPI contract definition or update
+- **[DB]** — Database schema, migrations, or seed data
+- **[BE]** — Backend code (Python/FastAPI: routes, services, models)
+- **[FE]** — Frontend code (React/TypeScript: pages, components, hooks)
+- **[TEST]** — Tests (unit, integration, E2E)
+- **[VERIFY]** — Verification checkpoint (run tests, check coverage, validate contract)
+
+### Task Structure Template
+
+Each task MUST follow this structure:
+
+```markdown
+- [ ] {N}. [{TAG}] {Task Description}
+  - Files: {list of files to create/modify}
+  - Components: {specific classes/functions/components to implement}
+  - Implements: {requirement IDs from requirements.md}
+  - **Done when**: {concrete, verifiable statement}
+  - **Verification**: {how to verify completion — test command or manual check}
+```
+
+### Optimal Task Count
+
+**Target**: 12-18 tasks per seam
+**Maximum**: 25 tasks per seam
+
+**Why**:
+- 50+ tasks = over-specification, reduces agent autonomy
+- 12-18 tasks = right balance between guidance and flexibility
+- Implementation agent can expand sub-steps internally
+
+**Rule**: If task count exceeds 25, merge related tasks or increase abstraction level.
+
+### Task Sequencing Rules (STRICT ORDER)
+
+Implementation agent executes tasks in this MANDATORY order:
+
+1. **[CONTRACT]** — Define API contract first
+2. **[DB]** — Create database schema/seed data
+3. **[BE]** — Implement backend routes/services
+4. **[TEST]** — Write backend tests
+5. **[VERIFY]** — Run tests, validate contract compliance
+6. **[FE]** — Implement frontend pages/components
+7. **[TEST]** — Write frontend tests
+8. **[VERIFY]** — Run E2E tests, visual parity check
+
+**Why this order**:
+- Contract-first ensures API agreement before implementation
+- Database schema must exist before backend queries
+- Backend must work before frontend can call it
+- Tests written immediately after implementation (not deferred)
+- Verification checkpoints catch issues early
+
+### Example Task List (Catalog Management)
+
+```markdown
+## Tasks
+
+### Phase 1: Contract & Foundation (Tasks 1-2)
+
+- [ ] 1. [CONTRACT] Define OpenAPI contract for catalog endpoints
+  - Files: `docs/seams/catalog-list/contracts/openapi.yaml`
+  - Components: GET /api/v1/catalog/items, GET /api/v1/catalog/items/{id}
+  - Implements: REQ-1.1, REQ-1.2
+  - **Done when**: Contract has request/response schemas, status codes, pagination
+  - **Verification**: `python .claude/scripts/validate_openapi.py {contract_path}`
+
+- [ ] 2. [DB] Create catalog database schema and seed data
+  - Files: `backend/app/catalog/models.py`, `backend/seeds/catalog_seed.py`
+  - Components: CatalogItem table (id, sku, name, price, status, created_at)
+  - Implements: REQ-1.3
+  - **Done when**: Table exists, seed script populates 10+ sample items
+  - **Verification**: `python -c "from app.core.database import engine; ..."` (check row count ≥10)
+
+### Phase 2: Backend Implementation (Tasks 3-7)
+
+- [ ] 3. [BE] Implement Pydantic schemas for catalog DTOs
+  - Files: `backend/app/catalog/schemas.py`
+  - Components: CatalogItemResponse, CatalogItemListResponse, PaginationMetadata
+  - Implements: REQ-1.1
+  - **Done when**: Schemas match OpenAPI contract exactly
+  - **Verification**: Import test, instantiate with sample data
+
+- [ ] 4. [BE] Implement catalog service layer
+  - Files: `backend/app/catalog/service.py`
+  - Components: CatalogService.list_items(), CatalogService.get_item()
+  - Implements: REQ-1.1, REQ-1.2
+  - **Done when**: Service methods query database, return Pydantic models
+  - **Verification**: Unit test with mocked database
+
+- [ ] 5. [BE] Implement catalog API routes
+  - Files: `backend/app/catalog/router.py`
+  - Components: GET /api/v1/catalog/items, GET /api/v1/catalog/items/{id}
+  - Implements: REQ-1.1, REQ-1.2
+  - **Done when**: Routes call service, return JSON matching contract
+  - **Verification**: Integration test with TestClient
+
+- [ ] 6. [TEST] Write backend tests for catalog module
+  - Files: `backend/tests/unit/test_catalog_service.py`, `backend/tests/integration/test_catalog_api.py`
+  - Components: test_list_items_returns_data, test_get_item_returns_item, test_get_item_not_found
+  - Implements: All catalog requirements
+  - **Done when**: All tests pass, coverage ≥80%
+  - **Verification**: `pytest --cov=app/catalog --cov-report=term-missing`
+
+- [ ] 7. [VERIFY] Backend verification checkpoint
+  - **Done when**: All backend tests pass, contract validation passes, linting passes
+  - **Verification**: `pytest tests/ && python .claude/scripts/validate_contract_backend.py`
+
+### Phase 3: Frontend Implementation (Tasks 8-13)
+
+- [ ] 8. [FE] Create API client for catalog
+  - Files: `frontend/src/api/catalog.ts`
+  - Components: listCatalogItems(), getCatalogItem()
+  - Implements: REQ-1.1, REQ-1.2
+  - **Done when**: Functions call backend API, validate responses with Zod
+  - **Verification**: Unit test with mocked fetch
+
+- [ ] 9. [FE] Create TanStack Query hooks for catalog
+  - Files: `frontend/src/hooks/useCatalog.ts`
+  - Components: useCatalogItems(), useCatalogItem()
+  - Implements: REQ-1.1, REQ-1.2
+  - **Done when**: Hooks use useQuery, handle loading/error states
+  - **Verification**: Component test with QueryClient
+
+- [ ] 10. [FE] Implement catalog grid component
+  - Files: `frontend/src/components/catalog/CatalogGrid.tsx`
+  - Components: CatalogGrid (displays items in table with sorting)
+  - Implements: REQ-1.1
+  - **Done when**: Grid renders items, columns sortable, pagination works
+  - **Verification**: Component test, Storybook story
+
+- [ ] 11. [FE] Implement catalog list page
+  - Files: `frontend/src/pages/catalog/CatalogListPage.tsx`
+  - Components: CatalogListPage (fetches data, renders grid)
+  - Implements: REQ-1.1
+  - **Done when**: Page fetches data with useCatalogItems(), renders CatalogGrid
+  - **Verification**: Integration test with mock API
+
+- [ ] 12. [TEST] Write frontend tests for catalog module
+  - Files: `frontend/tests/unit/CatalogGrid.test.tsx`, `frontend/tests/e2e/catalog.spec.ts`
+  - Components: test_renders_items, test_sorting_works, test_pagination_works, e2e_happy_path
+  - Implements: All catalog requirements
+  - **Done when**: All tests pass, coverage ≥75%
+  - **Verification**: `npm test -- --coverage && npm run test:e2e`
+
+- [ ] 13. [VERIFY] Frontend verification checkpoint
+  - **Done when**: All frontend tests pass, visual parity ≥85%, accessibility passes
+  - **Verification**: `npm run test:e2e && python .claude/scripts/compare_screenshots.py`
+
+### Phase 4: Final Verification (Task 14)
+
+- [ ] 14. [VERIFY] End-to-end integration verification
+  - **Done when**: Backend + frontend integrated, all tests pass, security scan passes
+  - **Verification**: `python .claude/scripts/hooks_integration.py post-implementation catalog-list`
+```
+
+**Key Points**:
+- 14 tasks total (within optimal range)
+- Every task has a tag, files, components, "Done when", and "Verification"
+- Strict sequencing: CONTRACT → DB → BE → TEST → VERIFY → FE → TEST → VERIFY
+- Verification checkpoints after each phase (backend, frontend, final)
+- Implementation agent can execute these sequentially without ambiguity
+
 ## Prerequisites
 
 - Design document MUST be approved
