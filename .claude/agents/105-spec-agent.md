@@ -331,7 +331,7 @@ Develop a comprehensive design document based on approved requirements. The desi
 1. **Read context**:
    - `docs/seams/{seam}/requirements.md` (approved requirements)
    - `docs/seams/{seam}/discovery.md` (technical details: data fields, table names, legacy code patterns)
-   - `docs/architecture-design.md` (global tech stack: Python/FastAPI, React, PostgreSQL, JWT auth, etc.)
+   - `docs/architecture-design.md` (global tech stack: Backend framework, Frontend framework, Database, Auth strategy, etc.)
    - `docs/api-design-patterns.md` (shared conventions: pagination, filtering, error handling)
 
 2. **Design Writing**: Write all design sections:
@@ -385,89 +385,33 @@ sequenceDiagram
 
 For EACH new or modified component, specify:
 
-#### Backend Components (Python/FastAPI example)
+#### Backend Components
 
-**Module**: `backend/app/{seam}/` (e.g., `backend/app/catalog_list/`)
+**Module**: `backend/app/{seam}/`
 
-| Component | File | Type | Responsibilities |
-|-----------|------|------|-----------------|
-| Router | `router.py` | API endpoints | HTTP handling, request validation, auth |
-| Schemas | `schemas.py` | Pydantic models | Request/response DTOs, validation |
-| Service | `service.py` | Business logic | Core functionality, business rules |
-| Models | `models.py` | SQLAlchemy models | Database entities (if writes needed) |
+| Component | File | Responsibilities |
+|-----------|------|------------------|
+| Router | `router.*` | API endpoints, HTTP handling, request validation, auth |
+| Schemas | `schemas.*` | Request/response DTOs, validation |
+| Service | `service.*` | Business logic, core functionality, business rules |
+| Models | `models.*` | Database entities (if writes needed) |
 
-**Example: CatalogListService**
+#### Frontend Components
 
-```python
-# backend/app/catalog_list/service.py
+**Module**: `frontend/src/pages/{seam}/`
 
-class CatalogListService:
-    """Service for catalog list operations."""
-
-    def __init__(self, db: AsyncSession):
-        self.db = db
-
-    async def get_items(
-        self,
-        page: int = 1,
-        limit: int = 10,
-        category: str | None = None,
-        status: str | None = None,
-        sort: str | None = None
-    ) -> CatalogItemListResponse:
-        """
-        Retrieve catalog items with pagination and filtering.
-
-        Implements:
-        - Requirement 1.1 (happy path)
-        - Requirement 1.2 (pagination)
-        - Requirement 1.3 (filtering)
-        - Requirement 1.4 (sorting)
-        """
-        # Implementation details will be in tasks
-        pass
-```
-
-#### Frontend Components (React/TypeScript example)
-
-**Module**: `frontend/src/pages/{seam}/` (e.g., `frontend/src/pages/catalog-list/`)
-
-| Component | File | Type | Responsibilities |
-|-----------|------|------|-----------------|
-| Page | `{Seam}Page.tsx` | Top-level component | Data fetching, composition |
-| Components | `components/{Component}.tsx` | UI components | Presentational, reusable |
-| API Client | `../../api/{seam}.ts` | HTTP client | Type-safe API calls |
-| Hook | `../../hooks/use{Seam}.ts` | TanStack Query hook | Server state management |
-
-**Example: CatalogListPage**
-
-```typescript
-// frontend/src/pages/catalog-list/CatalogListPage.tsx
-
-export function CatalogListPage() {
-  const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState({ category: null, status: null });
-
-  const { data, isLoading, error } = useCatalogItems(page, filters);
-
-  if (isLoading) return <LoadingSpinner />;
-  if (error) return <ErrorDisplay error={error} />;
-
-  return (
-    <div>
-      <CatalogFilters filters={filters} onChange={setFilters} />
-      <CatalogGrid items={data.items} />
-      <Pagination page={page} totalPages={data.pagination.total_pages} onChange={setPage} />
-    </div>
-  );
-}
-```
+| Component | File | Responsibilities |
+|-----------|------|------------------|
+| Page | `{Seam}Page.*` | Top-level component, data fetching, composition |
+| Components | `components/{Component}.*` | UI components, presentational, reusable |
+| API Client | `../../api/{seam}.*` | Type-safe API calls |
+| Hook | `../../hooks/use{Seam}.*` | Server state management |
 
 ### 4. Data Models
 
 For EACH new or modified entity:
 
-#### Backend Data Model (SQLAlchemy example)
+#### Backend Data Model
 
 **Entity**: `CatalogItem`
 
@@ -489,23 +433,16 @@ For EACH new or modified entity:
 
 **Migration**: Not needed (using legacy database schema)
 
-#### Frontend Data Model (TypeScript example)
+#### Frontend Data Model
 
 **Type**: `CatalogItem` (from OpenAPI contract)
 
-```typescript
-// Generated from contracts/openapi.yaml
-interface CatalogItem {
-  id: number;
-  sku: string;
-  name: string;
-  price: number;
-  category: string | null;
-  status: 'active' | 'inactive';
-  created_at: string; // ISO 8601
-  updated_at: string | null; // ISO 8601
-}
-```
+Structure will be generated from `contracts/openapi.yaml` based on the API specification.
+
+Common fields:
+- `id`: Unique identifier
+- `sku`, `name`, `price`, `category`, `status`: Business fields
+- `created_at`, `updated_at`: Audit timestamps (ISO 8601 format)
 
 ### 5. API Specification
 
@@ -600,11 +537,11 @@ Address each of the following that applies to this seam:
 #### Security
 - **Authentication**: JWT token required (from architecture-design.md)
 - **Authorization**: Role-based (USER role minimum)
-- **Input Validation**: Pydantic validation (backend), Zod validation (frontend)
-- **SQL Injection**: SQLAlchemy ORM only, no raw SQL
+- **Input Validation**: Schema validation (backend and frontend)
+- **SQL Injection**: Use ORM only, no raw SQL queries
 
 #### Observability
-- **Logging**: Log all API requests (method, path, status, duration, user_id) using structlog
+- **Logging**: Log all API requests (method, path, status, duration, user_id) using structured logging
 - **Metrics**: Track request count, error rate, latency (P50, P95, P99)
 - **Correlation IDs**: Propagate request ID through all logs
 
@@ -641,7 +578,7 @@ Address each of the following that applies to this seam:
 **Per-Component Error Handling**:
 - **Router**: Catch all exceptions, map to HTTP status codes, return ErrorResponse
 - **Service**: Throw domain-specific exceptions (ValidationError, BusinessRuleError)
-- **Database**: Catch SQLAlchemy exceptions, wrap in DatabaseError
+- **Database**: Catch ORM exceptions, wrap in DatabaseError
 
 ### 8. Testing Strategy
 
@@ -655,18 +592,18 @@ Address each of the following that applies to this seam:
 | 1.4 | Sort by name:asc | Unit | `CatalogListServiceTest` | Verify ORDER BY |
 | 1.1 | API returns 200 | Integration | `CatalogListAPITest` | Verify HTTP 200 + JSON |
 | 1.2 | Pagination in response | Integration | `CatalogListAPITest` | Verify pagination object |
-| 1.1 | UI displays items | E2E | Playwright | Verify grid renders |
+| 1.1 | UI displays items | E2E | E2E framework | Verify grid renders |
 
 #### Test Infrastructure
 
-**Backend** (pytest):
+**Backend**:
 - Mock database with `AsyncMock` for unit tests
 - Use `TestClient` for integration tests
 - Fixtures: `mock_db_session`, `mock_catalog_items`
 
-**Frontend** (vitest + Playwright):
-- Mock API calls with `msw` for unit tests
-- Use Playwright for E2E tests
+**Frontend**:
+- Mock API calls for unit tests
+- Use E2E testing framework for end-to-end tests
 - Fixtures: `mockCatalogItems`, `mockApiError`
 
 #### Coverage Targets
@@ -712,7 +649,7 @@ Address each of the following that applies to this seam:
 
 ### Frontend Data Model
 
-[TypeScript interfaces]
+[Generated types from OpenAPI contract]
 
 ## API Specification
 
@@ -772,8 +709,8 @@ Every task MUST be tagged with one of the following tags to enable proper sequen
 
 - **[CONTRACT]** — OpenAPI contract definition or update
 - **[DB]** — Database schema, migrations, or seed data
-- **[BE]** — Backend code (Python/FastAPI: routes, services, models)
-- **[FE]** — Frontend code (React/TypeScript: pages, components, hooks)
+- **[BE]** — Backend code (routes, services, models)
+- **[FE]** — Frontend code (pages, components, hooks)
 - **[TEST]** — Tests (unit, integration, E2E)
 - **[VERIFY]** — Verification checkpoint (run tests, check coverage, validate contract)
 
@@ -834,18 +771,18 @@ Implementation agent executes tasks in this MANDATORY order:
   - Components: GET /api/v1/catalog/items, GET /api/v1/catalog/items/{id}
   - Implements: REQ-1.1, REQ-1.2
   - **Done when**: Contract has request/response schemas, status codes, pagination
-  - **Verification**: `python .claude/scripts/validate_openapi.py {contract_path}`
+  - **Verification**: Validate OpenAPI schema
 
 - [ ] 2. [DB] Create catalog database schema and seed data
   - Files: `backend/app/catalog/models.py`, `backend/seeds/catalog_seed.py`
   - Components: CatalogItem table (id, sku, name, price, status, created_at)
   - Implements: REQ-1.3
   - **Done when**: Table exists, seed script populates 10+ sample items
-  - **Verification**: `python -c "from app.core.database import engine; ..."` (check row count ≥10)
+  - **Verification**: Query database to verify row count ≥10
 
 ### Phase 2: Backend Implementation (Tasks 3-7)
 
-- [ ] 3. [BE] Implement Pydantic schemas for catalog DTOs
+- [ ] 3. [BE] Implement request/response schemas for catalog DTOs
   - Files: `backend/app/catalog/schemas.py`
   - Components: CatalogItemResponse, CatalogItemListResponse, PaginationMetadata
   - Implements: REQ-1.1
@@ -856,7 +793,7 @@ Implementation agent executes tasks in this MANDATORY order:
   - Files: `backend/app/catalog/service.py`
   - Components: CatalogService.list_items(), CatalogService.get_item()
   - Implements: REQ-1.1, REQ-1.2
-  - **Done when**: Service methods query database, return Pydantic models
+  - **Done when**: Service methods query database, return validated models
   - **Verification**: Unit test with mocked database
 
 - [ ] 5. [BE] Implement catalog API routes
@@ -871,11 +808,11 @@ Implementation agent executes tasks in this MANDATORY order:
   - Components: test_list_items_returns_data, test_get_item_returns_item, test_get_item_not_found
   - Implements: All catalog requirements
   - **Done when**: All tests pass, coverage ≥80%
-  - **Verification**: `pytest --cov=app/catalog --cov-report=term-missing`
+  - **Verification**: Run backend tests with coverage
 
 - [ ] 7. [VERIFY] Backend verification checkpoint
   - **Done when**: All backend tests pass, contract validation passes, linting passes
-  - **Verification**: `pytest tests/ && python .claude/scripts/validate_contract_backend.py`
+  - **Verification**: Run backend tests and validate contract compliance
 
 ### Phase 3: Frontend Implementation (Tasks 8-13)
 
@@ -886,7 +823,7 @@ Implementation agent executes tasks in this MANDATORY order:
   - **Done when**: Functions call backend API, validate responses with Zod
   - **Verification**: Unit test with mocked fetch
 
-- [ ] 9. [FE] Create TanStack Query hooks for catalog
+- [ ] 9. [FE] Create data fetching hooks for catalog
   - Files: `frontend/src/hooks/useCatalog.ts`
   - Components: useCatalogItems(), useCatalogItem()
   - Implements: REQ-1.1, REQ-1.2
@@ -912,17 +849,17 @@ Implementation agent executes tasks in this MANDATORY order:
   - Components: test_renders_items, test_sorting_works, test_pagination_works, e2e_happy_path
   - Implements: All catalog requirements
   - **Done when**: All tests pass, coverage ≥75%
-  - **Verification**: `npm test -- --coverage && npm run test:e2e`
+  - **Verification**: Run frontend tests with coverage and E2E tests
 
 - [ ] 13. [VERIFY] Frontend verification checkpoint
   - **Done when**: All frontend tests pass, visual parity ≥85%, accessibility passes
-  - **Verification**: `npm run test:e2e && python .claude/scripts/compare_screenshots.py`
+  - **Verification**: Run E2E tests and compare screenshots
 
 ### Phase 4: Final Verification (Task 14)
 
 - [ ] 14. [VERIFY] End-to-end integration verification
   - **Done when**: Backend + frontend integrated, all tests pass, security scan passes
-  - **Verification**: `python .claude/scripts/hooks_integration.py post-implementation catalog-list`
+  - **Verification**: Run post-implementation hooks
 ```
 
 **Key Points**:
@@ -967,10 +904,10 @@ If this is NOT the first seam:
 
 For each component in design.md:
 - Create module/file
-- Implement schemas (Pydantic models with validation)
+- Implement schemas (models with validation)
 - Implement service (business logic)
 - Implement router (API endpoints)
-- Implement models (SQLAlchemy, if writes needed)
+- Implement models (ORM, if writes needed)
 - Unit tests for service
 - Integration tests for API
 
@@ -980,11 +917,11 @@ For each component in design.md:
 - Create page component
 - Create UI components (grids, filters, buttons)
 - Create API client functions
-- Create TanStack Query hooks
+- Create data fetching hooks
 - Copy assets (images, icons)
 - Add route to App.tsx
 - Unit tests for components
-- E2E tests with Playwright
+- E2E tests with testing framework
 
 ### Testing Tasks
 
@@ -1032,34 +969,34 @@ Include checkpoint tasks at reasonable breaks:
 
 ## Tech Stack (from architecture-design.md)
 
-- **Backend**: Python 3.12+ / FastAPI
-- **Frontend**: React 18 / TypeScript 5
+- **Backend**: Backend framework (async-capable)
+- **Frontend**: Frontend framework (component-based)
 - **Database**: PostgreSQL (or SQLite for POC)
-- **Testing**: pytest (backend), vitest + Playwright (frontend)
+- **Testing**: Backend test framework, frontend test framework + E2E framework
 
 ## Tasks
 
 ### Scaffolding (First Seam Only)
 
 - [ ] 1. [FIRST SEAM ONLY] Create backend project structure
-  - Create `backend/app/main.py` (FastAPI app factory)
-  - Create `backend/app/config.py` (pydantic-settings)
-  - Create `backend/app/dependencies.py` (DI functions)
-  - Create `backend/app/core/database.py` (SQLAlchemy engine)
-  - Create `backend/app/core/logging.py` (structlog setup)
-  - Create `backend/app/core/exceptions.py` (custom exception classes)
-  - Create `backend/pyproject.toml` (dependencies: fastapi, sqlalchemy, pydantic, pytest)
-  - **Done when**: Project structure exists, dependencies installable with `pip install`
+  - Create `backend/app/main.*` (Application factory)
+  - Create `backend/app/config.*` (Settings/configuration)
+  - Create `backend/app/dependencies.*` (DI functions)
+  - Create `backend/app/core/database.*` (Database connection)
+  - Create `backend/app/core/logging.*` (Logging setup)
+  - Create `backend/app/core/exceptions.*` (Custom exception classes)
+  - Create backend dependency configuration file
+  - **Done when**: Project structure exists, dependencies installable
 
 - [ ] 2. [FIRST SEAM ONLY] Create frontend project structure
-  - Create `frontend/src/main.tsx` (entry point)
-  - Create `frontend/src/App.tsx` (router root with React Router v6)
-  - Create `frontend/src/api/client.ts` (base HTTP client)
-  - Create `frontend/src/components/layout/AppShell.tsx` (header, sidebar, main content)
-  - Create `frontend/package.json` (dependencies: react, react-router-dom, @tanstack/react-query, zod)
-  - Create `frontend/vite.config.ts` (Vite config)
-  - Create `frontend/tailwind.config.ts` (Tailwind CSS config)
-  - **Done when**: Project structure exists, dependencies installable with `npm install`, dev server runs
+  - Create `frontend/src/main.*` (entry point)
+  - Create `frontend/src/App.*` (router root)
+  - Create `frontend/src/api/client.*` (base HTTP client)
+  - Create `frontend/src/components/layout/AppShell.*` (header, sidebar, main content)
+  - Create frontend dependency configuration file (router, data fetching, validation, styling)
+  - Create frontend build configuration
+  - Create frontend styling configuration
+  - **Done when**: Project structure exists, dependencies installable, dev server runs
 
 ### Backend Implementation
 
@@ -1070,7 +1007,7 @@ Include checkpoint tasks at reasonable breaks:
   - File: `backend/app/{seam}/service.py` (empty, will implement business logic later)
   - **Done when**: Module structure exists, files importable
 
-- [ ] 4. Implement Pydantic schemas
+- [ ] 4. Implement request/response schemas
   - File: `backend/app/{seam}/schemas.py`
   - Implement `{Resource}Response` (from design.md Data Models section)
   - Implement `{Resource}ListResponse` (with pagination object)
@@ -1088,8 +1025,8 @@ Include checkpoint tasks at reasonable breaks:
   - **Done when**: Service methods implemented, business rules enforced, no DB calls yet (will add in next task)
 
 - [ ] 6. Implement database queries
-  - File: `backend/app/{seam}/service.py` (modify)
-  - Use SQLAlchemy async queries: `select()`, `where()`, `order_by()`, `limit()`, `offset()`
+  - File: `backend/app/{seam}/service.*` (modify)
+  - Use ORM queries with appropriate filters, ordering, pagination
   - Map to legacy table from discovery.md (table: `{table_name}`, columns: `{column_list}`)
   - Handle empty results (return empty list, not error)
   - _Implements: Requirements 1.1, 1.2, 1.3, 1.4 (database access)_
@@ -1131,31 +1068,31 @@ Include checkpoint tasks at reasonable breaks:
   - **Done when**: All integration tests pass, API contract validated
 
 - [ ] 11. ✅ Checkpoint — Backend complete
-  - Run: `pytest backend/tests/ && pytest --cov=backend/app/{seam}`
+  - Run backend tests with coverage for seam module
   - Verify: All tests pass, coverage ≥80% on `{seam}` module
   - Verify: API accessible at `/api/v1/{seam}/{resource}`, returns correct responses
 
 ### Frontend Implementation
 
 - [ ] 12. Create frontend module for {seam}
-  - File: `frontend/src/pages/{seam}/{Seam}Page.tsx` (empty component)
+  - File: `frontend/src/pages/{seam}/{Seam}Page.*` (empty component)
   - File: `frontend/src/components/{seam}/` (directory for seam-specific components)
-  - File: `frontend/src/api/{seam}.ts` (empty API client)
-  - File: `frontend/src/hooks/use{Seam}.ts` (empty TanStack Query hook)
+  - File: `frontend/src/api/{seam}.*` (empty API client)
+  - File: `frontend/src/hooks/use{Seam}.*` (empty data fetching hook)
   - **Done when**: Module structure exists, files importable
 
 - [ ] 13. Implement API client
-  - File: `frontend/src/api/{seam}.ts`
+  - File: `frontend/src/api/{seam}.*`
   - Implement `list{Resources}(page, limit, filters, sort)` function
-  - Use base client from `client.ts`
+  - Use base client from `client.*`
   - Type: `Promise<{Resource}ListResponse>` (from OpenAPI contract)
   - _Implements: Requirements 1.1, 1.2, 1.3, 1.4 (API calls)_
   - **Done when**: API function calls backend endpoint, types match OpenAPI contract
 
-- [ ] 14. Implement TanStack Query hook
-  - File: `frontend/src/hooks/use{Seam}.ts`
+- [ ] 14. Implement data fetching hook
+  - File: `frontend/src/hooks/use{Seam}.*`
   - Implement `use{Resources}(page, filters, sort)` hook
-  - Use `useQuery` from `@tanstack/react-query`
+  - Use data fetching library (with caching and auto-refetch)
   - Auto-refetch on filter change
   - Error handling: return error state
   - _Implements: Requirements 1.1, 1.2, 1.3, 1.4 (data fetching)_
@@ -1203,8 +1140,8 @@ Include checkpoint tasks at reasonable breaks:
   - Test: Error state displays _(NFR: error handling)_
   - **Done when**: All tests pass, coverage ≥80% on page/hooks
 
-- [ ] 20. Write E2E tests with Playwright
-  - File: `frontend/tests/e2e/{seam}.spec.ts`
+- [ ] 20. Write E2E tests
+  - File: `frontend/tests/e2e/{seam}.spec.*`
   - Test: Navigate to `/{seam}`, see items in grid _(Requirement 1.1)_
   - Test: Select category filter, see filtered items _(Requirement 1.3)_
   - Test: Click next page, see page 2 items _(Requirement 1.2)_
@@ -1212,20 +1149,20 @@ Include checkpoint tasks at reasonable breaks:
   - **Done when**: All E2E tests pass, happy path verified
 
 - [ ] 21. ✅ Checkpoint — Frontend complete
-  - Run: `npm test && npm run test:e2e`
+  - Run frontend tests and E2E tests
   - Verify: All tests pass, coverage ≥80% on pages/hooks
   - Verify: E2E tests pass, UI matches ui-behavior.md
 
 ### Contract Validation
 
 - [ ] 22. Validate backend contract alignment
-  - Run: `python .claude/scripts/validate_contract_backend.py backend/app docs/seams/{seam}/contracts/openapi.yaml`
+  - Run contract validation for backend implementation
   - Verify: All endpoints defined in contract are implemented
   - Verify: No extra endpoints (not in contract)
   - **Done when**: Validation passes, backend matches contract
 
 - [ ] 23. Validate frontend contract alignment
-  - Run: `python .claude/scripts/validate_contract_frontend.py frontend/src docs/seams/{seam}/contracts/openapi.yaml`
+  - Run contract validation for frontend implementation
   - Verify: All API calls match contract endpoints
   - Verify: No API calls to undefined endpoints
   - **Done when**: Validation passes, frontend matches contract
@@ -1233,21 +1170,21 @@ Include checkpoint tasks at reasonable breaks:
 ### Visual Parity Check
 
 - [ ] 24. Capture modern screenshot
-  - Run backend: `cd backend && uvicorn app.main:app --reload`
-  - Run frontend: `cd frontend && npm run dev`
-  - Capture: `npx playwright screenshot http://localhost:5173/{seam} --output docs/seams/{seam}/modern-screenshot.png`
+  - Run backend server in dev mode
+  - Run frontend server in dev mode
+  - Capture screenshot of modern implementation
   - **Done when**: Screenshot captured
 
 - [ ] 25. Compare with legacy baseline
-  - Run: `python .claude/scripts/compare_screenshots.py docs/legacy-golden/{seam}/screenshots/main.png docs/seams/{seam}/modern-screenshot.png --threshold 85 --output docs/seams/{seam}/diff.png`
+  - Run screenshot comparison tool (legacy vs modern)
   - Verify: SSIM ≥85%
-  - If fails: Review diff.png, identify missing elements, update frontend
+  - If fails: Review diff image, identify missing elements, update frontend
   - **Done when**: SSIM ≥85%, visual parity achieved
 
 ### Final Checkpoint
 
 - [ ] 26. ✅ Final Checkpoint — All tasks complete
-  - Run: `pytest backend/tests/ && npm test && npm run test:e2e`
+  - Run all tests (backend + frontend + E2E)
   - Verify: All tests pass (backend + frontend + E2E)
   - Verify: Coverage ≥80% (backend + frontend)
   - Verify: Contract validation passes (backend + frontend)
