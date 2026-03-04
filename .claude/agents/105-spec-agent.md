@@ -50,7 +50,6 @@ You are given:
 - **Seam name**: `{seam}` (e.g., `catalog-list`, `orders-edit`)
 - **Discovery report**: `docs/seams/{seam}/discovery.md` (technical analysis)
 - **UI behavior**: `docs/seams/{seam}/ui-behavior.md` (UI structure, controls, grids)
-- **Architecture rules**: `CLAUDE.md` (auto-loaded — tech stack, API patterns, code conventions)
 
 ## Purpose
 

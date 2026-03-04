@@ -103,10 +103,9 @@ MODES:
 
 OUTPUTS:
   docs/seams/{seam}/    Requirements, design, tasks, contracts
-  backend/              Python/FastAPI implementation
-  frontend/             React/TypeScript implementation
+  backend/              Backend implementation
+  frontend/             Frontend implementation
 
-See CLAUDE.md for detailed rules and conventions.
 EOF
   exit 0
 fi

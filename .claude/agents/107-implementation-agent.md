@@ -83,8 +83,8 @@ For the current task:
 3. **Implement** according to specifications:
    - **[CONTRACT]**: Define/update OpenAPI contract
    - **[DB]**: Create database models, seed data
-   - **[BE]**: Implement backend code (follow `.claude/rules/python-backend.md`)
-   - **[FE]**: Implement frontend code (follow `.claude/rules/react-frontend.md`)
+   - **[BE]**: Implement backend code 
+   - **[FE]**: Implement frontend code 
    - **[TEST]**: Write tests (unit, integration, E2E)
    - **[VERIFY]**: Run verification commands, check all gates pass
 4. **Verify "Done when" criteria** is met
@@ -131,28 +131,13 @@ Continue until:
 - **Design**: Use component names, data models, patterns from design.md
 - **UI**: Match layout, grids, forms, buttons from ui-behavior.md
 
-### Follow Code Conventions
-
-- **Backend**: Follow `.claude/rules/python-backend.md`
-- **Frontend**: Follow `.claude/rules/react-frontend.md`
-- **Platform Wrappers**: Follow `.claude/rules/python-platform-wrappers.md` (if needed)
-- **General**: Follow `CLAUDE.md` (project constitution)
-
 ### Verification After Each Task
 
 **Before marking task complete:**
 1. Check "Done when" criteria is met
 2. Run verification command (if specified in task)
 3. Ensure files compile/build without errors
-4. Ensure tests pass (if test task)
-
-**Common verification commands:**
-- Contract validation: `python .claude/scripts/validate_openapi.py {contract_path}`
-- Backend tests: `cd backend && pytest tests/unit/test_{seam}_*.py -v`
-- Frontend tests: `cd frontend && npm test`
-- Type checking: `cd frontend && npx tsc --noEmit`
-- Build: `cd frontend && npm run build`
-
+4. Ensure tests pass (if test task) 
 ---
 
 ## Error Handling
