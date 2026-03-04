@@ -1,0 +1,695 @@
+openapi: 3.1.0
+info:
+  title: Catalog Management API
+  version: v1
+  description: |
+    API for managing eShop product catalog items with CRUD operations, image upload,
+    and brand/type lookups. Migrated from ASP.NET WebForms to FastAPI backend.
+
+servers:
+  - url: http://localhost:8000/api/v1
+    description: Development server
+  - url: https://api.eshop.example.com/api/v1
+    description: Production server
+
+paths:
+  /catalog/items:
+    get:
+      summary: List catalog items with pagination
+      operationId: listCatalogItems
+      tags:
+        - Catalog
+      parameters:
+        - $ref: '#/components/parameters/PageSizeParam'
+        - $ref: '#/components/parameters/PageIndexParam'
+      responses:
+        '200':
+          description: Catalog items retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemListResponse'
+              example:
+                items:
+                  - id: 1
+                    name: ".NET Bot Black Hoodie"
+                    description: "A stylish black hoodie with .NET Bot logo"
+                    price: 19.50
+                    picture_file_name: "1.png"
+                    picture_uri: "/Pics/1.png"
+                    catalog_brand_id: 2
+                    catalog_type_id: 1
+                    brand:
+                      id: 2
+                      brand: ".NET"
+                    type:
+                      id: 1
+                      type: "T-Shirt"
+                    available_stock: 100
+                    restock_threshold: 10
+                    max_stock_threshold: 200
+                pagination:
+                  page: 0
+                  limit: 10
+                  total_items: 45
+                  total_pages: 5
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Create new catalog item
+      operationId: createCatalogItem
+      tags:
+        - Catalog
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogItemCreate'
+            example:
+              name: "New Product"
+              description: "Product description"
+              price: 29.99
+              catalog_brand_id: 2
+              catalog_type_id: 1
+              available_stock: 50
+              restock_threshold: 5
+              max_stock_threshold: 100
+              temp_image_name: "abc123-uuid.jpg"
+      responses:
+        '201':
+          description: Catalog item created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /catalog/items/{id}:
+    get:
+      summary: Get catalog item by ID
+      operationId: getCatalogItem
+      tags:
+        - Catalog
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Catalog item ID
+      responses:
+        '200':
+          description: Catalog item retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemResponse'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update existing catalog item
+      operationId: updateCatalogItem
+      tags:
+        - Catalog
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Catalog item ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CatalogItemUpdate'
+      responses:
+        '200':
+          description: Catalog item updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CatalogItemResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete catalog item
+      operationId: deleteCatalogItem
+      tags:
+        - Catalog
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Catalog item ID
+      responses:
+        '204':
+          description: Catalog item deleted successfully (no content)
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /catalog/brands:
+    get:
+      summary: List all brands
+      operationId: listBrands
+      tags:
+        - Lookups
+      responses:
+        '200':
+          description: Brands retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BrandResponse'
+              example:
+                - id: 1
+                  brand: "Azure"
+                - id: 2
+                  brand: ".NET"
+                - id: 3
+                  brand: "Visual Studio"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /catalog/types:
+    get:
+      summary: List all types
+      operationId: listTypes
+      tags:
+        - Lookups
+      responses:
+        '200':
+          description: Types retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TypeResponse'
+              example:
+                - id: 1
+                  type: "T-Shirt"
+                - id: 2
+                  type: "Mug"
+                - id: 3
+                  type: "Sheet"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /images/upload:
+    post:
+      summary: Upload product image to temporary storage
+      operationId: uploadImage
+      tags:
+        - Images
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: Image file (JPG or PNG, max 10MB)
+      responses:
+        '201':
+          description: Image uploaded successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TempImageResponse'
+              example:
+                temp_filename: "abc123-uuid.jpg"
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    CatalogItemResponse:
+      type: object
+      required:
+        - id
+        - name
+        - price
+        - picture_file_name
+        - picture_uri
+        - catalog_brand_id
+        - catalog_type_id
+        - brand
+        - type
+        - available_stock
+        - restock_threshold
+        - max_stock_threshold
+      properties:
+        id:
+          type: integer
+          description: Catalog item ID (auto-generated)
+          example: 1
+        name:
+          type: string
+          maxLength: 50
+          description: Product name
+          example: ".NET Bot Black Hoodie"
+        description:
+          type: string
+          nullable: true
+          description: Product description (optional)
+          example: "A stylish black hoodie with .NET Bot logo"
+        price:
+          type: number
+          format: decimal
+          minimum: 0
+          maximum: 999999999.99
+          description: Product price (currency)
+          example: 19.50
+        picture_file_name:
+          type: string
+          description: Image filename only (without path)
+          example: "1.png"
+        picture_uri:
+          type: string
+          description: Full image URI (computed property)
+          example: "/Pics/1.png"
+        catalog_brand_id:
+          type: integer
+          description: Brand foreign key
+          example: 2
+        catalog_type_id:
+          type: integer
+          description: Type foreign key
+          example: 1
+        brand:
+          $ref: '#/components/schemas/BrandResponse'
+        type:
+          $ref: '#/components/schemas/TypeResponse'
+        available_stock:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: Current stock level
+          example: 100
+        restock_threshold:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: Alert threshold for restocking
+          example: 10
+        max_stock_threshold:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: Maximum stock capacity
+          example: 200
+
+    CatalogItemCreate:
+      type: object
+      required:
+        - name
+        - price
+        - catalog_brand_id
+        - catalog_type_id
+        - available_stock
+        - restock_threshold
+        - max_stock_threshold
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Product name (required)
+          example: "New Product"
+        description:
+          type: string
+          nullable: true
+          description: Product description (optional)
+          example: "Product description"
+        price:
+          type: number
+          format: decimal
+          minimum: 0
+          maximum: 999999999.99
+          multipleOf: 0.01
+          description: Product price (must have at most 2 decimal places)
+          example: 29.99
+        catalog_brand_id:
+          type: integer
+          minimum: 1
+          description: Brand foreign key (required)
+          example: 2
+        catalog_type_id:
+          type: integer
+          minimum: 1
+          description: Type foreign key (required)
+          example: 1
+        available_stock:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: Initial stock level
+          example: 50
+        restock_threshold:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: Restock alert threshold
+          example: 5
+        max_stock_threshold:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: Maximum stock capacity
+          example: 100
+        temp_image_name:
+          type: string
+          nullable: true
+          description: Temporary image filename from upload (optional, defaults to dummy.png)
+          example: "abc123-uuid.jpg"
+
+    CatalogItemUpdate:
+      type: object
+      required:
+        - name
+        - price
+        - catalog_brand_id
+        - catalog_type_id
+        - available_stock
+        - restock_threshold
+        - max_stock_threshold
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 50
+          description: Product name (required)
+          example: "Updated Product Name"
+        description:
+          type: string
+          nullable: true
+          description: Product description (optional)
+          example: "Updated description"
+        price:
+          type: number
+          format: decimal
+          minimum: 0
+          maximum: 999999999.99
+          multipleOf: 0.01
+          description: Product price
+          example: 34.99
+        catalog_brand_id:
+          type: integer
+          minimum: 1
+          description: Brand foreign key
+          example: 2
+        catalog_type_id:
+          type: integer
+          minimum: 1
+          description: Type foreign key
+          example: 1
+        available_stock:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: Stock level
+          example: 75
+        restock_threshold:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: Restock threshold
+          example: 10
+        max_stock_threshold:
+          type: integer
+          minimum: 0
+          maximum: 10000000
+          description: Maximum stock
+          example: 150
+        temp_image_name:
+          type: string
+          nullable: true
+          description: New image filename (optional, preserves existing if null)
+          example: null
+
+    CatalogItemListResponse:
+      type: object
+      required:
+        - items
+        - pagination
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CatalogItemResponse'
+        pagination:
+          $ref: '#/components/schemas/PaginationMetadata'
+
+    PaginationMetadata:
+      type: object
+      required:
+        - page
+        - limit
+        - total_items
+        - total_pages
+      properties:
+        page:
+          type: integer
+          minimum: 0
+          description: Current page (zero-based index)
+          example: 0
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 100
+          description: Items per page
+          example: 10
+        total_items:
+          type: integer
+          minimum: 0
+          description: Total number of items across all pages
+          example: 45
+        total_pages:
+          type: integer
+          minimum: 0
+          description: Total number of pages
+          example: 5
+
+    BrandResponse:
+      type: object
+      required:
+        - id
+        - brand
+      properties:
+        id:
+          type: integer
+          description: Brand ID
+          example: 1
+        brand:
+          type: string
+          maxLength: 100
+          description: Brand name
+          example: "Azure"
+
+    TypeResponse:
+      type: object
+      required:
+        - id
+        - type
+      properties:
+        id:
+          type: integer
+          description: Type ID
+          example: 1
+        type:
+          type: string
+          maxLength: 100
+          description: Type name
+          example: "T-Shirt"
+
+    TempImageResponse:
+      type: object
+      required:
+        - temp_filename
+      properties:
+        temp_filename:
+          type: string
+          description: Temporary filename (UUID + extension)
+          example: "abc123-uuid.jpg"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              description: Machine-readable error code
+              example: "VALIDATION_ERROR"
+              enum:
+                - VALIDATION_ERROR
+                - NOT_FOUND
+                - UNAUTHORIZED
+                - FORBIDDEN
+                - CONFLICT
+                - INTERNAL_SERVER_ERROR
+            message:
+              type: string
+              description: Human-readable error message
+              example: "Name must not exceed 50 characters"
+            details:
+              type: object
+              additionalProperties: true
+              nullable: true
+              description: Additional error context (optional)
+              example:
+                field: "name"
+                constraint: "max_length"
+                max: 50
+            request_id:
+              type: string
+              nullable: true
+              description: Correlation ID for error tracking
+              example: "abc-123-def"
+
+  parameters:
+    PageSizeParam:
+      name: pageSize
+      in: query
+      description: Number of items per page (default 10, max 100)
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 100
+        default: 10
+      example: 10
+
+    PageIndexParam:
+      name: pageIndex
+      in: query
+      description: Zero-based page number (default 0)
+      schema:
+        type: integer
+        minimum: 0
+        default: 0
+      example: 0
+
+  responses:
+    ValidationError:
+      description: Validation error (invalid input)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "VALIDATION_ERROR"
+              message: "Name must not exceed 50 characters"
+              details:
+                field: "name"
+                constraint: "max_length"
+                max: 50
+
+    Unauthorized:
+      description: Unauthorized (missing or invalid authentication)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "UNAUTHORIZED"
+              message: "Authentication required"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "NOT_FOUND"
+              message: "Catalog item with ID 999 not found"
+
+    Conflict:
+      description: Conflict (business rule violation or constraint error)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "CONFLICT"
+              message: "Cannot delete catalog item: referenced by other records"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+          example:
+            error:
+              code: "INTERNAL_SERVER_ERROR"
+              message: "Database connection failed"
+              request_id: "abc-123-def"
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token for authenticated requests (required for create, update, delete, image upload)
+
+security:
+  - bearerAuth: []

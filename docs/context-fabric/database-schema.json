@@ -1,0 +1,43 @@
+{
+  "extraction_date": "2026-03-03T16:40:00Z",
+  "database": "SQL Server (Entity Framework 6)",
+  "tables": [
+    {
+      "name": "Catalog",
+      "entity": "CatalogItem",
+      "columns": [
+        "Id", "Name", "Description", "Price", "PictureFileName",
+        "CatalogTypeId", "CatalogBrandId", "AvailableStock",
+        "RestockThreshold", "MaxStockThreshold", "OnReorder"
+      ],
+      "fk_to": ["CatalogBrand.Id", "CatalogType.Id"]
+    },
+    {
+      "name": "CatalogBrand",
+      "entity": "CatalogBrand",
+      "columns": ["Id", "Brand"],
+      "fk_to": []
+    },
+    {
+      "name": "CatalogType",
+      "entity": "CatalogType",
+      "columns": ["Id", "Type"],
+      "fk_to": []
+    }
+  ],
+  "relationships": [
+    {
+      "from": "Catalog",
+      "to": "CatalogBrand",
+      "type": "many-to-one",
+      "fk_column": "CatalogBrandId"
+    },
+    {
+      "from": "Catalog",
+      "to": "CatalogType",
+      "type": "many-to-one",
+      "fk_column": "CatalogTypeId"
+    }
+  ],
+  "notes": "All catalog tables are tightly coupled via FK relationships. Should be kept together in same seam."
+}

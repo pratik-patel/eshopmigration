@@ -1,0 +1,33 @@
+{
+  "generation_date": "2026-03-03T16:54:00Z",
+  "candidates": [
+    {
+      "seam_name": "catalog-management",
+      "workflow_cluster": "Catalog CRUD + Browse + Image Upload",
+      "delivery_surfaces": [
+        "Default.aspx (list/browse)",
+        "Catalog/Create.aspx",
+        "Catalog/Edit.aspx",
+        "Catalog/Delete.aspx",
+        "Catalog/Details.aspx",
+        "Catalog/PicUploader.asmx"
+      ],
+      "data_ownership": {
+        "writes": ["CatalogItem", "File System (Pics/)"],
+        "reads": ["CatalogItem", "CatalogBrand", "CatalogType"]
+      },
+      "fk_cohesive": true,
+      "fk_relationships": [
+        "CatalogItem -> CatalogBrand",
+        "CatalogItem -> CatalogType"
+      ],
+      "external_deps": ["File System (CSV seed data)", "File System (image storage)"],
+      "required_roles": ["anonymous"],
+      "business_capability": "Product catalog management",
+      "cohesion": "high",
+      "coupling": "low"
+    }
+  ],
+  "rejected_candidates": [],
+  "notes": "Application has a single cohesive domain (catalog). One seam covers all functionality."
+}

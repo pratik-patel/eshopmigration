@@ -1,0 +1,252 @@
+{
+  "seam": "catalog-management",
+  "extraction_date": "2026-03-03T00:00:00Z",
+  "triggers": [
+    {
+      "screen": "Default.aspx",
+      "control": "CreateNewLink",
+      "event": "Click",
+      "handler_symbol": "Navigate to Create.aspx",
+      "handler_file": "N/A (client-side navigation)",
+      "confidence": "high",
+      "evidence": "Default.aspx:28 (RouteUrl link)"
+    },
+    {
+      "screen": "Create.aspx",
+      "control": "CreateButton",
+      "event": "Click",
+      "handler_symbol": "Create_Click",
+      "handler_file": "Catalog/Create.aspx.cs",
+      "confidence": "high",
+      "evidence": "Create.aspx.cs:50-82"
+    },
+    {
+      "screen": "Edit.aspx",
+      "control": "SaveButton",
+      "event": "Click",
+      "handler_symbol": "Save_Click",
+      "handler_file": "Catalog/Edit.aspx.cs",
+      "confidence": "high",
+      "evidence": "Edit.aspx.cs:62-92"
+    },
+    {
+      "screen": "Delete.aspx",
+      "control": "DeleteButton",
+      "event": "Click",
+      "handler_symbol": "Delete_Click",
+      "handler_file": "Catalog/Delete.aspx.cs",
+      "confidence": "high",
+      "evidence": "Delete.aspx.cs:34-38"
+    }
+  ],
+  "flows": [
+    {
+      "trigger_id": "Default.aspx.Page_Load",
+      "call_path": [
+        {
+          "file": "Default.aspx.cs",
+          "symbol": "Page_Load",
+          "line": 25
+        },
+        {
+          "file": "Default.aspx.cs",
+          "symbol": "CatalogService.GetCatalogItemsPaginated",
+          "line": 35
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "GetCatalogItemsPaginated",
+          "line": 20
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "db.CatalogItems.Include().OrderBy().Skip().Take()",
+          "line": 24
+        }
+      ],
+      "boundaries": "database_read",
+      "side_effects": [
+        "SELECT FROM CatalogItems JOIN CatalogBrand JOIN CatalogType",
+        "SELECT COUNT(*) FROM CatalogItems"
+      ],
+      "notes": "Pagination using EF6 Skip/Take. Includes eager loading of CatalogBrand and CatalogType."
+    },
+    {
+      "trigger_id": "Create.aspx.Create_Click",
+      "call_path": [
+        {
+          "file": "Catalog/Create.aspx.cs",
+          "symbol": "Create_Click",
+          "line": 50
+        },
+        {
+          "file": "Catalog/Create.aspx.cs",
+          "symbol": "CatalogService.CreateCatalogItem",
+          "line": 73
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "CreateCatalogItem",
+          "line": 50
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "indexGenerator.GetNextSequenceValue",
+          "line": 52
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "db.CatalogItems.Add",
+          "line": 53
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "db.SaveChanges",
+          "line": 54
+        },
+        {
+          "file": "Catalog/Create.aspx.cs",
+          "symbol": "ImageService.UpdateImage",
+          "line": 77
+        }
+      ],
+      "boundaries": "database_write, file_io",
+      "side_effects": [
+        "INSERT INTO Catalog",
+        "File copy (if image uploaded)"
+      ],
+      "notes": "Uses HiLo generator for ID. Optionally updates image via IImageService."
+    },
+    {
+      "trigger_id": "Edit.aspx.Save_Click",
+      "call_path": [
+        {
+          "file": "Catalog/Edit.aspx.cs",
+          "symbol": "Save_Click",
+          "line": 62
+        },
+        {
+          "file": "Catalog/Edit.aspx.cs",
+          "symbol": "ImageService.UpdateImage",
+          "line": 83
+        },
+        {
+          "file": "Catalog/Edit.aspx.cs",
+          "symbol": "CatalogService.UpdateCatalogItem",
+          "line": 88
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "UpdateCatalogItem",
+          "line": 57
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "db.Entry().State = Modified",
+          "line": 59
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "db.SaveChanges",
+          "line": 60
+        }
+      ],
+      "boundaries": "database_write, file_io",
+      "side_effects": [
+        "UPDATE Catalog WHERE Id = ?",
+        "File copy (if image uploaded)"
+      ],
+      "notes": "Updates entity state and saves. Optionally updates image."
+    },
+    {
+      "trigger_id": "Delete.aspx.Delete_Click",
+      "call_path": [
+        {
+          "file": "Catalog/Delete.aspx.cs",
+          "symbol": "Delete_Click",
+          "line": 34
+        },
+        {
+          "file": "Catalog/Delete.aspx.cs",
+          "symbol": "CatalogService.RemoveCatalogItem",
+          "line": 36
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "RemoveCatalogItem",
+          "line": 63
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "db.CatalogItems.Remove",
+          "line": 65
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "db.SaveChanges",
+          "line": 66
+        }
+      ],
+      "boundaries": "database_write",
+      "side_effects": [
+        "DELETE FROM Catalog WHERE Id = ?"
+      ],
+      "notes": "Deletes catalog item. Does NOT delete associated image file."
+    },
+    {
+      "trigger_id": "Create.aspx.Page_Load",
+      "call_path": [
+        {
+          "file": "Catalog/Create.aspx.cs",
+          "symbol": "Page_Load",
+          "line": 21
+        },
+        {
+          "file": "Catalog/Create.aspx.cs",
+          "symbol": "Request.IsAuthenticated check",
+          "line": 26
+        },
+        {
+          "file": "Catalog/Create.aspx.cs",
+          "symbol": "Context.GetOwinContext().Authentication.Challenge",
+          "line": 28
+        }
+      ],
+      "boundaries": "authentication",
+      "side_effects": [
+        "Redirect to Azure AD authentication if not authenticated"
+      ],
+      "notes": "OpenID Connect authentication check on protected pages (Create, Edit, Delete)."
+    },
+    {
+      "trigger_id": "Details.aspx.Page_Load",
+      "call_path": [
+        {
+          "file": "Catalog/Details.aspx.cs",
+          "symbol": "Page_Load",
+          "line": 17
+        },
+        {
+          "file": "Catalog/Details.aspx.cs",
+          "symbol": "CatalogService.FindCatalogItem",
+          "line": 21
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "FindCatalogItem",
+          "line": 36
+        },
+        {
+          "file": "Services/CatalogService.cs",
+          "symbol": "db.CatalogItems.Include().FirstOrDefault()",
+          "line": 38
+        }
+      ],
+      "boundaries": "database_read",
+      "side_effects": [
+        "SELECT FROM CatalogItems JOIN CatalogBrand JOIN CatalogType WHERE Id = ?"
+      ],
+      "notes": "Single item read with eager loading of related entities."
+    }
+  ]
+}

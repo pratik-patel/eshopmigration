@@ -1,0 +1,33 @@
+{
+  "extraction_date": "2026-03-03T16:42:00Z",
+  "integrations": [
+    {
+      "type": "FILE_IO",
+      "operation": "READ",
+      "files": [
+        "Setup/CatalogTypes.csv",
+        "Setup/CatalogBrands.csv",
+        "Setup/CatalogItems.csv",
+        "Setup/Catalog.zip"
+      ],
+      "used_in": ["Database initialization", "Seed data loading"],
+      "modules": ["Models/Infrastructure/CatalogDBInitializer.cs"]
+    },
+    {
+      "type": "FILE_IO",
+      "operation": "WRITE/READ",
+      "path": "Pics/ (image storage)",
+      "used_in": ["Image upload", "Image display"],
+      "modules": ["Services/ImageAzureStorage.cs", "Services/ImageMockStorage.cs"]
+    },
+    {
+      "type": "AZURE_BLOB",
+      "operation": "UPLOAD",
+      "path": "Azure Blob Storage (optional)",
+      "used_in": ["Image storage (cloud mode)"],
+      "modules": ["Services/ImageAzureStorage.cs"],
+      "conditional": true
+    }
+  ],
+  "notes": "Primary external dependency is file system for CSV seed data and image storage. Azure Blob is optional alternative."
+}

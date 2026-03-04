@@ -1,0 +1,832 @@
+{
+  "seam": "catalog-management",
+  "extraction_date": "2026-03-03T00:00:00Z",
+  "framework": "aspnet-webforms",
+  "framework_version": "4.7.2",
+  "ui_library": "bootstrap-3.x",
+  "total_screens": 5,
+  "screens": [
+    {
+      "id": "default-aspx",
+      "type_name": "Default.aspx",
+      "framework": "aspnet-webforms",
+      "kind": "page",
+      "file": "Default.aspx",
+      "code_behind": "Default.aspx.cs",
+      "master_page": "Site.Master",
+      "title": "Home Page",
+      "route": "~/",
+      "business_function": "Product catalog list with pagination",
+      "controls": [
+        {
+          "name": "productList",
+          "type": "asp:ListView",
+          "purpose": "Display paginated list of catalog items",
+          "data_binding": "Model.Data (PaginatedItemsViewModel<CatalogItem>)",
+          "confidence": "high"
+        },
+        {
+          "name": "PaginationNext",
+          "type": "asp:HyperLink",
+          "text": "Next",
+          "css_class": "esh-pager-item esh-pager-item--navigable",
+          "purpose": "Navigate to next page",
+          "confidence": "high"
+        },
+        {
+          "name": "PaginationPrevious",
+          "type": "asp:HyperLink",
+          "text": "Previous",
+          "css_class": "esh-pager-item esh-pager-item--navigable",
+          "purpose": "Navigate to previous page",
+          "confidence": "high"
+        },
+        {
+          "name": "CreateNewLink",
+          "type": "a",
+          "text": "Create New",
+          "css_class": "btn esh-button esh-button-primary",
+          "href": "<%$RouteUrl:RouteName=CreateProductRoute%>",
+          "purpose": "Navigate to create product page",
+          "confidence": "high"
+        }
+      ],
+      "table_columns": [
+        {
+          "header": "",
+          "data_binding": "Item.PictureUri",
+          "control_type": "image",
+          "css_class": "esh-thumbnail",
+          "confidence": "high"
+        },
+        {
+          "header": "Name",
+          "data_binding": "Item.Name",
+          "control_type": "text",
+          "confidence": "high"
+        },
+        {
+          "header": "Description",
+          "data_binding": "Item.Description",
+          "control_type": "text",
+          "confidence": "high"
+        },
+        {
+          "header": "Brand",
+          "data_binding": "Item.CatalogBrand.Brand",
+          "control_type": "text",
+          "confidence": "high"
+        },
+        {
+          "header": "Type",
+          "data_binding": "Item.CatalogType.Type",
+          "control_type": "text",
+          "confidence": "high"
+        },
+        {
+          "header": "Price",
+          "data_binding": "Item.Price",
+          "control_type": "text",
+          "css_class": "esh-price",
+          "confidence": "high"
+        },
+        {
+          "header": "Picture name",
+          "data_binding": "Item.PictureFileName",
+          "control_type": "text",
+          "confidence": "high"
+        },
+        {
+          "header": "Stock",
+          "data_binding": "Item.AvailableStock",
+          "control_type": "text",
+          "confidence": "high"
+        },
+        {
+          "header": "Restock",
+          "data_binding": "Item.RestockThreshold",
+          "control_type": "text",
+          "confidence": "high"
+        },
+        {
+          "header": "Max stock",
+          "data_binding": "Item.MaxStockThreshold",
+          "control_type": "text",
+          "confidence": "high"
+        },
+        {
+          "header": "",
+          "control_type": "action-links",
+          "actions": [
+            {
+              "text": "Edit",
+              "route": "EditProductRoute",
+              "css_class": "esh-table-link",
+              "confidence": "high"
+            },
+            {
+              "text": "Details",
+              "route": "ProductDetailsRoute",
+              "css_class": "esh-table-link",
+              "confidence": "high"
+            },
+            {
+              "text": "Delete",
+              "route": "DeleteProductRoute",
+              "css_class": "esh-table-link",
+              "confidence": "high"
+            }
+          ],
+          "confidence": "high"
+        }
+      ],
+      "actions": [
+        {
+          "control": "CreateNewLink",
+          "event": "Click",
+          "handler": "Navigate to Create.aspx",
+          "confidence": "high"
+        },
+        {
+          "control": "PaginationNext",
+          "event": "Click",
+          "handler": "Navigate to next page with ProductsByPageRoute",
+          "confidence": "high"
+        },
+        {
+          "control": "PaginationPrevious",
+          "event": "Click",
+          "handler": "Navigate to previous page with ProductsByPageRoute",
+          "confidence": "high"
+        }
+      ],
+      "child_screens": [
+        {
+          "child_type": "Create.aspx",
+          "opened_via": "CreateNewLink click",
+          "modal": "modeless",
+          "confidence": "high"
+        },
+        {
+          "child_type": "Edit.aspx",
+          "opened_via": "Edit link click",
+          "modal": "modeless",
+          "confidence": "high"
+        },
+        {
+          "child_type": "Details.aspx",
+          "opened_via": "Details link click",
+          "modal": "modeless",
+          "confidence": "high"
+        },
+        {
+          "child_type": "Delete.aspx",
+          "opened_via": "Delete link click",
+          "modal": "modeless",
+          "confidence": "high"
+        }
+      ],
+      "layout": {
+        "container": "div.esh-table",
+        "grid": "table.table",
+        "pagination": "div.esh-pager"
+      }
+    },
+    {
+      "id": "create-aspx",
+      "type_name": "Create.aspx",
+      "framework": "aspnet-webforms",
+      "kind": "page",
+      "file": "Catalog/Create.aspx",
+      "code_behind": "Catalog/Create.aspx.cs",
+      "master_page": "Site.Master",
+      "title": "Create",
+      "route": "~/Catalog/Create",
+      "business_function": "Create new catalog item with image upload",
+      "controls": [
+        {
+          "name": "Name",
+          "type": "asp:TextBox",
+          "label": "Name",
+          "css_class": "form-control",
+          "validation": "RequiredFieldValidator",
+          "confidence": "high"
+        },
+        {
+          "name": "Description",
+          "type": "asp:TextBox",
+          "label": "Description",
+          "css_class": "form-control",
+          "confidence": "high"
+        },
+        {
+          "name": "Brand",
+          "type": "asp:DropDownList",
+          "label": "Brand",
+          "css_class": "form-control",
+          "data_source": "GetBrands()",
+          "data_text_field": "Brand",
+          "data_value_field": "Id",
+          "confidence": "high"
+        },
+        {
+          "name": "Type",
+          "type": "asp:DropDownList",
+          "label": "Type",
+          "css_class": "form-control",
+          "data_source": "GetTypes()",
+          "data_text_field": "Type",
+          "data_value_field": "Id",
+          "confidence": "high"
+        },
+        {
+          "name": "Price",
+          "type": "asp:TextBox",
+          "label": "Price",
+          "css_class": "form-control",
+          "default_value": "0.00",
+          "validation": "RangeValidator (0 to 1000000, Currency)",
+          "confidence": "high"
+        },
+        {
+          "name": "Stock",
+          "type": "asp:TextBox",
+          "label": "Stock",
+          "css_class": "form-control",
+          "default_value": "0",
+          "validation": "RangeValidator (0 to 10000000, Integer)",
+          "confidence": "high"
+        },
+        {
+          "name": "Restock",
+          "type": "asp:TextBox",
+          "label": "Restock",
+          "css_class": "form-control",
+          "default_value": "0",
+          "validation": "RangeValidator (0 to 10000000, Integer)",
+          "confidence": "high"
+        },
+        {
+          "name": "Maxstock",
+          "type": "asp:TextBox",
+          "label": "Max stock",
+          "css_class": "form-control",
+          "default_value": "0",
+          "validation": "RangeValidator (0 to 10000000, Integer)",
+          "confidence": "high"
+        },
+        {
+          "name": "uploadEditorImage",
+          "type": "input[type=file]",
+          "label": "Upload image",
+          "css_class": "hidden",
+          "accept": "image/*",
+          "purpose": "Client-side image upload (Azure Storage)",
+          "confidence": "high"
+        },
+        {
+          "name": "TempImageName",
+          "type": "asp:HiddenField",
+          "purpose": "Store temporary image name after upload",
+          "confidence": "high"
+        },
+        {
+          "name": "ProductImage",
+          "type": "asp:Image",
+          "css_class": "esh-picture",
+          "image_url": "pictureUri (data-bound)",
+          "purpose": "Display product image preview",
+          "confidence": "high"
+        },
+        {
+          "name": "CancelButton",
+          "type": "a",
+          "text": "[ Cancel ]",
+          "css_class": "btn esh-button esh-button-secondary",
+          "href": "~",
+          "confidence": "high"
+        },
+        {
+          "name": "CreateButton",
+          "type": "asp:Button",
+          "text": "[ Create ]",
+          "css_class": "btn esh-button esh-button-primary",
+          "on_click": "Create_Click",
+          "confidence": "high"
+        }
+      ],
+      "actions": [
+        {
+          "control": "CreateButton",
+          "event": "Click",
+          "handler": "Create_Click",
+          "server_side": true,
+          "purpose": "Create new catalog item and redirect to Default.aspx",
+          "confidence": "high"
+        },
+        {
+          "control": "CancelButton",
+          "event": "Click",
+          "handler": "Navigate to Default.aspx",
+          "server_side": false,
+          "confidence": "high"
+        },
+        {
+          "control": "uploadEditorImage",
+          "event": "change",
+          "handler": "Client-side upload via PicUploader.asmx",
+          "server_side": false,
+          "purpose": "Upload image to Azure Storage and populate TempImageName",
+          "confidence": "medium"
+        }
+      ],
+      "layout": {
+        "container": "div.container",
+        "left_column": "div.col-md-4 (image preview and upload)",
+        "right_column": "div.col-md-8 form-horizontal (form fields)"
+      }
+    },
+    {
+      "id": "edit-aspx",
+      "type_name": "Edit.aspx",
+      "framework": "aspnet-webforms",
+      "kind": "page",
+      "file": "Catalog/Edit.aspx",
+      "code_behind": "Catalog/Edit.aspx.cs",
+      "master_page": "Site.Master",
+      "title": "Edit",
+      "route": "~/Catalog/Edit/{id}",
+      "business_function": "Edit existing catalog item with image upload",
+      "controls": [
+        {
+          "name": "Name",
+          "type": "asp:TextBox",
+          "label": "Name",
+          "css_class": "form-control",
+          "data_binding": "product.Name",
+          "validation": "RequiredFieldValidator",
+          "confidence": "high"
+        },
+        {
+          "name": "Description",
+          "type": "asp:TextBox",
+          "label": "Description",
+          "css_class": "form-control",
+          "data_binding": "product.Description",
+          "confidence": "high"
+        },
+        {
+          "name": "BrandDropDownList",
+          "type": "asp:DropDownList",
+          "label": "Brand",
+          "css_class": "form-control",
+          "data_text_field": "Brand",
+          "data_value_field": "Id",
+          "selected_value": "product.CatalogBrandId",
+          "confidence": "high"
+        },
+        {
+          "name": "TypeDropDownList",
+          "type": "asp:DropDownList",
+          "label": "Type",
+          "css_class": "form-control",
+          "data_text_field": "Type",
+          "data_value_field": "Id",
+          "selected_value": "product.CatalogTypeId",
+          "confidence": "high"
+        },
+        {
+          "name": "Price",
+          "type": "asp:TextBox",
+          "label": "Price",
+          "css_class": "form-control",
+          "data_binding": "product.Price",
+          "validation": "RangeValidator (0 to 1000000, Currency)",
+          "confidence": "high"
+        },
+        {
+          "name": "PictureFileName",
+          "type": "asp:TextBox",
+          "label": "Picture name",
+          "css_class": "form-control",
+          "data_binding": "product.PictureFileName",
+          "read_only": true,
+          "tooltip": "Not allowed for edition",
+          "confidence": "high"
+        },
+        {
+          "name": "Stock",
+          "type": "asp:TextBox",
+          "label": "Stock",
+          "css_class": "form-control",
+          "data_binding": "product.AvailableStock",
+          "validation": "RangeValidator (0 to 10000000, Integer)",
+          "confidence": "high"
+        },
+        {
+          "name": "Restock",
+          "type": "asp:TextBox",
+          "label": "Restock",
+          "css_class": "form-control",
+          "data_binding": "product.RestockThreshold",
+          "validation": "RangeValidator (0 to 10000000, Integer)",
+          "confidence": "high"
+        },
+        {
+          "name": "Maxstock",
+          "type": "asp:TextBox",
+          "label": "Max stock",
+          "css_class": "form-control",
+          "data_binding": "product.MaxStockThreshold",
+          "validation": "RangeValidator (0 to 10000000, Integer)",
+          "confidence": "high"
+        },
+        {
+          "name": "uploadEditorImage",
+          "type": "input[type=file]",
+          "label": "Upload image",
+          "css_class": "hidden",
+          "accept": "image/*",
+          "purpose": "Client-side image upload (Azure Storage)",
+          "confidence": "high"
+        },
+        {
+          "name": "TempImageName",
+          "type": "asp:HiddenField",
+          "purpose": "Store temporary image name after upload",
+          "confidence": "high"
+        },
+        {
+          "name": "ProductImage",
+          "type": "asp:Image",
+          "css_class": "esh-picture",
+          "image_url": "/Pics/ + product.PictureFileName",
+          "confidence": "high"
+        },
+        {
+          "name": "CancelButton",
+          "type": "a",
+          "text": "[ Cancel ]",
+          "css_class": "btn esh-button esh-button-secondary",
+          "href": "~",
+          "confidence": "high"
+        },
+        {
+          "name": "SaveButton",
+          "type": "asp:Button",
+          "text": "[ Save ]",
+          "css_class": "btn esh-button esh-button-primary",
+          "on_click": "Save_Click",
+          "confidence": "high"
+        }
+      ],
+      "actions": [
+        {
+          "control": "SaveButton",
+          "event": "Click",
+          "handler": "Save_Click",
+          "server_side": true,
+          "purpose": "Update catalog item and redirect to Default.aspx",
+          "confidence": "high"
+        },
+        {
+          "control": "CancelButton",
+          "event": "Click",
+          "handler": "Navigate to Default.aspx",
+          "server_side": false,
+          "confidence": "high"
+        },
+        {
+          "control": "uploadEditorImage",
+          "event": "change",
+          "handler": "Client-side upload via PicUploader.asmx",
+          "server_side": false,
+          "purpose": "Upload image to Azure Storage and populate TempImageName",
+          "confidence": "medium"
+        }
+      ],
+      "layout": {
+        "container": "div.container",
+        "left_column": "div.col-md-4 (image preview and upload)",
+        "right_column": "div.col-md-8 form-horizontal (form fields)"
+      }
+    },
+    {
+      "id": "details-aspx",
+      "type_name": "Details.aspx",
+      "framework": "aspnet-webforms",
+      "kind": "page",
+      "file": "Catalog/Details.aspx",
+      "code_behind": "Catalog/Details.aspx.cs",
+      "master_page": "Site.Master",
+      "title": "Details",
+      "route": "~/Catalog/Details/{id}",
+      "business_function": "View catalog item details (read-only)",
+      "controls": [
+        {
+          "name": "ProductImage",
+          "type": "asp:Image",
+          "css_class": "col-md-8 esh-picture",
+          "image_url": "/Pics/ + product.PictureFileName",
+          "confidence": "high"
+        },
+        {
+          "name": "NameLabel",
+          "type": "asp:Label",
+          "label": "Name",
+          "data_binding": "product.Name",
+          "confidence": "high"
+        },
+        {
+          "name": "DescriptionLabel",
+          "type": "asp:Label",
+          "label": "Description",
+          "data_binding": "product.Description",
+          "confidence": "high"
+        },
+        {
+          "name": "BrandLabel",
+          "type": "asp:Label",
+          "label": "Brand",
+          "data_binding": "product.CatalogBrand.Brand",
+          "confidence": "high"
+        },
+        {
+          "name": "TypeLabel",
+          "type": "asp:Label",
+          "label": "Type",
+          "data_binding": "product.CatalogType.Type",
+          "confidence": "high"
+        },
+        {
+          "name": "PriceLabel",
+          "type": "asp:Label",
+          "label": "Price",
+          "css_class": "esh-price",
+          "data_binding": "product.Price",
+          "confidence": "high"
+        },
+        {
+          "name": "PictureFileNameLabel",
+          "type": "asp:Label",
+          "label": "Picture name",
+          "data_binding": "product.PictureFileName",
+          "confidence": "high"
+        },
+        {
+          "name": "StockLabel",
+          "type": "asp:Label",
+          "label": "Stock",
+          "data_binding": "product.AvailableStock",
+          "confidence": "high"
+        },
+        {
+          "name": "RestockLabel",
+          "type": "asp:Label",
+          "label": "Restock",
+          "data_binding": "product.RestockThreshold",
+          "confidence": "high"
+        },
+        {
+          "name": "MaxStockLabel",
+          "type": "asp:Label",
+          "label": "Max stock",
+          "data_binding": "product.MaxStockThreshold",
+          "confidence": "high"
+        },
+        {
+          "name": "BackToListButton",
+          "type": "a",
+          "text": "[ Back to list ]",
+          "css_class": "btn esh-button esh-button-secondary",
+          "href": "~",
+          "confidence": "high"
+        },
+        {
+          "name": "EditButton",
+          "type": "a",
+          "text": "[ Edit ]",
+          "css_class": "btn esh-button esh-button-primary",
+          "href": "EditProductRoute with product.Id",
+          "confidence": "high"
+        }
+      ],
+      "actions": [
+        {
+          "control": "BackToListButton",
+          "event": "Click",
+          "handler": "Navigate to Default.aspx",
+          "confidence": "high"
+        },
+        {
+          "control": "EditButton",
+          "event": "Click",
+          "handler": "Navigate to Edit.aspx with product.Id",
+          "confidence": "high"
+        }
+      ],
+      "layout": {
+        "container": "div.container",
+        "left_column": "div.col-md-4 (image)",
+        "middle_column": "dl.col-md-4.dl-horizontal (Name, Description, Brand, Type, Price)",
+        "right_column": "dl.col-md-4.dl-horizontal (Picture name, Stock, Restock, Max stock, action buttons)"
+      }
+    },
+    {
+      "id": "delete-aspx",
+      "type_name": "Delete.aspx",
+      "framework": "aspnet-webforms",
+      "kind": "page",
+      "file": "Catalog/Delete.aspx",
+      "code_behind": "Catalog/Delete.aspx.cs",
+      "master_page": "Site.Master",
+      "title": "Delete",
+      "route": "~/Catalog/Delete/{id}",
+      "business_function": "Confirm deletion of catalog item",
+      "controls": [
+        {
+          "name": "ConfirmationMessage",
+          "type": "h3",
+          "text": "Are you sure you want to delete this?",
+          "confidence": "high"
+        },
+        {
+          "name": "ProductImage",
+          "type": "asp:Image",
+          "css_class": "col-md-8 esh-picture",
+          "image_url": "/Pics/ + productToDelete.PictureFileName",
+          "confidence": "high"
+        },
+        {
+          "name": "NameLabel",
+          "type": "asp:Label",
+          "label": "Name",
+          "data_binding": "productToDelete.Name",
+          "confidence": "high"
+        },
+        {
+          "name": "DescriptionLabel",
+          "type": "asp:Label",
+          "label": "Description",
+          "data_binding": "productToDelete.Description",
+          "confidence": "high"
+        },
+        {
+          "name": "BrandLabel",
+          "type": "asp:Label",
+          "label": "Brand",
+          "data_binding": "productToDelete.CatalogBrand.Brand",
+          "confidence": "high"
+        },
+        {
+          "name": "TypeLabel",
+          "type": "asp:Label",
+          "label": "Type",
+          "data_binding": "productToDelete.CatalogType.Type",
+          "confidence": "high"
+        },
+        {
+          "name": "PriceLabel",
+          "type": "asp:Label",
+          "label": "Price",
+          "css_class": "esh-price",
+          "data_binding": "productToDelete.Price",
+          "confidence": "high"
+        },
+        {
+          "name": "PictureFileNameLabel",
+          "type": "asp:Label",
+          "label": "Picture name",
+          "data_binding": "productToDelete.PictureFileName",
+          "confidence": "high"
+        },
+        {
+          "name": "StockLabel",
+          "type": "asp:Label",
+          "label": "Stock",
+          "data_binding": "productToDelete.AvailableStock",
+          "confidence": "high"
+        },
+        {
+          "name": "RestockLabel",
+          "type": "asp:Label",
+          "label": "Restock",
+          "data_binding": "productToDelete.RestockThreshold",
+          "confidence": "high"
+        },
+        {
+          "name": "MaxStockLabel",
+          "type": "asp:Label",
+          "label": "Max stock",
+          "data_binding": "productToDelete.MaxStockThreshold",
+          "confidence": "high"
+        },
+        {
+          "name": "CancelButton",
+          "type": "a",
+          "text": "[ Cancel ]",
+          "css_class": "btn esh-button esh-button-secondary",
+          "href": "~",
+          "confidence": "high"
+        },
+        {
+          "name": "DeleteButton",
+          "type": "asp:Button",
+          "text": "[ Delete ]",
+          "css_class": "btn esh-button esh-button-primary",
+          "on_click": "Delete_Click",
+          "confidence": "high"
+        }
+      ],
+      "actions": [
+        {
+          "control": "DeleteButton",
+          "event": "Click",
+          "handler": "Delete_Click",
+          "server_side": true,
+          "purpose": "Delete catalog item and redirect to Default.aspx",
+          "confidence": "high"
+        },
+        {
+          "control": "CancelButton",
+          "event": "Click",
+          "handler": "Navigate to Default.aspx",
+          "server_side": false,
+          "confidence": "high"
+        }
+      ],
+      "layout": {
+        "container": "div.container",
+        "left_column": "div.col-md-4 (image)",
+        "middle_column": "dl.col-md-4.dl-horizontal (Name, Description, Brand, Type, Price)",
+        "right_column": "dl.col-md-4.dl-horizontal (Picture name, Stock, Restock, Max stock, action buttons)"
+      }
+    }
+  ],
+  "chrome_elements": [
+    {
+      "element": "Header",
+      "type": "header.navbar",
+      "location": "Top",
+      "content": [
+        {
+          "type": "Brand Logo",
+          "path": "/images/brand.png",
+          "alt": "eShop brand",
+          "confidence": "high"
+        },
+        {
+          "type": "Login Control",
+          "control": "asp:LoginView",
+          "states": ["Anonymous: Sign in link", "Authenticated: User name + Sign out"],
+          "confidence": "high"
+        }
+      ],
+      "css_class": "navbar navbar-light navbar-static-top",
+      "confidence": "high"
+    },
+    {
+      "element": "Hero Section",
+      "type": "section.esh-app-hero",
+      "location": "Below header",
+      "content": [
+        {
+          "type": "Title",
+          "text": "Catalog Manager (WebForms)",
+          "css_class": "esh-header-title",
+          "confidence": "high"
+        }
+      ],
+      "background_image": "/images/main_banner.png",
+      "height": "12.5vw",
+      "confidence": "high"
+    },
+    {
+      "element": "Footer",
+      "type": "footer.esh-app-footer",
+      "location": "Bottom",
+      "content": [
+        {
+          "type": "Brand Logo Dark",
+          "path": "/images/brand_dark.png",
+          "confidence": "high"
+        },
+        {
+          "type": "Footer Text Image",
+          "path": "/images/main_footer_text.png",
+          "width": "335px",
+          "height": "26px",
+          "confidence": "high"
+        },
+        {
+          "type": "Session Info",
+          "control": "asp:Label",
+          "id": "SessionInfoLabel",
+          "confidence": "high"
+        }
+      ],
+      "background_color": "#000000",
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+{
+  "extraction_date": "2026-03-03T16:52:00Z",
+  "write_sets": [
+    {
+      "workflow": "catalog-manage",
+      "entry_points": ["Catalog/Create.aspx", "Catalog/Edit.aspx", "Catalog/Delete.aspx"],
+      "writes_to": ["CatalogItem"],
+      "ownership": "exclusive"
+    },
+    {
+      "workflow": "image-upload",
+      "entry_points": ["Catalog/PicUploader.asmx"],
+      "writes_to": ["File System (Pics/)"],
+      "ownership": "exclusive"
+    }
+  ],
+  "write_overlap_matrix": {
+    "CatalogItem": ["catalog-manage"],
+    "CatalogBrand": [],
+    "CatalogType": [],
+    "File System": ["image-upload"]
+  },
+  "conflicts": [],
+  "notes": "No write conflicts detected. Each table/resource is owned by a single workflow."
+}

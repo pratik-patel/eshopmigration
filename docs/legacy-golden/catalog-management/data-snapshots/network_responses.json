@@ -1,0 +1,225 @@
+{
+  "captured_at": "2026-03-03T21:19:18.484351+00:00",
+  "responses": [
+    {
+      "url": "http://localhost:50586/",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "http://localhost:50586/Content/base.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "url": "http://localhost:50586/Content/site.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "url": "http://localhost:50586/Content/custom.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "url": "http://localhost:50586/bundles/MsAjaxJs?v=D6VN0fHlwFSIWjbVzi6mZyE9Ls-4LNrSSYVGRU46XF81",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8"
+    },
+    {
+      "url": "http://localhost:50586/Scripts/modernizr-2.8.3.js",
+      "status": 200,
+      "content_type": "application/javascript"
+    },
+    {
+      "url": "http://localhost:50586/images/brand.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Content/bootstrap.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "url": "http://localhost:50586/bundles/WebFormsJs?v=N8tymL9KraMLGAMFuPycfH3pXe6uUlRXdhtYv8A_jUU1",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8"
+    },
+    {
+      "url": "http://localhost:50586/Scripts/respond.js",
+      "status": 200,
+      "content_type": "application/javascript"
+    },
+    {
+      "url": "http://localhost:50586/images/brand_dark.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/images/main_footer_text.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Scripts/bootstrap.js",
+      "status": 200,
+      "content_type": "application/javascript"
+    },
+    {
+      "url": "http://localhost:50586/Scripts/jquery-3.3.1.js",
+      "status": 200,
+      "content_type": "application/javascript"
+    },
+    {
+      "url": "http://localhost:50586/Pics/1.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Pics/2.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Pics/3.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Pics/5.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Pics/6.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Pics/4.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Pics/7.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Pics/10.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Pics/8.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/images/main_banner.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/Pics/9.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/fonts/Montserrat-Regular.woff",
+      "status": 200,
+      "content_type": "font/x-woff"
+    },
+    {
+      "url": "http://localhost:50586/fonts/Montserrat-Bold.woff",
+      "status": 200,
+      "content_type": "font/x-woff"
+    },
+    {
+      "url": "http://localhost:50586/Catalog/Create",
+      "status": 200,
+      "content_type": "text/html; charset=utf-8"
+    },
+    {
+      "url": "http://localhost:50586/Scripts/modernizr-2.8.3.js",
+      "status": 200,
+      "content_type": "application/javascript"
+    },
+    {
+      "url": "http://localhost:50586/Content/bootstrap.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "url": "http://localhost:50586/Content/custom.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "url": "http://localhost:50586/Content/base.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "url": "http://localhost:50586/Content/site.css",
+      "status": 200,
+      "content_type": "text/css"
+    },
+    {
+      "url": "http://localhost:50586/bundles/MsAjaxJs?v=D6VN0fHlwFSIWjbVzi6mZyE9Ls-4LNrSSYVGRU46XF81",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8"
+    },
+    {
+      "url": "http://localhost:50586/Scripts/jquery-3.3.1.js",
+      "status": 200,
+      "content_type": "application/javascript"
+    },
+    {
+      "url": "http://localhost:50586/Scripts/bootstrap.js",
+      "status": 200,
+      "content_type": "application/javascript"
+    },
+    {
+      "url": "http://localhost:50586/Scripts/respond.js",
+      "status": 200,
+      "content_type": "application/javascript"
+    },
+    {
+      "url": "http://localhost:50586/bundles/WebFormsJs?v=N8tymL9KraMLGAMFuPycfH3pXe6uUlRXdhtYv8A_jUU1",
+      "status": 200,
+      "content_type": "text/javascript; charset=utf-8"
+    },
+    {
+      "url": "http://localhost:50586/images/brand.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/images/brand_dark.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/images/main_footer_text.png",
+      "status": 200,
+      "content_type": "image/png"
+    },
+    {
+      "url": "http://localhost:50586/fonts/Montserrat-Regular.woff",
+      "status": 200,
+      "content_type": "font/x-woff"
+    },
+    {
+      "url": "http://localhost:50586/fonts/Montserrat-Bold.woff",
+      "status": 200,
+      "content_type": "font/x-woff"
+    },
+    {
+      "url": "http://localhost:50586/images/main_banner.png",
+      "status": 200,
+      "content_type": "image/png"
+    }
+  ]
+}

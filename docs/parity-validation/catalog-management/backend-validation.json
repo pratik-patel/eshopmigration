@@ -1,0 +1,48 @@
+{
+  "phase": "backend_api_validation",
+  "status": "FAIL",
+  "endpoints_tested": 8,
+  "endpoints_passed": 4,
+  "endpoints_failed": 3,
+  "endpoints_skipped": 1,
+  "results": [
+    {
+      "endpoint": "GET /items",
+      "status": "PASS",
+      "items_count": 3
+    },
+    {
+      "endpoint": "GET /items/{id}",
+      "status": "PASS"
+    },
+    {
+      "endpoint": "GET /brands",
+      "status": "PASS",
+      "count": 5
+    },
+    {
+      "endpoint": "GET /types",
+      "status": "PASS",
+      "count": 4
+    },
+    {
+      "endpoint": "POST /items",
+      "status": "FAIL",
+      "created_id": null
+    },
+    {
+      "endpoint": "PUT /items/{id}",
+      "status": "FAIL"
+    },
+    {
+      "endpoint": "DELETE /items/{id}",
+      "status": "FAIL",
+      "http_code": "422"
+    },
+    {
+      "endpoint": "POST /images/upload",
+      "status": "SKIPPED"
+    }
+  ],
+  "timestamp": "2026-03-03 17:15:15"
+}

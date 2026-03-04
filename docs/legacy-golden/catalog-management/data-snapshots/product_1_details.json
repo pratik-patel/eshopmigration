@@ -1,0 +1,12 @@
+{
+  "page": "product_details",
+  "product_id": "1",
+  "captured_at": "2026-03-03T21:20:05.092986+00:00",
+  "data": {
+    "name": "Details",
+    "price": "19.5",
+    "description": null,
+    "brand": null,
+    "type": null
+  }
+}

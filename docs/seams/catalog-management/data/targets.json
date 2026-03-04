@@ -1,0 +1,116 @@
+{
+  "seam": "catalog-management",
+  "extraction_date": "2026-03-03T00:00:00Z",
+  "read_targets": [
+    {
+      "table": "Catalog (CatalogItem)",
+      "columns": [
+        "Id",
+        "Name",
+        "Description",
+        "Price",
+        "PictureFileName",
+        "CatalogTypeId",
+        "CatalogBrandId",
+        "AvailableStock",
+        "RestockThreshold",
+        "MaxStockThreshold",
+        "OnReorder"
+      ],
+      "evidence": "CatalogService.cs:24-30 (GetCatalogItemsPaginated), CatalogService.cs:38 (FindCatalogItem)",
+      "access_pattern": "EF6 Include with eager loading",
+      "confidence": "high"
+    },
+    {
+      "table": "CatalogBrand",
+      "columns": ["Id", "Brand"],
+      "evidence": "CatalogService.cs:45 (GetCatalogBrands), eager loaded in pagination queries",
+      "access_pattern": "EF6 ToList()",
+      "confidence": "high"
+    },
+    {
+      "table": "CatalogType",
+      "columns": ["Id", "Type"],
+      "evidence": "CatalogService.cs:42 (GetCatalogTypes), eager loaded in pagination queries",
+      "access_pattern": "EF6 ToList()",
+      "confidence": "high"
+    }
+  ],
+  "write_targets": [
+    {
+      "table": "Catalog (CatalogItem)",
+      "operations": ["INSERT", "UPDATE", "DELETE"],
+      "evidence": "CatalogService.cs:50-54 (CreateCatalogItem), CatalogService.cs:57-60 (UpdateCatalogItem), CatalogService.cs:63-66 (RemoveCatalogItem)",
+      "transaction_scope": "implicit (EF6 SaveChanges)",
+      "conflicts": "none detected"
+    }
+  ],
+  "file_targets": [
+    {
+      "path": "Pics/*.png|jpg",
+      "operations": ["READ", "WRITE"],
+      "evidence": "ImageMockStorage.cs:40-47 (UploadTempImage), Create.aspx.cs:77 (UpdateImage), Edit.aspx.cs:83 (UpdateImage)",
+      "notes": "Product images stored in ~/Pics/ folder or Azure Blob (conditional)",
+      "confidence": "high"
+    },
+    {
+      "path": "Setup/CatalogTypes.csv",
+      "operations": ["READ"],
+      "evidence": "external-dependencies.json (seed data)",
+      "notes": "One-time seed data during database initialization",
+      "confidence": "high"
+    },
+    {
+      "path": "Setup/CatalogBrands.csv",
+      "operations": ["READ"],
+      "evidence": "external-dependencies.json (seed data)",
+      "notes": "One-time seed data during database initialization",
+      "confidence": "high"
+    },
+    {
+      "path": "Setup/CatalogItems.csv",
+      "operations": ["READ"],
+      "evidence": "external-dependencies.json (seed data)",
+      "notes": "One-time seed data during database initialization",
+      "confidence": "high"
+    }
+  ],
+  "unknown_targets": [],
+  "shared_write_conflicts": [],
+  "transaction_patterns": [
+    {
+      "operation": "CreateCatalogItem",
+      "scope": "Single table (Catalog)",
+      "evidence": "CatalogService.cs:52-54",
+      "notes": "Uses HiLoGenerator for ID before insert. No explicit transaction - relies on EF6 implicit transaction."
+    },
+    {
+      "operation": "UpdateCatalogItem",
+      "scope": "Single table (Catalog)",
+      "evidence": "CatalogService.cs:59-60",
+      "notes": "Updates entity state to Modified, then SaveChanges. No explicit transaction."
+    },
+    {
+      "operation": "RemoveCatalogItem",
+      "scope": "Single table (Catalog)",
+      "evidence": "CatalogService.cs:65-66",
+      "notes": "Delete operation. No explicit transaction."
+    }
+  ],
+  "data_relationships": [
+    {
+      "from": "Catalog",
+      "to": "CatalogBrand",
+      "type": "many-to-one",
+      "fk_column": "CatalogBrandId",
+      "cascade_delete": false
+    },
+    {
+      "from": "Catalog",
+      "to": "CatalogType",
+      "type": "many-to-one",
+      "fk_column": "CatalogTypeId",
+      "cascade_delete": false
+    }
+  ]
+}

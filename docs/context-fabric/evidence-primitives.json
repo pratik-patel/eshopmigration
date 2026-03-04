@@ -1,0 +1,110 @@
+{
+  "extraction_date": "2026-03-03T16:48:00Z",
+  "delivery_surfaces": [
+    {
+      "type": "web_page",
+      "entry_point": "Default.aspx",
+      "code_behind": "Default.aspx.cs",
+      "method": "_Default.Page_Load",
+      "operations": ["READ"],
+      "reads_from": ["CatalogItem", "CatalogBrand", "CatalogType"],
+      "writes_to": [],
+      "description": "Catalog list page with pagination"
+    },
+    {
+      "type": "web_page",
+      "entry_point": "Catalog/Create.aspx",
+      "code_behind": "Catalog/Create.aspx.cs",
+      "operations": ["CREATE"],
+      "reads_from": ["CatalogBrand", "CatalogType"],
+      "writes_to": ["CatalogItem"],
+      "description": "Create new catalog item"
+    },
+    {
+      "type": "web_page",
+      "entry_point": "Catalog/Edit.aspx",
+      "code_behind": "Catalog/Edit.aspx.cs",
+      "operations": ["UPDATE"],
+      "reads_from": ["CatalogItem", "CatalogBrand", "CatalogType"],
+      "writes_to": ["CatalogItem"],
+      "description": "Edit existing catalog item"
+    },
+    {
+      "type": "web_page",
+      "entry_point": "Catalog/Delete.aspx",
+      "code_behind": "Catalog/Delete.aspx.cs",
+      "operations": ["DELETE"],
+      "reads_from": ["CatalogItem"],
+      "writes_to": ["CatalogItem"],
+      "description": "Delete catalog item"
+    },
+    {
+      "type": "web_page",
+      "entry_point": "Catalog/Details.aspx",
+      "code_behind": "Catalog/Details.aspx.cs",
+      "operations": ["READ"],
+      "reads_from": ["CatalogItem", "CatalogBrand", "CatalogType"],
+      "writes_to": [],
+      "description": "View catalog item details"
+    },
+    {
+      "type": "web_service",
+      "entry_point": "Catalog/PicUploader.asmx",
+      "code_behind": "Catalog/PicUploader.asmx.cs",
+      "operations": ["UPLOAD"],
+      "reads_from": [],
+      "writes_to": ["File System (Pics/)"],
+      "description": "Upload product images"
+    }
+  ],
+  "data_access_patterns": [
+    {
+      "workflow": "catalog-browse",
+      "entry_points": ["Default.aspx", "Catalog/Details.aspx"],
+      "reads": ["CatalogItem", "CatalogBrand", "CatalogType"],
+      "writes": []
+    },
+    {
+      "workflow": "catalog-manage",
+      "entry_points": ["Catalog/Create.aspx", "Catalog/Edit.aspx", "Catalog/Delete.aspx"],
+      "reads": ["CatalogItem", "CatalogBrand", "CatalogType"],
+      "writes": ["CatalogItem"]
+    },
+    {
+      "workflow": "image-upload",
+      "entry_points": ["Catalog/PicUploader.asmx"],
+      "reads": [],
+      "writes": ["File System"]
+    }
+  ],
+  "dependencies": [
+    {
+      "from": "Default.aspx.cs",
+      "to": "ICatalogService",
+      "type": "DI"
+    },
+    {
+      "from": "Catalog/*.aspx.cs",
+      "to": "ICatalogService",
+      "type": "DI"
+    },
+    {
+      "from": "CatalogService",
+      "to": "CatalogDBContext",
+      "type": "constructor"
+    },
+    {
+      "from": "CatalogDBContext",
+      "to": "CatalogItem/CatalogBrand/CatalogType",
+      "type": "Entity Framework"
+    }
+  ],
+  "transaction_scopes": [
+    {
+      "workflow": "catalog-create",
+      "scope": "single_table",
+      "tables": ["CatalogItem"],
+      "notes": "Simple CRUD, no distributed transactions"
+    }
+  ]
+}

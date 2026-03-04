@@ -1,0 +1,228 @@
+{
+  "seam": "catalog-management",
+  "extraction_date": "2026-03-03T00:00:00Z",
+  "inputs": [
+    {
+      "name": "name",
+      "type": "string",
+      "source": "ui",
+      "evidence": "Create.aspx control 'Name', Edit.aspx control 'Name'",
+      "validation": "Required, MaxLength 50",
+      "confidence": "high"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "source": "ui",
+      "evidence": "Create.aspx control 'Description', Edit.aspx control 'Description'",
+      "validation": "None",
+      "confidence": "high"
+    },
+    {
+      "name": "catalogBrandId",
+      "type": "integer",
+      "source": "ui",
+      "evidence": "Create.aspx DropDownList 'Brand', Edit.aspx DropDownList 'BrandDropDownList'",
+      "validation": "Required (FK to CatalogBrand)",
+      "confidence": "high"
+    },
+    {
+      "name": "catalogTypeId",
+      "type": "integer",
+      "source": "ui",
+      "evidence": "Create.aspx DropDownList 'Type', Edit.aspx DropDownList 'TypeDropDownList'",
+      "validation": "Required (FK to CatalogType)",
+      "confidence": "high"
+    },
+    {
+      "name": "price",
+      "type": "decimal",
+      "source": "ui",
+      "evidence": "Create.aspx TextBox 'Price', Edit.aspx TextBox 'Price'",
+      "validation": "RangeValidator (0 to 1000000), Currency format, 2 decimals",
+      "confidence": "high"
+    },
+    {
+      "name": "availableStock",
+      "type": "integer",
+      "source": "ui",
+      "evidence": "Create.aspx TextBox 'Stock', Edit.aspx TextBox 'Stock'",
+      "validation": "RangeValidator (0 to 10000000)",
+      "default_value": "0",
+      "confidence": "high"
+    },
+    {
+      "name": "restockThreshold",
+      "type": "integer",
+      "source": "ui",
+      "evidence": "Create.aspx TextBox 'Restock', Edit.aspx TextBox 'Restock'",
+      "validation": "RangeValidator (0 to 10000000)",
+      "default_value": "0",
+      "confidence": "high"
+    },
+    {
+      "name": "maxStockThreshold",
+      "type": "integer",
+      "source": "ui",
+      "evidence": "Create.aspx TextBox 'Maxstock', Edit.aspx TextBox 'Maxstock'",
+      "validation": "RangeValidator (0 to 10000000)",
+      "default_value": "0",
+      "confidence": "high"
+    },
+    {
+      "name": "tempImageName",
+      "type": "string",
+      "source": "ui",
+      "evidence": "Create.aspx HiddenField 'TempImageName', Edit.aspx HiddenField 'TempImageName'",
+      "validation": "None (optional)",
+      "confidence": "high"
+    },
+    {
+      "name": "id",
+      "type": "integer",
+      "source": "both",
+      "evidence": "RouteData 'id' parameter in Edit.aspx, Details.aspx, Delete.aspx",
+      "validation": "Required for edit/delete/details operations",
+      "confidence": "high"
+    }
+  ],
+  "outputs": [
+    {
+      "name": "id",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": "CatalogItem.Id in all views",
+      "confidence": "high"
+    },
+    {
+      "name": "name",
+      "type": "string",
+      "source": "data_path",
+      "evidence": "Default.aspx grid column, Details.aspx label",
+      "confidence": "high"
+    },
+    {
+      "name": "description",
+      "type": "string",
+      "source": "data_path",
+      "evidence": "Default.aspx grid column, Details.aspx label",
+      "confidence": "high"
+    },
+    {
+      "name": "brandName",
+      "type": "string",
+      "source": "data_path",
+      "evidence": "Item.CatalogBrand.Brand in Default.aspx grid, Details.aspx label",
+      "confidence": "high"
+    },
+    {
+      "name": "typeName",
+      "type": "string",
+      "source": "data_path",
+      "evidence": "Item.CatalogType.Type in Default.aspx grid, Details.aspx label",
+      "confidence": "high"
+    },
+    {
+      "name": "price",
+      "type": "decimal",
+      "source": "data_path",
+      "evidence": "Item.Price in Default.aspx grid (with $ prefix), Details.aspx label",
+      "display_format": "Currency with $ prefix",
+      "confidence": "high"
+    },
+    {
+      "name": "pictureFileName",
+      "type": "string",
+      "source": "data_path",
+      "evidence": "Item.PictureFileName in Default.aspx grid, Edit.aspx read-only field",
+      "confidence": "high"
+    },
+    {
+      "name": "pictureUri",
+      "type": "string",
+      "source": "data_path",
+      "evidence": "Item.PictureUri in Default.aspx grid (image display)",
+      "notes": "Computed from PictureFileName via ImageService.BuildUrlImage",
+      "confidence": "high"
+    },
+    {
+      "name": "availableStock",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": "Item.AvailableStock in Default.aspx grid, Details.aspx label",
+      "confidence": "high"
+    },
+    {
+      "name": "restockThreshold",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": "Item.RestockThreshold in Default.aspx grid, Details.aspx label",
+      "confidence": "high"
+    },
+    {
+      "name": "maxStockThreshold",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": "Item.MaxStockThreshold in Default.aspx grid, Details.aspx label",
+      "confidence": "high"
+    },
+    {
+      "name": "catalogBrandId",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": "Used for dropdown selection in Edit.aspx",
+      "confidence": "high"
+    },
+    {
+      "name": "catalogTypeId",
+      "type": "integer",
+      "source": "data_path",
+      "evidence": "Used for dropdown selection in Edit.aspx",
+      "confidence": "high"
+    }
+  ],
+  "filters_sorts_paging": [
+    {
+      "name": "pageSize",
+      "type": "integer",
+      "source": "ui",
+      "evidence": "RouteData 'size' parameter, default 10",
+      "default_value": 10,
+      "confidence": "high"
+    },
+    {
+      "name": "pageIndex",
+      "type": "integer",
+      "source": "ui",
+      "evidence": "RouteData 'index' parameter, default 0",
+      "default_value": 0,
+      "confidence": "high"
+    },
+    {
+      "name": "sortColumn",
+      "type": "string",
+      "source": "data_path",
+      "evidence": "CatalogService.cs:27 OrderBy(c => c.Id)",
+      "default_value": "Id",
+      "confidence": "high"
+    }
+  ],
+  "lookup_lists": [
+    {
+      "name": "catalogBrands",
+      "type": "array",
+      "fields": ["id", "brand"],
+      "source": "CatalogService.GetCatalogBrands()",
+      "evidence": "Create.aspx.cs:40, Edit.aspx.cs:52",
+      "confidence": "high"
+    },
+    {
+      "name": "catalogTypes",
+      "type": "array",
+      "fields": ["id", "type"],
+      "source": "CatalogService.GetCatalogTypes()",
+      "evidence": "Create.aspx.cs:45, Edit.aspx.cs:57",
+      "confidence": "high"
+    }
+  ]
+}

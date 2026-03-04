@@ -1,0 +1,48 @@
+{
+  "overall_score": 69.76,
+  "target_score": 85.0,
+  "status": "FAIL",
+  "workflows": [
+    {
+      "workflow": "01_product_list",
+      "ssim_score": 74.27,
+      "legacy_screenshot": "docs/legacy-golden/catalog-management/screenshots/01_product_list.png",
+      "modern_screenshot": "docs/parity-validation/catalog-management/screenshots/modern/01_product_list.png",
+      "diff_screenshot": "docs/parity-validation/catalog-management/screenshots/diff/01_product_list_diff.png",
+      "status": "FAIL"
+    },
+    {
+      "workflow": "02_create_product",
+      "ssim_score": 73.32,
+      "legacy_screenshot": "docs/legacy-golden/catalog-management/screenshots/02_create_product.png",
+      "modern_screenshot": "docs/parity-validation/catalog-management/screenshots/modern/02_create_product.png",
+      "diff_screenshot": "docs/parity-validation/catalog-management/screenshots/diff/02_create_product_diff.png",
+      "status": "FAIL"
+    },
+    {
+      "workflow": "03_product_details",
+      "ssim_score": 65.66,
+      "legacy_screenshot": "docs/legacy-golden/catalog-management/screenshots/03_product_details.png",
+      "modern_screenshot": "docs/parity-validation/catalog-management/screenshots/modern/03_product_details.png",
+      "diff_screenshot": "docs/parity-validation/catalog-management/screenshots/diff/03_product_details_diff.png",
+      "status": "FAIL"
+    },
+    {
+      "workflow": "04_edit_product",
+      "ssim_score": 69.05,
+      "legacy_screenshot": "docs/legacy-golden/catalog-management/screenshots/04_edit_product.png",
+      "modern_screenshot": "docs/parity-validation/catalog-management/screenshots/modern/04_edit_product.png",
+      "diff_screenshot": "docs/parity-validation/catalog-management/screenshots/diff/04_edit_product_diff.png",
+      "status": "FAIL"
+    },
+    {
+      "workflow": "05_delete_confirmation",
+      "ssim_score": 66.5,
+      "legacy_screenshot": "docs/legacy-golden/catalog-management/screenshots/05_delete_confirmation.png",
+      "modern_screenshot": "docs/parity-validation/catalog-management/screenshots/modern/05_delete_confirmation.png",
+      "diff_screenshot": "docs/parity-validation/catalog-management/screenshots/diff/05_delete_confirmation_diff.png",
+      "status": "FAIL"
+    }
+  ],
+  "timestamp": "2026-03-03 17:05:07"
+}

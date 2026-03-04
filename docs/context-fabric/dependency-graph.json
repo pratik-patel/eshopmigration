@@ -1,0 +1,43 @@
+{
+  "extraction_date": "2026-03-03T16:50:00Z",
+  "nodes": [
+    {"id": "Default.aspx", "type": "UI"},
+    {"id": "Catalog/Create.aspx", "type": "UI"},
+    {"id": "Catalog/Edit.aspx", "type": "UI"},
+    {"id": "Catalog/Delete.aspx", "type": "UI"},
+    {"id": "Catalog/Details.aspx", "type": "UI"},
+    {"id": "Catalog/PicUploader.asmx", "type": "Service"},
+    {"id": "ICatalogService", "type": "Interface"},
+    {"id": "CatalogService", "type": "Service"},
+    {"id": "IImageService", "type": "Interface"},
+    {"id": "ImageAzureStorage", "type": "Service"},
+    {"id": "ImageMockStorage", "type": "Service"},
+    {"id": "CatalogDBContext", "type": "DataAccess"},
+    {"id": "CatalogItem", "type": "Entity"},
+    {"id": "CatalogBrand", "type": "Entity"},
+    {"id": "CatalogType", "type": "Entity"}
+  ],
+  "edges": [
+    {"from": "Default.aspx", "to": "ICatalogService", "type": "depends_on"},
+    {"from": "Catalog/Create.aspx", "to": "ICatalogService", "type": "depends_on"},
+    {"from": "Catalog/Edit.aspx", "to": "ICatalogService", "type": "depends_on"},
+    {"from": "Catalog/Delete.aspx", "to": "ICatalogService", "type": "depends_on"},
+    {"from": "Catalog/Details.aspx", "to": "ICatalogService", "type": "depends_on"},
+    {"from": "Default.aspx", "to": "IImageService", "type": "depends_on"},
+    {"from": "ICatalogService", "to": "CatalogService", "type": "implemented_by"},
+    {"from": "IImageService", "to": "ImageAzureStorage", "type": "implemented_by"},
+    {"from": "IImageService", "to": "ImageMockStorage", "type": "implemented_by"},
+    {"from": "CatalogService", "to": "CatalogDBContext", "type": "depends_on"},
+    {"from": "CatalogDBContext", "to": "CatalogItem", "type": "manages"},
+    {"from": "CatalogDBContext", "to": "CatalogBrand", "type": "manages"},
+    {"from": "CatalogDBContext", "to": "CatalogType", "type": "manages"}
+  ],
+  "sccs": [
+    {
+      "id": "catalog_scc_1",
+      "nodes": ["ICatalogService", "CatalogService", "CatalogDBContext", "CatalogItem", "CatalogBrand", "CatalogType"],
+      "split_risk": "low",
+      "notes": "All catalog components form a cohesive unit"
+    }
+  ]
+}

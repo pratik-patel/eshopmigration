@@ -1,0 +1,83 @@
+{
+  "analysis_date": "2026-03-03T21:20:00Z",
+  "total_screens_discovered": 5,
+  "screens_in_seams": 5,
+  "uncovered_screens": 0,
+  "coverage_percentage": 100.0,
+  "seams": {
+    "catalog-management": {
+      "screens_captured": 5,
+      "pages": [
+        {
+          "page": "Default.aspx",
+          "description": "Product List (Browse Catalog)",
+          "screenshot": "01_product_list.png",
+          "url": "/",
+          "status": "captured"
+        },
+        {
+          "page": "Catalog/Create.aspx",
+          "description": "Create Product Form",
+          "screenshot": "02_create_product.png",
+          "url": "/Catalog/Create",
+          "status": "captured"
+        },
+        {
+          "page": "Catalog/Details.aspx",
+          "description": "Product Details View",
+          "screenshot": "03_product_details.png",
+          "url": "/Catalog/Details/{id}",
+          "status": "captured"
+        },
+        {
+          "page": "Catalog/Edit.aspx",
+          "description": "Edit Product Form",
+          "screenshot": "04_edit_product.png",
+          "url": "/Catalog/Edit/{id}",
+          "status": "captured"
+        },
+        {
+          "page": "Catalog/Delete.aspx",
+          "description": "Delete Product Confirmation",
+          "screenshot": "05_delete_confirmation.png",
+          "url": "/Catalog/Delete/{id}",
+          "status": "captured"
+        }
+      ],
+      "web_services": [
+        {
+          "service": "Catalog/PicUploader.asmx",
+          "description": "Image Upload ASMX Web Service",
+          "status": "not_captured",
+          "reason": "Requires interactive file upload workflow, not a navigable page",
+          "migration_note": "Replace with REST API endpoint (POST /api/products/{id}/image)"
+        }
+      ],
+      "data_snapshots": [
+        {
+          "file": "product_list_snapshot.json",
+          "description": "Product list page structure",
+          "tables_accessed": ["CatalogItem", "CatalogBrand", "CatalogType"]
+        },
+        {
+          "file": "create_product_form_structure.json",
+          "description": "Create form field inventory (14 fields)"
+        },
+        {
+          "file": "product_1_details.json",
+          "description": "Product details data for product ID 1"
+        }
+      ]
+    }
+  },
+  "uncovered_details": [],
+  "recommendation": "All known screens captured successfully. Ready for parity testing. Note: PicUploader.asmx web service not captured (requires interactive upload, will be replaced with REST API).",
+  "capture_summary": {
+    "total_screenshots": 5,
+    "total_data_snapshots": 3,
+    "capture_tool": "Playwright (Python, Chromium)",
+    "viewport_resolution": "1920x1080",
+    "base_url": "http://localhost:50586/",
+    "environment": "Windows Server 2022"
+  }
+}

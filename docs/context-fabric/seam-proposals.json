@@ -1,0 +1,36 @@
+{
+  "proposal_date": "2026-03-03T16:58:00Z",
+  "seams": [
+    {
+      "name": "catalog-management",
+      "rank": 1,
+      "score": 138,
+      "status": "approved",
+      "business_capability": "Product catalog management (browse, CRUD, image upload)",
+      "delivery_surfaces": [
+        "Default.aspx",
+        "Catalog/Create.aspx",
+        "Catalog/Edit.aspx",
+        "Catalog/Delete.aspx",
+        "Catalog/Details.aspx",
+        "Catalog/PicUploader.asmx"
+      ],
+      "owned_writes": ["CatalogItem", "File System (Pics/)"],
+      "owned_reads": ["CatalogBrand", "CatalogType"],
+      "fk_relationships": ["CatalogItem->CatalogBrand", "CatalogItem->CatalogType"],
+      "external_dependencies": ["File I/O (CSV seed data)", "File I/O (images)"],
+      "cross_seam_dependencies": [],
+      "blockers": [],
+      "verification_strategy": "Visual parity testing + API contract validation"
+    }
+  ],
+  "total_seams": 1,
+  "shared_infrastructure": ["Site.Master", "Global.asax", "Startup.cs", "App_Start/*"],
+  "out_of_scope": [],
+  "coverage_summary": {
+    "in_scope_files": 49,
+    "assigned_to_seams": 15,
+    "assigned_to_infrastructure": 10,
+    "coverage_percentage": 100
+  }
+}

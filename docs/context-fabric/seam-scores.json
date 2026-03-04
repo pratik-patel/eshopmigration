@@ -1,0 +1,23 @@
+{
+  "scoring_date": "2026-03-03T16:56:00Z",
+  "seam_scores": [
+    {
+      "seam_name": "catalog-management",
+      "cohesion_score": 10,
+      "ownership_purity": 10,
+      "fk_purity_bonus": 10,
+      "menu_alignment_bonus": 5,
+      "permission_coherence_bonus": 3,
+      "cross_seam_deps_penalty": 0,
+      "shared_writes_penalty": 0,
+      "fk_violations_penalty": 0,
+      "external_integration_penalty": 0,
+      "mixed_permissions_penalty": 0,
+      "total_score": 138,
+      "ranking": 1,
+      "verdict": "APPROVED"
+    }
+  ],
+  "optimization_iterations": 1,
+  "notes": "Single seam application - no optimization needed"
+}

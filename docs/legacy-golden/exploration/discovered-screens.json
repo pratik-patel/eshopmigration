@@ -1,0 +1,148 @@
+{
+  "analysis_date": "2026-03-03T21:20:00Z",
+  "total_screens_discovered": 5,
+  "exploration_method": "Systematic URL navigation (from seam-proposals.json)",
+  "screens": [
+    {
+      "screen_name": "01_product_list",
+      "page_file": "Default.aspx",
+      "screenshot": "C:\\Users\\pratikp6\\codebase\\eshopmigration\\docs\\legacy-golden\\catalog-management\\screenshots\\01_product_list.png",
+      "navigation_path": "URL: / (Direct navigation)",
+      "page_title": "Home Page - Catalog manager (Web Forms)",
+      "url": "/",
+      "in_seam": "catalog-management",
+      "status": "covered",
+      "observed_controls": [
+        "Product grid/list (10 items per page)",
+        "Pagination controls (Previous/Next)",
+        "Product detail links",
+        "Page indicator (Showing 10 of 12 products)"
+      ],
+      "observed_data_access": {
+        "reads": ["CatalogItem", "CatalogBrand", "CatalogType"],
+        "writes": []
+      },
+      "complexity": "medium"
+    },
+    {
+      "screen_name": "02_create_product",
+      "page_file": "Catalog/Create.aspx",
+      "screenshot": "C:\\Users\\pratikp6\\codebase\\eshopmigration\\docs\\legacy-golden\\catalog-management\\screenshots\\02_create_product.png",
+      "navigation_path": "URL: /Catalog/Create (Direct navigation)",
+      "page_title": "Create - Catalog manager (Web Forms)",
+      "url": "/Catalog/Create",
+      "in_seam": "catalog-management",
+      "status": "covered",
+      "observed_controls": [
+        "Text input: Name (required)",
+        "Textarea: Description",
+        "Number input: Price (required)",
+        "Dropdown: Brand (CatalogBrandId, required)",
+        "Dropdown: Type (CatalogTypeId, required)",
+        "File upload: Product Image (optional)",
+        "Number input: Available Stock (required)",
+        "Number input: Restock Threshold (required)",
+        "Number input: Max Stock Threshold (required)",
+        "Submit button",
+        "Cancel/Back link"
+      ],
+      "observed_data_access": {
+        "reads": ["CatalogBrand", "CatalogType"],
+        "writes": ["CatalogItem", "File System (Pics/)"]
+      },
+      "complexity": "high"
+    },
+    {
+      "screen_name": "03_product_details",
+      "page_file": "Catalog/Details.aspx",
+      "screenshot": "C:\\Users\\pratikp6\\codebase\\eshopmigration\\docs\\legacy-golden\\catalog-management\\screenshots\\03_product_details.png",
+      "navigation_path": "URL: /Catalog/Details/1 (Direct navigation, product ID 1)",
+      "page_title": "Details - Catalog manager (Web Forms)",
+      "url": "/Catalog/Details/{id}",
+      "in_seam": "catalog-management",
+      "status": "covered",
+      "observed_controls": [
+        "Read-only product information",
+        "Product image display",
+        "Brand name (from FK relationship)",
+        "Type name (from FK relationship)",
+        "Edit link/button",
+        "Delete link/button",
+        "Back to List link"
+      ],
+      "observed_data_access": {
+        "reads": ["CatalogItem", "CatalogBrand", "CatalogType"],
+        "writes": []
+      },
+      "complexity": "low"
+    },
+    {
+      "screen_name": "04_edit_product",
+      "page_file": "Catalog/Edit.aspx",
+      "screenshot": "C:\\Users\\pratikp6\\codebase\\eshopmigration\\docs\\legacy-golden\\catalog-management\\screenshots\\04_edit_product.png",
+      "navigation_path": "URL: /Catalog/Edit/1 (Direct navigation, product ID 1)",
+      "page_title": "Edit - Catalog manager (Web Forms)",
+      "url": "/Catalog/Edit/{id}",
+      "in_seam": "catalog-management",
+      "status": "covered",
+      "observed_controls": [
+        "Pre-populated form (same fields as Create)",
+        "Text input: Name (required, pre-filled)",
+        "Textarea: Description (pre-filled)",
+        "Number input: Price (required, pre-filled)",
+        "Dropdown: Brand (CatalogBrandId, pre-selected)",
+        "Dropdown: Type (CatalogTypeId, pre-selected)",
+        "File upload: Replace Product Image (optional)",
+        "Number input: Available Stock (pre-filled)",
+        "Number input: Restock Threshold (pre-filled)",
+        "Number input: Max Stock Threshold (pre-filled)",
+        "Save button",
+        "Cancel/Back link"
+      ],
+      "observed_data_access": {
+        "reads": ["CatalogItem", "CatalogBrand", "CatalogType"],
+        "writes": ["CatalogItem", "File System (Pics/)"]
+      },
+      "complexity": "high"
+    },
+    {
+      "screen_name": "05_delete_confirmation",
+      "page_file": "Catalog/Delete.aspx",
+      "screenshot": "C:\\Users\\pratikp6\\codebase\\eshopmigration\\docs\\legacy-golden\\catalog-management\\screenshots\\05_delete_confirmation.png",
+      "navigation_path": "URL: /Catalog/Delete/1 (Direct navigation, product ID 1)",
+      "page_title": "Delete - Catalog manager (Web Forms)",
+      "url": "/Catalog/Delete/{id}",
+      "in_seam": "catalog-management",
+      "status": "covered",
+      "observed_controls": [
+        "Read-only product information (confirmation)",
+        "Warning message (confirm deletion)",
+        "Confirm Delete button",
+        "Cancel/Back link"
+      ],
+      "observed_data_access": {
+        "reads": ["CatalogItem"],
+        "writes": ["CatalogItem (DELETE)"]
+      },
+      "complexity": "medium"
+    }
+  ],
+  "web_services": [
+    {
+      "service_name": "PicUploader.asmx",
+      "service_type": "ASMX Web Service",
+      "status": "not_captured",
+      "reason": "Not a navigable page, requires file upload interaction",
+      "operations": ["UploadFile"],
+      "migration_note": "Replace with REST API endpoint: POST /api/products/{id}/image"
+    }
+  ],
+  "notes": [
+    "All screens systematically explored via direct URL navigation",
+    "Product ID 1 used for parameterized routes (Details, Edit, Delete)",
+    "Total product count in database: 12 products",
+    "Pagination: 10 items per page, 2 pages total",
+    "No authentication required (public catalog)",
+    "Image upload workflow not captured (requires interactive file upload)"
+  ]
+}

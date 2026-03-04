@@ -1,0 +1,104 @@
+{
+  "form_name": "create_product",
+  "captured_at": "2026-03-03T21:19:18.481350+00:00",
+  "fields": [
+    {
+      "name": "__EVENTTARGET",
+      "type": "hidden",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "__EVENTARGUMENT",
+      "type": "hidden",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "__VIEWSTATE",
+      "type": "hidden",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "__VIEWSTATEGENERATOR",
+      "type": "hidden",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "__EVENTVALIDATION",
+      "type": "hidden",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "ctl00$MainContent$Name",
+      "type": "text",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "ctl00$MainContent$Description",
+      "type": "text",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "ctl00$MainContent$Brand",
+      "type": "select-one",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "ctl00$MainContent$Type",
+      "type": "select-one",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "ctl00$MainContent$Price",
+      "type": "text",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "ctl00$MainContent$Stock",
+      "type": "text",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "ctl00$MainContent$Restock",
+      "type": "text",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "ctl00$MainContent$Maxstock",
+      "type": "text",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    },
+    {
+      "name": "ctl00$MainContent$ctl06",
+      "type": "submit",
+      "label": "",
+      "required": false,
+      "placeholder": ""
+    }
+  ]
+}

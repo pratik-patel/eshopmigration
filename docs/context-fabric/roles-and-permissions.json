@@ -1,0 +1,19 @@
+{
+  "extraction_date": "2026-03-03T16:44:00Z",
+  "authentication": "None (public application)",
+  "roles": [],
+  "access": [
+    {
+      "resource": "catalog-browse",
+      "roles": ["anonymous"],
+      "operations": ["read"]
+    },
+    {
+      "resource": "catalog-manage",
+      "roles": ["anonymous"],
+      "operations": ["create", "update", "delete"],
+      "notes": "No auth protection found - all operations are public"
+    }
+  ],
+  "notes": "This is a demo application with no authentication or authorization. All features are publicly accessible."
+}

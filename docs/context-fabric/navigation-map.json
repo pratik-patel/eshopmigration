@@ -1,0 +1,312 @@
+{
+  "navigation_map_date": "2026-03-03T00:00:00Z",
+  "application_type": "aspnet-webforms",
+  "routing_mechanism": "ASP.NET Routing (RouteConfig)",
+  "main_menu": {
+    "note": "No visible menu structure - navigation is via inline links and buttons",
+    "items": []
+  },
+  "global_navigation": {
+    "header": {
+      "items": [
+        {
+          "label": "Brand Logo",
+          "action": "navigate_to_home",
+          "target": "Default.aspx",
+          "type": "link"
+        },
+        {
+          "label": "Sign in / Sign out",
+          "action": "authentication",
+          "control": "asp:LoginView",
+          "type": "dynamic"
+        }
+      ]
+    },
+    "footer": {
+      "items": [
+        {
+          "label": "Brand Logo (Dark)",
+          "type": "static_image"
+        },
+        {
+          "label": "Footer Text",
+          "type": "static_image"
+        },
+        {
+          "label": "Session Info",
+          "type": "dynamic_label"
+        }
+      ]
+    }
+  },
+  "routes": [
+    {
+      "name": "Default",
+      "route_name": null,
+      "path": "~/",
+      "page": "Default.aspx",
+      "parameters": [],
+      "description": "Product catalog list (default page)"
+    },
+    {
+      "name": "ProductsByPage",
+      "route_name": "ProductsByPageRoute",
+      "path": "~/?size={size}&index={index}",
+      "page": "Default.aspx",
+      "parameters": [
+        {
+          "name": "size",
+          "type": "int",
+          "description": "Items per page"
+        },
+        {
+          "name": "index",
+          "type": "int",
+          "description": "Page index (0-based)"
+        }
+      ],
+      "description": "Paginated product catalog list"
+    },
+    {
+      "name": "CreateProduct",
+      "route_name": "CreateProductRoute",
+      "path": "~/Catalog/Create",
+      "page": "Catalog/Create.aspx",
+      "parameters": [],
+      "description": "Create new catalog item"
+    },
+    {
+      "name": "EditProduct",
+      "route_name": "EditProductRoute",
+      "path": "~/Catalog/Edit/{id}",
+      "page": "Catalog/Edit.aspx",
+      "parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "description": "Catalog item ID"
+        }
+      ],
+      "description": "Edit existing catalog item"
+    },
+    {
+      "name": "ProductDetails",
+      "route_name": "ProductDetailsRoute",
+      "path": "~/Catalog/Details/{id}",
+      "page": "Catalog/Details.aspx",
+      "parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "description": "Catalog item ID"
+        }
+      ],
+      "description": "View catalog item details"
+    },
+    {
+      "name": "DeleteProduct",
+      "route_name": "DeleteProductRoute",
+      "path": "~/Catalog/Delete/{id}",
+      "page": "Catalog/Delete.aspx",
+      "parameters": [
+        {
+          "name": "id",
+          "type": "int",
+          "description": "Catalog item ID"
+        }
+      ],
+      "description": "Delete catalog item (confirmation)"
+    }
+  ],
+  "navigation_tree": {
+    "Default.aspx": {
+      "screen_title": "Home Page",
+      "navigates_to": [
+        {
+          "target": "Create.aspx",
+          "trigger": "Create New button",
+          "trigger_control": "CreateNewLink",
+          "modal": false,
+          "route": "CreateProductRoute"
+        },
+        {
+          "target": "Edit.aspx",
+          "trigger": "Edit link (per row)",
+          "trigger_control": "asp:HyperLink (ItemTemplate)",
+          "modal": false,
+          "route": "EditProductRoute",
+          "parameters": ["id"]
+        },
+        {
+          "target": "Details.aspx",
+          "trigger": "Details link (per row)",
+          "trigger_control": "asp:HyperLink (ItemTemplate)",
+          "modal": false,
+          "route": "ProductDetailsRoute",
+          "parameters": ["id"]
+        },
+        {
+          "target": "Delete.aspx",
+          "trigger": "Delete link (per row)",
+          "trigger_control": "asp:HyperLink (ItemTemplate)",
+          "modal": false,
+          "route": "DeleteProductRoute",
+          "parameters": ["id"]
+        },
+        {
+          "target": "Default.aspx (next page)",
+          "trigger": "Next pagination button",
+          "trigger_control": "PaginationNext",
+          "modal": false,
+          "route": "ProductsByPageRoute",
+          "parameters": ["size", "index"]
+        },
+        {
+          "target": "Default.aspx (previous page)",
+          "trigger": "Previous pagination button",
+          "trigger_control": "PaginationPrevious",
+          "modal": false,
+          "route": "ProductsByPageRoute",
+          "parameters": ["size", "index"]
+        }
+      ]
+    },
+    "Create.aspx": {
+      "screen_title": "Create",
+      "navigates_to": [
+        {
+          "target": "Default.aspx",
+          "trigger": "Create button (on success)",
+          "trigger_control": "CreateButton",
+          "modal": false,
+          "method": "server_side_redirect"
+        },
+        {
+          "target": "Default.aspx",
+          "trigger": "Cancel button",
+          "trigger_control": "CancelButton",
+          "modal": false,
+          "method": "client_side_link"
+        }
+      ]
+    },
+    "Edit.aspx": {
+      "screen_title": "Edit",
+      "navigates_to": [
+        {
+          "target": "Default.aspx",
+          "trigger": "Save button (on success)",
+          "trigger_control": "SaveButton",
+          "modal": false,
+          "method": "server_side_redirect"
+        },
+        {
+          "target": "Default.aspx",
+          "trigger": "Cancel button",
+          "trigger_control": "CancelButton",
+          "modal": false,
+          "method": "client_side_link"
+        }
+      ]
+    },
+    "Details.aspx": {
+      "screen_title": "Details",
+      "navigates_to": [
+        {
+          "target": "Default.aspx",
+          "trigger": "Back to list button",
+          "trigger_control": "BackToListButton",
+          "modal": false,
+          "method": "client_side_link"
+        },
+        {
+          "target": "Edit.aspx",
+          "trigger": "Edit button",
+          "trigger_control": "EditButton",
+          "modal": false,
+          "route": "EditProductRoute",
+          "parameters": ["id"]
+        }
+      ]
+    },
+    "Delete.aspx": {
+      "screen_title": "Delete",
+      "navigates_to": [
+        {
+          "target": "Default.aspx",
+          "trigger": "Delete button (on success)",
+          "trigger_control": "DeleteButton",
+          "modal": false,
+          "method": "server_side_redirect"
+        },
+        {
+          "target": "Default.aspx",
+          "trigger": "Cancel button",
+          "trigger_control": "CancelButton",
+          "modal": false,
+          "method": "client_side_link"
+        }
+      ]
+    }
+  },
+  "route_mapping": [
+    {
+      "legacy_screen": "Default.aspx",
+      "modern_route": "/catalog",
+      "seam": "catalog-management",
+      "description": "Product catalog list page"
+    },
+    {
+      "legacy_screen": "Create.aspx",
+      "modern_route": "/catalog/create",
+      "seam": "catalog-management",
+      "description": "Create new product"
+    },
+    {
+      "legacy_screen": "Edit.aspx",
+      "modern_route": "/catalog/edit/:id",
+      "seam": "catalog-management",
+      "description": "Edit product by ID"
+    },
+    {
+      "legacy_screen": "Details.aspx",
+      "modern_route": "/catalog/details/:id",
+      "seam": "catalog-management",
+      "description": "View product details by ID"
+    },
+    {
+      "legacy_screen": "Delete.aspx",
+      "modern_route": "/catalog/delete/:id",
+      "seam": "catalog-management",
+      "description": "Delete product confirmation by ID"
+    }
+  ],
+  "keyboard_shortcuts": [],
+  "authentication_flows": {
+    "sign_in": {
+      "trigger": "Sign in link (anonymous user)",
+      "mechanism": "OpenID Connect (Azure AD)",
+      "redirect_after": "Default.aspx"
+    },
+    "sign_out": {
+      "trigger": "Sign out link (authenticated user)",
+      "mechanism": "ASP.NET Identity LogoutAction",
+      "redirect_after": "Default.aspx"
+    },
+    "protected_pages": [
+      "Create.aspx",
+      "Edit.aspx"
+    ]
+  },
+  "pagination": {
+    "mechanism": "Query string parameters (size, index)",
+    "default_page_size": 10,
+    "default_page_index": 0,
+    "controls": {
+      "next": "PaginationNext (asp:HyperLink)",
+      "previous": "PaginationPrevious (asp:HyperLink)",
+      "info": "Static text showing 'Showing X of Y products - Page N - M'"
+    }
+  }
+}

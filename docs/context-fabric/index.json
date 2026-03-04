@@ -1,0 +1,31 @@
+{
+  "context_fabric_version": "1.0",
+  "generation_date": "2026-03-03T17:05:00Z",
+  "artifacts": {
+    "project_facts": "project-facts.json",
+    "manifest": "manifest.json",
+    "database_schema": "database-schema.json",
+    "external_integrations": "external-integrations.json",
+    "roles_and_permissions": "roles-and-permissions.json",
+    "evidence_primitives": "evidence-primitives.json",
+    "dependency_graph": "dependency-graph.json",
+    "data_ownership": "data-ownership.json",
+    "seam_candidates": "seam-candidates.json",
+    "seam_scores": "seam-scores.json",
+    "seam_proposals": "seam-proposals.json",
+    "coverage_audit": "coverage-audit.json"
+  },
+  "seams": [
+    {
+      "name": "catalog-management",
+      "discovery_brief": "../seams/catalog-management/discovery.md",
+      "status": "approved"
+    }
+  ],
+  "summary": {
+    "total_seams": 1,
+    "total_delivery_surfaces": 6,
+    "total_tables": 3,
+    "audit_status": "PASS"
+  }
+}

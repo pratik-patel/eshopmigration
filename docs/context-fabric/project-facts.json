@@ -1,0 +1,21 @@
+{
+  "discovery_date": "2026-03-03T16:30:00Z",
+  "legacy_codebase_root": "/c/Users/pratikp6/codebase/eShopModernizing/eShopModernizedWebFormsSolution",
+  "primary_application_root": "/c/Users/pratikp6/codebase/eShopModernizing/eShopModernizedWebFormsSolution/src/eShopModernizedWebForms",
+  "build_system": "MSBuild",
+  "framework": "ASP.NET WebForms",
+  "language": "C#",
+  "runtime_url": "http://localhost:50586/",
+  "solution_file": "eShopModernizedWebForms.sln",
+  "projects": [
+    {
+      "name": "eShopModernizedWebForms",
+      "type": "Web Application",
+      "path": "src/eShopModernizedWebForms",
+      "guid": "{4416714A-9BB8-480B-95B3-C2599598E3EC}"
+    }
+  ],
+  "target_framework": ".NET Framework 4.7.2",
+  "database": "SQL Server (Entity Framework 6)",
+  "deployment": "IIS / Docker"
+}

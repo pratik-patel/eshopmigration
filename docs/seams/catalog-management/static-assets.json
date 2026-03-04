@@ -1,0 +1,90 @@
+{
+  "seam": "catalog-management",
+  "extraction_date": "2026-03-03T00:00:00Z",
+  "assets": [
+    {
+      "id": "brand-logo",
+      "path": "/images/brand.png",
+      "type": "image",
+      "format": "png",
+      "usage_context": "Header brand logo (light variant)",
+      "used_in": ["Site.Master"],
+      "location": "navbar header",
+      "confidence": "high"
+    },
+    {
+      "id": "brand-logo-dark",
+      "path": "/images/brand_dark.png",
+      "type": "image",
+      "format": "png",
+      "usage_context": "Footer brand logo (dark variant)",
+      "used_in": ["Site.Master"],
+      "location": "footer",
+      "confidence": "high"
+    },
+    {
+      "id": "main-banner",
+      "path": "/images/main_banner.png",
+      "type": "image",
+      "format": "png",
+      "usage_context": "Hero section background image",
+      "used_in": ["Site.Master", "Site.css (.esh-app-hero)"],
+      "location": "hero section",
+      "css_reference": "background-image: url('../images/main_banner.png')",
+      "confidence": "high"
+    },
+    {
+      "id": "footer-text",
+      "path": "/images/main_footer_text.png",
+      "type": "image",
+      "format": "png",
+      "dimensions": {
+        "width": "335px",
+        "height": "26px"
+      },
+      "usage_context": "Footer text image",
+      "used_in": ["Site.Master"],
+      "location": "footer",
+      "confidence": "high"
+    },
+    {
+      "id": "favicon",
+      "path": "/favicon.ico",
+      "type": "icon",
+      "format": "ico",
+      "usage_context": "Browser favicon",
+      "used_in": ["Site.Master"],
+      "location": "browser tab",
+      "confidence": "high"
+    },
+    {
+      "id": "product-images",
+      "path": "/Pics/{dynamic-filename}",
+      "type": "image",
+      "format": "jpg/png (dynamic)",
+      "usage_context": "Product catalog item images",
+      "used_in": [
+        "Default.aspx (thumbnail in table)",
+        "Create.aspx (preview image)",
+        "Edit.aspx (preview image)",
+        "Details.aspx (display image)",
+        "Delete.aspx (display image)"
+      ],
+      "location": "product displays",
+      "note": "Dynamic path constructed from CatalogItem.PictureFileName",
+      "css_classes": ["esh-thumbnail (120px max)", "esh-picture (370px max)"],
+      "confidence": "high"
+    }
+  ],
+  "asset_summary": {
+    "total_static_images": 4,
+    "total_dynamic_images": 1,
+    "total_icons": 1,
+    "total_assets": 6
+  },
+  "image_formats": {
+    "png": 4,
+    "ico": 1,
+    "dynamic": 1
+  }
+}

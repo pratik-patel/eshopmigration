@@ -1,0 +1,141 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom eShop styles from design-tokens.json */
+
+@layer base {
+  body {
+    @apply font-sans;
+  }
+
+  h1 {
+    @apply text-h1 lg:text-h1-large font-semibold;
+  }
+
+  h2 {
+    @apply text-h2 font-semibold;
+  }
+}
+
+@layer components {
+  /* Price display with $ prefix */
+  .esh-price::before {
+    content: '$';
+  }
+
+  /* Buttons */
+  .esh-button-primary {
+    @apply bg-primary-green hover:bg-primary-green-hover text-white px-button-h py-button uppercase transition-all duration-350 border-0;
+  }
+
+  .esh-button-secondary {
+    @apply bg-secondary-red hover:bg-secondary-red-hover text-white px-button-h py-button uppercase transition-all duration-350 border-0;
+  }
+
+  /* Table */
+  .esh-table {
+    @apply w-full max-w-container;
+  }
+
+  .esh-table-header {
+    @apply uppercase text-base;
+  }
+
+  .esh-table-cell {
+    @apply text-base font-light align-middle whitespace-nowrap border-b border-neutral-gray-table-border;
+  }
+
+  .esh-table-link {
+    @apply text-inherit font-semibold cursor-pointer transition-colors duration-350 hover:text-primary-green-link-hover;
+  }
+
+  /* Images */
+  .esh-thumbnail {
+    @apply max-w-thumbnail h-auto;
+  }
+
+  .esh-picture {
+    @apply max-w-picture h-auto w-full;
+  }
+
+  /* Loader */
+  .esh-loader {
+    @apply border-8 border-neutral-gray-loader border-t-accent-teal rounded-loader w-[50px] h-[50px] animate-spin-loader mt-[0.8vw];
+  }
+
+  /* Pager */
+  .esh-pager {
+    @apply pt-4 text-center;
+  }
+
+  .esh-pager-item {
+    @apply mx-pager-h text-neutral-gray-dark md:text-pager-small sm:mx-pager-h-small;
+  }
+
+  .esh-pager-item-navigable {
+    @apply cursor-pointer inline-block hover:text-primary-green;
+  }
+
+  .esh-pager-item-hidden {
+    @apply opacity-0 pointer-events-none;
+  }
+
+  /* Links */
+  .esh-link {
+    @apply text-inherit font-semibold cursor-pointer transition-colors duration-350 hover:text-primary-green-link-hover;
+  }
+
+  /* Layout */
+  .esh-body-title {
+    @apply font-primary p-body-title-v-top pb-body-title-v-bottom px-body-title-h mb-8 bg-accent-teal text-h2 text-white;
+  }
+
+  .esh-container {
+    @apply max-w-container mx-auto;
+  }
+
+  /* Header */
+  .esh-header-brand {
+    @apply max-w-[1440px] mx-auto py-4 px-4;
+  }
+
+  .esh-header-brand img {
+    @apply h-8 w-auto;
+  }
+
+  /* Hero Section */
+  .esh-app-hero {
+    @apply relative h-[12.5vw] min-h-[100px] flex items-center justify-start;
+    background-image: url('/images/main_banner.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  .esh-header-title {
+    @apply text-[4vw] text-white font-semibold;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  .esh-header-title span {
+    @apply font-light;
+  }
+
+  /* Footer */
+  .esh-app-footer {
+    @apply bg-black text-white py-8 px-4 mt-auto;
+  }
+
+  .esh-app-footer .container {
+    @apply max-w-[1440px] mx-auto;
+  }
+
+  .esh-app-footer-brand {
+    @apply h-[50px] w-[230px] object-contain;
+  }
+
+  .esh-app-footer-text {
+    @apply h-auto w-auto;
+  }
+}

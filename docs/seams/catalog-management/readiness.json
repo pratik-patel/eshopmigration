@@ -1,0 +1,72 @@
+{
+  "seam": "catalog-management",
+  "extraction_date": "2026-03-03T00:00:00Z",
+  "go": true,
+  "confidence": "high",
+  "confidence_reason": "Clean seam boundaries, no cross-seam dependencies, clear data ownership, independent delivery possible",
+  "blockers": [],
+  "warnings": [
+    {
+      "type": "authentication",
+      "severity": "medium",
+      "description": "Uses OpenID Connect (Azure AD) for authentication on Create/Edit/Delete pages",
+      "evidence": "Create.aspx.cs:26-28, Edit.aspx.cs:30-33, Delete.aspx.cs:23-25",
+      "mitigation": "Implement JWT-based auth in Python backend, Azure AD integration via OAuth2"
+    },
+    {
+      "type": "file_storage",
+      "severity": "low",
+      "description": "Image storage has two modes: local file system (~/Pics/) or Azure Blob Storage",
+      "evidence": "ImageMockStorage.cs, ImageAzureStorage.cs (referenced), CatalogConfiguration.UseAzureStorage flag",
+      "mitigation": "Implement file storage abstraction in Python (local + optional cloud storage)"
+    },
+    {
+      "type": "id_generation",
+      "severity": "low",
+      "description": "Uses HiLo ID generator for CatalogItem.Id",
+      "evidence": "CatalogService.cs:52 indexGenerator.GetNextSequenceValue(db)",
+      "mitigation": "Replace with database auto-increment or UUID generation in Python"
+    }
+  ],
+  "needs_ui_inventory": false,
+  "dependency_wrapper_needed": false,
+  "refactor_required": false,
+  "external_dependencies": [
+    {
+      "type": "database",
+      "description": "SQL Server with Entity Framework 6",
+      "tables": ["Catalog", "CatalogBrand", "CatalogType"],
+      "migration_path": "SQLAlchemy async with Postgres/SQLite"
+    },
+    {
+      "type": "file_io",
+      "description": "Image file storage (local or Azure Blob)",
+      "migration_path": "Python file I/O or cloud storage SDK"
+    },
+    {
+      "type": "authentication",
+      "description": "OpenID Connect (Azure AD)",
+      "migration_path": "JWT tokens with Azure AD OAuth2"
+    },
+    {
+      "type": "logging",
+      "description": "log4net",
+      "migration_path": "Python structlog"
+    }
+  ],
+  "cross_seam_dependencies": [],
+  "data_ownership": {
+    "owned_tables": ["Catalog"],
+    "read_only_tables": ["CatalogBrand", "CatalogType"],
+    "shared_tables": []
+  },
+  "delivery_risk": "low",
+  "independent_delivery": true,
+  "notes": [
+    "Seam is self-contained with clear boundaries",
+    "All CRUD operations are isolated within seam",
+    "Authentication is handled at page level (can be moved to API middleware)",
+    "Image upload is asynchronous (client-side) - needs migration to modern pattern",
+    "Pagination is server-side with fixed defaults (pageSize=10, pageIndex=0)"
+  ]
+}

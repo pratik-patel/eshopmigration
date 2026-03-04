@@ -1,0 +1,280 @@
+{
+  "seam": "catalog-management",
+  "extraction_date": "2026-03-03T00:00:00Z",
+  "source_files": ["Content/Site.css", "Content/custom.css"],
+  "colors": {
+    "primary": {
+      "green": "#83D01B",
+      "green_hover": "#4A760f",
+      "green_link_hover": "#75b918"
+    },
+    "secondary": {
+      "red": "#E52638",
+      "red_hover": "#b20000"
+    },
+    "accent": {
+      "teal": "#00A69C"
+    },
+    "neutral": {
+      "white": "#FFFFFF",
+      "black": "#000000",
+      "gray_light": "#EEEEEE",
+      "gray_medium": "#888888",
+      "gray_dark": "#333333",
+      "gray_table_border": "#eee",
+      "gray_loader": "#f3f3f3"
+    }
+  },
+  "typography": {
+    "font_families": {
+      "primary": "Montserrat, sans-serif",
+      "fallback": "sans-serif"
+    },
+    "font_sizes": {
+      "h1": "4vw",
+      "h1_large_screen": "4rem",
+      "h2": "3rem",
+      "body": "1rem",
+      "link": "2rem",
+      "table_header": "1rem",
+      "table_cell": "1rem",
+      "pager_small": "0.85rem"
+    },
+    "font_weights": {
+      "light": "300",
+      "normal": "400",
+      "semibold": "600"
+    },
+    "text_transforms": {
+      "table_header": "uppercase",
+      "button": "uppercase"
+    }
+  },
+  "spacing": {
+    "padding": {
+      "section": "2.5rem",
+      "body_title_horizontal": "3rem",
+      "body_title_vertical_top": "1rem",
+      "body_title_vertical_bottom": "1.5rem",
+      "button": "1rem 1.5rem",
+      "table_top": "10px",
+      "form_info_top": "7px"
+    },
+    "margin": {
+      "section_bottom": "2rem",
+      "button_top": "1rem",
+      "button_between": "1rem",
+      "pager_horizontal": "5vw",
+      "pager_horizontal_small": "2.5vw",
+      "dl_horizontal_left": "5%"
+    }
+  },
+  "components": {
+    "buttons": {
+      "base": {
+        "border": "0",
+        "border_radius": "0",
+        "color": "#FFFFFF",
+        "font_size": "1rem",
+        "font_weight": "400",
+        "padding": "1rem 1.5rem",
+        "text_transform": "uppercase",
+        "transition": "all 0.35s"
+      },
+      "primary": {
+        "background": "#83D01B",
+        "background_hover": "#4A760f",
+        "color_hover": "white"
+      },
+      "secondary": {
+        "background": "#E52638",
+        "background_hover": "#b20000",
+        "color_hover": "white"
+      },
+      "upload": {
+        "margin_top": "1vw"
+      }
+    },
+    "table": {
+      "header": {
+        "font_size": "1rem",
+        "text_transform": "uppercase",
+        "border_bottom": "none"
+      },
+      "cell": {
+        "font_size": "1rem",
+        "font_weight": "300",
+        "border": "none",
+        "border_bottom": "1px solid #eee",
+        "vertical_align": "middle",
+        "white_space": "nowrap"
+      },
+      "link": {
+        "color": "inherit",
+        "font_weight": "600",
+        "cursor": "pointer",
+        "transition": "color 0.35s",
+        "hover_color": "#75b918"
+      },
+      "max_width": "1440px"
+    },
+    "images": {
+      "thumbnail": {
+        "max_width": "120px",
+        "height": "auto"
+      },
+      "picture": {
+        "max_width": "370px",
+        "height": "auto",
+        "width": "100%"
+      }
+    },
+    "loader": {
+      "border": "8px solid #f3f3f3",
+      "border_top": "8px solid #00A69C",
+      "border_radius": "50%",
+      "width": "50px",
+      "height": "50px",
+      "animation": "spin 2s linear infinite",
+      "margin_top": "0.8vw"
+    },
+    "pager": {
+      "wrapper": {
+        "padding_top": "1rem",
+        "text_align": "center"
+      },
+      "item": {
+        "margin": "0 5vw",
+        "color": "#333333"
+      },
+      "item_navigable": {
+        "cursor": "pointer",
+        "display": "inline-block",
+        "hover_color": "#83D01B"
+      },
+      "item_hidden": {
+        "opacity": "0",
+        "pointer_events": "none"
+      }
+    },
+    "links": {
+      "base": {
+        "color": "inherit",
+        "font_weight": "600",
+        "cursor": "pointer",
+        "transition": "color 0.35s"
+      },
+      "hover": {
+        "color": "#75b918"
+      },
+      "login": {
+        "background_hover": "transparent",
+        "text_decoration_hover": "underline"
+      }
+    }
+  },
+  "layout": {
+    "header": {
+      "navbar": {
+        "classes": "navbar navbar-light navbar-static-top"
+      },
+      "brand": {
+        "max_width": "1440px",
+        "margin": "auto"
+      }
+    },
+    "hero": {
+      "background_image": "url('../images/main_banner.png')",
+      "background_size": "cover",
+      "height": "12.5vw",
+      "height_medium_screen": "20vw",
+      "width": "100%"
+    },
+    "hero_title": {
+      "font_family": "Montserrat, sans-serif",
+      "font_size": "4vw",
+      "font_size_large_screen": "4rem",
+      "font_weight": "600",
+      "color": "#FFFFFF",
+      "display": "inline-block",
+      "vertical_align": "middle"
+    },
+    "body_title": {
+      "font_family": "Montserrat, sans-serif",
+      "padding": "1rem 3rem 1.5rem",
+      "margin": "0 0 2rem 0",
+      "background_color": "#00A69C",
+      "font_size": "3rem",
+      "color": "#FFFFFF"
+    },
+    "footer": {
+      "background_color": "#000000",
+      "border_top": "1px solid #EEEEEE",
+      "margin_top": "2.5rem",
+      "padding": "2.5rem 0",
+      "width": "100%"
+    },
+    "footer_brand": {
+      "height": "50px",
+      "width": "230px"
+    },
+    "container": {
+      "max_width": "1440px"
+    }
+  },
+  "responsive": {
+    "breakpoints": {
+      "small": "1024px",
+      "medium": "1280px",
+      "large": "1800px"
+    },
+    "rules": [
+      {
+        "breakpoint": "max-width: 1280px",
+        "changes": {
+          ".esh-pager-item": {
+            "font_size": "0.85rem"
+          }
+        }
+      },
+      {
+        "breakpoint": "max-width: 1024px",
+        "changes": {
+          ".esh-pager-item": {
+            "margin": "0 2.5vw"
+          },
+          ".esh-app-hero": {
+            "height": "20vw"
+          }
+        }
+      },
+      {
+        "breakpoint": "min-width: 1800px",
+        "changes": {
+          ".esh-header-title": {
+            "font_size": "4rem"
+          }
+        }
+      }
+    ]
+  },
+  "animations": {
+    "spin": {
+      "0%": {
+        "transform": "rotate(0deg)"
+      },
+      "100%": {
+        "transform": "rotate(360deg)"
+      }
+    },
+    "transitions": {
+      "button": "all 0.35s",
+      "link": "color 0.35s"
+    }
+  },
+  "price_display": {
+    "prefix": "$",
+    "css_selector": ".esh-price:before",
+    "content": "'$'"
+  }
+}
