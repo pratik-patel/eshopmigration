@@ -199,12 +199,44 @@ flowchart TD
      - Frontend integration validation
      - Visual parity (SSIM threshold)
 
+### Migration Thought Process Loop (Talking Points)
+
+```mermaid
+flowchart LR
+    A["Define Scope and Success Criteria"] --> B["Build Evidence Baseline<br/>(code, UI, runtime, data)"]
+    B --> C["Propose Seam Hypothesis"]
+    C --> D{"Architecture Gates Pass?<br/>ownership, invariants, dependencies"}
+    D -- "No" --> E["Refine Boundary / Split Seam / Add Mitigations"]
+    E --> C
+    D -- "Yes" --> F["Spec and Plan Work"]
+    F --> G["Implement Thin Vertical Slice"]
+    G --> H["Validate: API -> Integration -> Visual Parity"]
+    H --> I{"Parity and Quality Gates Pass?"}
+    I -- "No" --> J["Route to Root Cause Owner<br/>(backend/frontend/spec)"]
+    J --> F
+    I -- "Yes" --> K["Pilot Release + Rollback Check"]
+    K --> L{"Pilot Stable?"}
+    L -- "No" --> J
+    L -- "Yes" --> M["Promote Seam and Repeat for Next Seam"]
+    M --> C
+```
+
+Use this as the executive narrative:
+1. Start with measurable outcomes, not implementation details.
+2. Ground every seam decision in evidence, then treat it as a hypothesis.
+3. Challenge the hypothesis with hard architecture gates before coding.
+4. Build small, testable vertical slices instead of broad rewrites.
+5. Validate in sequence (backend, integration, visual), then pilot safely.
+6. Feed defects back to root cause owner and iterate quickly.
+7. Promote only proven seams and repeat the loop.
+
 ### Tracking and Evidence
 
 - Run log: `docs/tracking/migration-activity.jsonl`
 - Seam progress: `docs/seams/catalog-management/implementation-progress.json`
 - Roadmap: `docs/implementation-roadmap.md`
 - Discovery summary: `docs/context-fabric/DISCOVERY_SUMMARY.md`
+- Seam governance spec: `docs/seam-governance.md`
 
 ## Notes
 

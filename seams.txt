@@ -1,0 +1,22 @@
+A practical way to decide seams in any app:
+
+Inventory delivery surfaces: pages, APIs, jobs, message consumers, CLI commands.
+
+Group by user workflow/capability: “catalog CRUD”, “order checkout”, “invoice export”, not by technical layer.
+
+Map data ownership: which tables/files/topics each workflow writes to.
+
+Keep transactional consistency intact: if two writes must be atomic, keep them in one seam.
+
+Check dependency profile: prefer high internal cohesion, low cross-seam calls.
+
+Respect FK and shared-write constraints: parent-child tables that always change together usually stay in one seam.
+
+Factor permission boundaries: admin-only flows often form separate seams from end-user flows.
+
+Include external integrations: workflows tied to one external system often make a good seam.
+
+Score candidates: reward cohesion and ownership purity, penalize shared writes and hard cross-deps.
+
+Validate with testability and releaseability: each seam should have its own contract, tests, and parity checks.
+
